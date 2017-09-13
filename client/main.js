@@ -101,12 +101,8 @@ function svg(source, scale){
 
 function text(text,scale,spacing,anchor){
 	scale = scale || {
-		x:3,
-		y:4
-	};
-	scale = {
-		x: scale.x*4,
-		y: scale.y*4
+		x:30,
+		y:40
 	};
 	var xadvance = scale.x*(1.0+spacing);
 	text = text.toLowerCase();
@@ -272,9 +268,13 @@ function init(){
 		this.options.container.x = size.x*2/3;
 		this.options.container.y = size.y*2/3;
 		this.container.addChild(this.options.container);
+		var textScale = {
+			x:10,
+			y:10
+		};
 		for(var i = 0; i < this.options.length; ++i){
-			var t = text(this.options[i],{x:0,y:0.5});
-			t.y += i*10;
+			var t = text(this.options[i], textScale, 0.25,{x:0.5,y:0.5});
+			t.y += i*textScale.y*1.75;
 			this.options.container.addChild(t);
 			this.options[i] = t;
 		}
@@ -309,15 +309,15 @@ function init(){
 		this.options[id].scale.x = this.options[id].scale.y = 1.0;
 	};
 	menu.select = function(id){
-		this.options[id].scale.x = this.options[id].scale.y = 2.0;
+		this.options[id].scale.x = this.options[id].scale.y = 1.5;
 	};
 
-	//menu.init();
+	menu.init();
 
-	//ayy = text("Rōshigumi", {x:6,y:14}, 0.25,{x:0.5,y:0.5});
-	//ayy.x = size.x/2;
-	//ayy.y = size.y/2;
-	//scene.addChild(ayy);
+	ayy = text("Rōshigumi", {x:6*4,y:14*4}, 0.25,{x:0.5,y:0.5});
+	ayy.x = size.x/2;
+	ayy.y = size.y/2;
+	scene.addChild(ayy);
 
 	// start the main loop
 	window.onresize = onResize;
@@ -376,7 +376,7 @@ Bullet.prototype.live = function(player){
 }
 
 function update(){
-	//menu.update();
+	menu.update();
 	mouse.correctedPos = {
 		x: mouse.pos.x/scaleMultiplier/postProcessScale,
 		y: mouse.pos.y/scaleMultiplier/postProcessScale
