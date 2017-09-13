@@ -212,7 +212,7 @@ function init(){
 	cursor.size = 3;
 
 
-	enemy = svg(sam,{x:100,y:100*0.8});
+	enemy = svg(sam,{x:48,y:48*0.8});
 	enemy.x = size.x/2;
 	enemy.y = size.y/2;
 	enemy.v = {};
