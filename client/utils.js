@@ -4,6 +4,9 @@ function lerp(from,to,by){
 	}
 	return from+(to-from)*by;
 }
+function magnitude(v){
+	return Math.sqrt(v.x*v.x+v.y*v.y);
+}
 function slerp(from,to,by){
 	from/=Math.PI*2;
 	to/=Math.PI*2;
