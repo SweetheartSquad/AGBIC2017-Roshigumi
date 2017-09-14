@@ -471,13 +471,13 @@ function init(){
 			scene.addChild(this.container);
 		},
 		update:function(){
-			var restoring = game.ticker.lastTime - this.lastUse > 500;
-			if(restoring){
+			var restoreTime = clamp(0, (game.ticker.lastTime - this.lastUse)/500, 1);
+			if(restoreTime >= 1){
 				this.restore();
 			}
 
 			this.fill.clear();
-			this.fill.beginFill(0xFFFFFF,restoring ? 0.2 : 0.1);
+			this.fill.beginFill(0xFFFFFF, lerp(0.1, 0.2, restoreTime));
 			this.fill.drawRect(0,0,this.current/this.max*this.width,this.height);
 			this.fill.endFill();
 
