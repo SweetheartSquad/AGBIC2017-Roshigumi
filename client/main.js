@@ -222,6 +222,43 @@ function init(){
 	player.v.x = 0;
 	player.v.y = 0;
 	player.invincible = 0;
+	player.blockLine = [{
+		x: 25,
+		y: -32
+	},{
+		x: 25,
+		y: 32
+	}];
+	player.attackLines = [
+		[{
+			x: 15,
+			y: -48
+		},{
+			x: 15,
+			y: 48
+		}],
+		[{
+			x: 15,
+			y: -48
+		},{
+			x: 50,
+			y: 0
+		}],
+		[{
+			x: 15,
+			y: 48
+		},{
+			x: 50,
+			y: 0
+		}],
+		[{
+			x: 15,
+			y: 0
+		},{
+			x: 50,
+			y: 0
+		}]
+	];
 	player.attack = function(){
 		screen_filter.uniforms.uScanDistort += 3;
 		sword.side *= -1;
@@ -266,35 +303,34 @@ function init(){
 		screen_filter.uniforms.uScanDistort += 0.1;
 		//sword.rotation += 0.05;
 	};
-	player.getBlockLine = function(){
-		var l = [
-			{
-				x: 25,
-				y: -32
-			},
-			{
-				x: 25,
-				y: 32
-			}
-		];
-		return l;
+	player.rotateLine = function(l){
+		var l = l.slice();
+		var p = player.toGlobal(new PIXI.Point(l[0].x,l[0].y));
+		l[0] = {
+			x: p.x,
+			y: p.y
+		};
+		p = player.toGlobal(new PIXI.Point(l[1].x,l[1].y));
+		l[1] = {
+			x: p.x,
+			y: p.y
+		};
+		return l
 	};
 	player.getRotatedBlockLine = function(){
-		var l = this.getBlockLine();
-		var p = player.toGlobal(new PIXI.Point(l[0].x,l[0].y));
-		l[0].x = p.x;
-		l[0].y = p.y;
-		p = player.toGlobal(new PIXI.Point(l[1].x,l[1].y));
-		l[1].x = p.x;
-		l[1].y = p.y;
-		return l;
+		return this.rotateLine(this.blockLine);
+	};
+	player.getRotatedAttackLines = function(){
+		var ls = this.attackLines.slice();
+		for(var i = 0; i < ls.length; ++i){
+			ls[i] = this.rotateLine(ls[i]);
+		}
+		return ls;
 	};
 
 	if(debug){
 		debug.drawList.push(player);
 		player.debug = function(){
-			var l = player.getBlockLine();
-
 			debug.beginFill(0xFF0000,1);
 			debug.lineStyle(0);
 			debug.drawCircle(player.x,player.y,player.radius);
@@ -304,6 +340,13 @@ function init(){
 			debug.moveTo(l[0].x,l[0].y);
 			debug.lineTo(l[1].x,l[1].y);
 			debug.endFill();
+
+			l = player.getRotatedAttackLines();
+			for(var i = 0; i < l.length; ++i){
+				debug.moveTo(l[i][0].x,l[i][0].y);
+				debug.lineTo(l[i][1].x,l[i][1].y);
+				debug.endFill();
+			}
 		}
 	}
 
@@ -321,7 +364,6 @@ function init(){
 	enemy.v = {};
 	enemy.v.x = 0;
 	enemy.v.y = 0;
-	enemy.visible=false;
 
 	bullets = {};
 
@@ -628,13 +670,17 @@ function update(){
 	cursor.clear();
 	cursor.beginFill(0x0,0.0);
 	cursor.lineStyle(1,0xFFFFFF,1);
-	cursor.moveTo(mouse.correctedPos.x,mouse.correctedPos.y-cursor.size);
-	cursor.lineTo(mouse.correctedPos.x,mouse.correctedPos.y+cursor.size);
-	cursor.moveTo(mouse.correctedPos.x-cursor.size,mouse.correctedPos.y);
-	cursor.lineTo(mouse.correctedPos.x+cursor.size,mouse.correctedPos.y);
+	//cursor.moveTo(mouse.correctedPos.x,mouse.correctedPos.y-cursor.size);
+	//cursor.lineTo(mouse.correctedPos.x,mouse.correctedPos.y+cursor.size);
+	//cursor.moveTo(mouse.correctedPos.x-cursor.size,mouse.correctedPos.y);
+	//cursor.lineTo(mouse.correctedPos.x+cursor.size,mouse.correctedPos.y);
 	cursor.lineStyle(0.2,0xFFFFFF,1);
-	cursor.moveTo(mouse.correctedPos.x,mouse.correctedPos.y);
-	cursor.lineTo(sword.x+Math.random(),sword.y+Math.random());
+	cursor.moveTo(mouse.correctedPos.x+Math.random()*15,mouse.correctedPos.y+Math.random()*15);
+	cursor.lineTo(sword.x,sword.y);
+	cursor.moveTo(mouse.correctedPos.x+Math.random()*15,mouse.correctedPos.y+Math.random()*15);
+	cursor.lineTo(sword.x,sword.y);
+	cursor.moveTo(mouse.correctedPos.x+Math.random()*15,mouse.correctedPos.y+Math.random()*15);
+	cursor.lineTo(sword.x,sword.y);
 	cursor.endFill();
 
 	sword.x = lerp(sword.x, player.x + Math.cos(player.rotation+Math.PI/2*sword.side)*20, 0.05);
@@ -707,28 +753,30 @@ function update(){
 		if(l && player.blocking){
 			b.dead = true;
 		}
-		debug.beginFill(0,0);
-		debug.lineStyle(2,0x0000FF,1);
-		debug.moveTo(
-			blockLine[0].x,
-			blockLine[0].y
-		);
-		debug.lineTo(
-			blockLine[1].x,
-			blockLine[1].y
-		);
-		debug.moveTo(
-			b.spr.x - bullets.radius*Math.cos(Math.atan2(b.v.y,b.v.x)) + Math.cos(Math.atan2(player.v.y,player.v.x))*magnitude(player.v),
-			b.spr.y - bullets.radius*Math.sin(Math.atan2(b.v.y,b.v.x)) + Math.sin(Math.atan2(player.v.y,player.v.x))*magnitude(player.v)
-		);
-		debug.lineTo(
-			b.spr.x + b.v.x + bullets.radius*Math.cos(Math.atan2(b.v.y,b.v.x)) + Math.cos(Math.atan2(player.v.y,player.v.x))*magnitude(player.v),
-			b.spr.y + b.v.y + bullets.radius*Math.sin(Math.atan2(b.v.y,b.v.x)) + Math.sin(Math.atan2(player.v.y,player.v.x))*magnitude(player.v)
-		);
-		if(l){
-			debug.drawCircle(l.x,l.y,4);
+		if(debug){
+			debug.beginFill(0,0);
+			debug.lineStyle(2,0x0000FF,1);
+			debug.moveTo(
+				blockLine[0].x,
+				blockLine[0].y
+			);
+			debug.lineTo(
+				blockLine[1].x,
+				blockLine[1].y
+			);
+			debug.moveTo(
+				b.spr.x - bullets.radius*Math.cos(Math.atan2(b.v.y,b.v.x)) + Math.cos(Math.atan2(player.v.y,player.v.x))*magnitude(player.v),
+				b.spr.y - bullets.radius*Math.sin(Math.atan2(b.v.y,b.v.x)) + Math.sin(Math.atan2(player.v.y,player.v.x))*magnitude(player.v)
+			);
+			debug.lineTo(
+				b.spr.x + b.v.x + bullets.radius*Math.cos(Math.atan2(b.v.y,b.v.x)) + Math.cos(Math.atan2(player.v.y,player.v.x))*magnitude(player.v),
+				b.spr.y + b.v.y + bullets.radius*Math.sin(Math.atan2(b.v.y,b.v.x)) + Math.sin(Math.atan2(player.v.y,player.v.x))*magnitude(player.v)
+			);
+			if(l){
+				debug.drawCircle(l.x,l.y,4);
+			}
+			debug.endFill();
 		}
-		debug.endFill();
 
 		// hit
 		if(!player.invincible && circToCirc(b.spr.x,b.spr.y,bullets.radius, player.x,player.y,player.radius)){
