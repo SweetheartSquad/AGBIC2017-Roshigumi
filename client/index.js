@@ -11,7 +11,9 @@ var decay = 0.95;
 
 var sounds=[];
 
-var scaleMode = 2;
+var scaleMode = 1;
+
+var debug = true;
 
 toggleFullscreen = function(){
 	if (game.view.toggleFullscreen) {

@@ -170,7 +170,6 @@ function init(){
 	main.timestep = 1000/60; // target ms/frame
 	game.ticker.add(main.bind(main));
 
-
 	scene = new PIXI.Container();
 	// screen background
 	(function(){
@@ -183,6 +182,20 @@ function init(){
 		g.destroy();
 		scene.addChild(bg);
 	}());
+
+
+
+	if(debug){
+		debug = new PIXI.Graphics();
+		debug.drawList = [];
+		debug.draw = function(){
+			this.clear();
+			for(var i = 0; i < this.drawList.length; ++i){
+				this.drawList[i].debug();
+			}
+		}
+		debug.alpha=0.5;
+	}
 
 	// create render texture
 	renderTexture = PIXI.RenderTexture.create(size.x,size.y,PIXI.SCALE_MODES.NEAREST,1);
@@ -203,6 +216,7 @@ function init(){
 	renderSprite3.addChild(scene);
 
 	player = svg(ship,{x:32,y:32*0.9});
+	player.radius = 12;
 	player.x = size.x/3;
 	player.y = size.y/3;
 	player.v = {};
@@ -220,7 +234,7 @@ function init(){
 		g.beginFill(0xFFFFFF,0.1); 
 		//g.lineStyle(20,0xFFFFFF,0.5);
 		var arc={
-			wide:150,
+			wide:125,
 			long:100
 		};
 		g.moveTo(arc.long*0.1,-arc.wide/2);
@@ -246,14 +260,46 @@ function init(){
 		},0);
 	};
 	player.block = function(){
-		sword.x = lerp(sword.x, player.x + Math.cos(player.rotation)*25 + Math.cos(player.rotation-Math.PI/2*sword.side)*35, 0.9);
-		sword.y = lerp(sword.y, player.y + Math.sin(player.rotation)*25 + Math.sin(player.rotation-Math.PI/2*sword.side)*35, 0.9);
+		sword.x = lerp(sword.x, player.x + Math.cos(player.rotation)*25 + Math.cos(player.rotation-Math.PI/2*sword.side)*38, 0.9);
+		sword.y = lerp(sword.y, player.y + Math.sin(player.rotation)*25 + Math.sin(player.rotation-Math.PI/2*sword.side)*38, 0.9);
 		sword.trotation = player.rotation + Math.PI/2*sword.side;
-		sword.rotation = slerp(sword.rotation, sword.trotation, 0.9);
+		sword.rotation = slerp(sword.rotation, sword.trotation, 0.5);
 		screen_filter.uniforms.uScanDistort += 0.1;
 
 		//sword.rotation += 0.05;
 	};
+	player.getBlockLine = function(){
+		var l = [
+			{
+				x: 25,
+				y: -32
+			},
+			{
+				x: 25,
+				y: 32
+			}
+		];
+		return l;
+	};
+
+	if(debug){
+		debug.drawList.push(player);
+		player.debug = function(){
+			var l = player.getBlockLine();
+
+			debug.beginFill(0xFF0000,1);
+			debug.lineStyle(0);
+			debug.drawCircle(player.x,player.y,player.radius);
+			debug.lineStyle(1,0xFF0000,1);
+
+			var p = player.toGlobal(new PIXI.Point(l[0].x,l[0].y));
+			debug.moveTo(p.x,p.y);
+			p = player.toGlobal(new PIXI.Point(l[1].x,l[1].y));
+			debug.lineTo(p.x,p.y);
+			debug.endFill();
+		}
+	}
+
 	sword = svg(sword,{x:64,y:64*0.1});
 	sword.side = 1;
 	sword.overshoot=0;
@@ -272,22 +318,23 @@ function init(){
 
 	bullets = {};
 
+
+	bullets.max = 10000;
+	bullets.radius = 8;
+	bullets.container = new PIXI.ParticleContainer(bullets.max, {
+		scale:false,
+		position:true,
+		rotation:true
+	}, bullets.max);
 	(function(){
-		var b = svg(bullet,{x:16,y:16});
+		var b = svg(bullet,{x:bullets.radius*2,y:bullets.radius*2});
 		//b.drawRect(0,0,bsize,bsize);
 		//b.rotation = Math.PI;
 		b.endFill();
 		bullets.tex = b.generateTexture();
 		b.destroy();
 	}());
-
-	bullets.max = 10000;
 	bullets.pool = new Pool(bullets.max, Bullet);
-	bullets.container = new PIXI.ParticleContainer(bullets.max, {
-		scale:false,
-		position:true,
-		rotation:true
-	}, bullets.max);
 
 	scene.addChild(bullets.container);
 	scene.addChild(enemy);
@@ -424,12 +471,13 @@ function init(){
 			scene.addChild(this.container);
 		},
 		update:function(){
-			if(game.ticker.lastTime - this.lastUse > 500){
+			var restoring = game.ticker.lastTime - this.lastUse > 500;
+			if(restoring){
 				this.restore();
 			}
 
 			this.fill.clear();
-			this.fill.beginFill(0xFFFFFF,0.25);
+			this.fill.beginFill(0xFFFFFF,restoring ? 0.2 : 0.1);
 			this.fill.drawRect(0,0,this.current/this.max*this.width,this.height);
 			this.fill.endFill();
 
@@ -462,6 +510,9 @@ function init(){
 	};
 	stamina.init();
 
+	if(debug){
+		scene.addChild(debug);
+	}
 	
 	// start the main loop
 	window.onresize = onResize;
@@ -506,8 +557,16 @@ function Bullet(){
 		y:0
 	};
 }
+Bullet.prototype.debug = function(){
+	debug.beginFill(0xFF0000,1);
+	debug.drawCircle(this.spr.x,this.spr.y,bullets.radius);
+	debug.endFill();
+};
 Bullet.prototype.kill = function(){
 	bullets.container.removeChild(this.spr);
+	if(debug){
+		debug.drawList.splice(debug.drawList.indexOf(this),1);
+	}
 }
 Bullet.prototype.live = function(player){
 	this.dead = false;
@@ -517,6 +576,9 @@ Bullet.prototype.live = function(player){
 	this.v.y = Math.sin(player.rotation)/4;
 	this.spr.rotation = Math.atan2(this.v.y,this.v.x);
 	bullets.container.addChild(this.spr);
+	if(debug){
+		debug.drawList.push(this);
+	}
 }
 
 function update(){
@@ -563,33 +625,37 @@ function update(){
 	cursor.lineTo(sword.x+Math.random(),sword.y+Math.random());
 	cursor.endFill();
 
-	sword.x = lerp(sword.x, player.x - Math.cos(player.rotation)*20, 0.05);
-	sword.y = lerp(sword.y, player.y - Math.sin(player.rotation)*20, 0.05);
+	sword.x = lerp(sword.x, player.x + Math.cos(player.rotation+Math.PI/2*sword.side)*20, 0.05);
+	sword.y = lerp(sword.y, player.y + Math.sin(player.rotation+Math.PI/2*sword.side)*20, 0.05);
 	sword.trotation = Math.atan2(
 		mouse.correctedPos.y - sword.y,
 		mouse.correctedPos.x - sword.x
 	);
 	sword.rotation = slerp(sword.rotation,sword.trotation + Math.PI*sword.side/2 * 0.9*(1.0+sword.overshoot), 0.1);
 	sword.overshoot = lerp(sword.overshoot,0,0.1);
-	if(mouse.isJustDown() && stamina.current > 25){
-		player.attack();
-		stamina.drain(25);
-	}else if(keys.isDown(keys.SHIFT)){
+	sword.scale.x = lerp(sword.scale.x, 0.7, 0.05);
+	sword.scale.y = lerp(sword.scale.y, 0.7*sword.side, 0.05);
+	if(keys.isDown(keys.SHIFT)){
 		if(stamina.current > 0.5){
 			if(keys.isJustDown(keys.SHIFT)){
 				sword.side *= -1;
 			}
 			player.block();
 			stamina.drain(0.5);
+			sword.scale.x = sword.scale.y = 1;
 		}else{
 			stamina.drain(0); // prevent turtling regen
 		}
+	}else if(mouse.isJustDown() && stamina.current > 22){
+		player.attack();
+		stamina.drain(22);
+		sword.scale.x = sword.scale.y = 1;
 	}
 	if(player.invincible){
 		player.invincible -= 1;
 		player.visible = player.invincible%6<3;
 	}
-	sword.scale.y = -sword.side;
+	sword.scale.y = Math.abs(sword.scale.y)*sword.side;
 
 	if(keys.isJustDown(keys.X) || keys.isDown(keys.C) && game.ticker.lastTime%100 < 10){
 		var b = bullets.pool.add(enemy);
@@ -608,7 +674,7 @@ function update(){
 			b.dead = true;
 		}
 
-		if(!player.invincible && Math.pow(b.spr.x-player.x,2)+Math.pow(b.spr.y-player.y,2) < 15*15){
+		if(!player.invincible && Math.pow(b.spr.x-player.x,2)+Math.pow(b.spr.y-player.y,2) < Math.pow(player.radius + bullets.radius, 2)){
 			b.dead = true;
 			health.damage();
 			screen_filter.uniforms.uScanDistort += 80;
@@ -634,6 +700,10 @@ function update(){
 		screen_filter.uniforms.uScanDistort = 20;
 	}else{
 		screen_filter.uniforms.uScanDistort *= 0.9;
+	}
+
+	if(debug){
+		debug.draw();
 	}
 
 	/////////////////////
