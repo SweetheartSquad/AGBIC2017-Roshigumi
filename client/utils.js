@@ -1,5 +1,5 @@
 function lerp(from,to,by){
-	if(Math.abs(to-from) < 1){
+	if(Math.abs(to-from) < 0.0001){
 		return to;
 	}
 	return from+(to-from)*by;
