@@ -811,14 +811,6 @@ function update(){
 		y: mouse.pos.y/scaleMultiplier/postProcessScale
 	};
 
-	//ayy.rotation = Math.sin(game.ticker.lastTime/300)/20;
-	//ayy.scale.x = Math.cos(game.ticker.lastTime/300)/2+1;
-	//ayy.scale.y = Math.sin(game.ticker.lastTime/300)/2+1;
-	//title.scale.x = title.scale.y = 3;
-	//title.rotation = Math.sin(game.ticker.lastTime/400)/20;
-	//title.scale.x = Math.cos(game.ticker.lastTime/300)/2+2;
-	//title.scale.y = Math.sin(game.ticker.lastTime/200)/2+2;
-
 	var input = getInput();
 
 	switch(parseInt(window.location.hash.substr(6))){
@@ -868,24 +860,23 @@ function update(){
 	////////////
 	// cursor //
 	////////////
-	//cursor.x = mouse.correctedPos.x;
-	//cursor.y = mouse.correctedPos.y;
-	
 	cursor.clear();
-	cursor.beginFill(0x0,0.0);
-	cursor.lineStyle(1,0xFFFFFF,1);
-	cursor.moveTo(mouse.correctedPos.x,mouse.correctedPos.y-cursor.size);
-	cursor.lineTo(mouse.correctedPos.x,mouse.correctedPos.y+cursor.size);
-	cursor.moveTo(mouse.correctedPos.x-cursor.size,mouse.correctedPos.y);
-	cursor.lineTo(mouse.correctedPos.x+cursor.size,mouse.correctedPos.y);
-	var l = player.getRotatedAttackLines()[2];
-	cursor.lineStyle(0.1,0xFFFFFF,1);
-	cursor.moveTo(l[1].x+(Math.random()*2-1)*20,l[1].y+(Math.random()*2-1)*20);
-	cursor.lineTo(sword.x,sword.y);
-	cursor.lineStyle(0.2,0xFFFFFF,1);
-	cursor.moveTo(l[1].x+(Math.random()*2-1)*3,l[1].y+(Math.random()*2-1)*3);
-	cursor.lineTo(sword.x,sword.y);
-	cursor.endFill();
+	if(!player.blocking){
+		cursor.beginFill(0x0,0.0);
+		cursor.lineStyle(1,0xFFFFFF,1);
+		cursor.moveTo(mouse.correctedPos.x,mouse.correctedPos.y-cursor.size);
+		cursor.lineTo(mouse.correctedPos.x,mouse.correctedPos.y+cursor.size);
+		cursor.moveTo(mouse.correctedPos.x-cursor.size,mouse.correctedPos.y);
+		cursor.lineTo(mouse.correctedPos.x+cursor.size,mouse.correctedPos.y);
+		var l = player.getRotatedAttackLines()[2];
+		cursor.lineStyle(0.1,0xFFFFFF,1);
+		cursor.moveTo(l[1].x+(Math.random()*2-1)*20,l[1].y+(Math.random()*2-1)*20);
+		cursor.lineTo(sword.x,sword.y);
+		cursor.lineStyle(0.2,0xFFFFFF,1);
+		cursor.moveTo(l[1].x+(Math.random()*2-1)*3,l[1].y+(Math.random()*2-1)*3);
+		cursor.lineTo(sword.x,sword.y);
+		cursor.endFill();
+	}
 
 
 	sword.x = lerp(sword.x, player.spr.x + Math.cos(player.spr.rotation+Math.PI/2*sword.side)*20, 0.05);
@@ -1015,6 +1006,16 @@ function update(){
 		}else{
 			e.spr.visible = true;
 		}
+
+
+		if(Math.random()<0.01){
+			var b =bullets.pool.add(e);
+			b.v.x = player.spr.x - e.spr.x;
+			b.v.y = player.spr.y - e.spr.y;
+			var l = magnitude(b.v);
+			b.v.x/=l;
+			b.v.y/=l;
+		}
 	}
 
 
@@ -1069,6 +1070,12 @@ function update(){
 		);
 		if(l && player.blocking){
 			b.dead = true;
+
+			blur_filter.uniforms.uBlurAdd += 0.01;
+			extra.beginFill(0,0);
+			extra.lineStyle(0.8,0xFFFFFF,1);
+			extra.drawCircle(b.spr.x, b.spr.y, bullets.radius*3*(Math.random()/2+0.6));
+			extra.endFill();
 		}
 		if(debug.enabled){
 			debug.beginFill(0,0);
