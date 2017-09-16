@@ -48,7 +48,9 @@
 	var sam={x:0.5,y:0.5,svg:'<polyline style="fill:none;stroke:#000000;stroke-miterlimit:10;" points="507.466217,50.5711594 502,50.5711594 502,91.3632736 507.466217,91.3632736 507.466217,92.818779 507.466217,49.1162796 529.4724731,49.1162796 529.4724731,52.770546 525.140625,56.7887115 525.140625,79.388176 525.140625,79.8785019 524.913147,80.2572479 522.8085938,83.7590408 529.3688965,90.2065582 529.4724731,92.818779 507.5629272,92.818779 529.5889893,92.818779 529.4724731,90.3082199 539.8748779,100.5321121 549.1776123,100.5321121 549.3623657,99.1739426 546.6564941,97.0259933 541.1989746,97.2851105 525.140625,80.1500092 525.2540894,56.8271332 542.5819702,40.1625366 561.3064575,40.1625366 578.6547852,56.7887115 564.1009521,52.6806679 563.0458984,46.8332024 540.8413086,46.8332024 539.6932373,52.6806679 525.5596924,56.7887115 540.6323853,46.9658699 563.4116211,46.8332024 578.9089355,56.7887115 578.6547852,79.8785019 563.0458984,97.2851105 556.9046021,97.2851105 564.3755493,91.3564453 554.5248413,66.2854691 549.3623657,66.2854691 539.5115967,91.3564453 549.4869385,99.2359161 546.0136719,113.8034134 549.4869385,119.8374634 554.4002075,119.8374634 557.8734741,113.8034134 554.4002075,99.2359161 549.5545044,99.2359161 554.4622192,99.2359161 556.9318848,97.3322296 554.5006714,99.3276672 554.8006592,100.5321121 564.0122681,100.5321121 574.3701172,90.3522186 574.5275269,92.818779 574.5275269,90.1972504 581.0786133,83.7590408 578.746582,79.5102844 578.746582,56.7887115 574.4667969,52.6031799 574.5275269,49.1162796 596.5337524,49.1677361 596.5337524,91.3632736 596.5951538,50.5711594 602,50.5711594 602,91.3632736 596.6019897,91.3632736 596.5337524,92.818779 574.6211548,92.818779 "/>'}
 	var heart={x:0.5,y:0.5,svg:'<polyline id="XMLID_1_" style="fill:none;stroke:#231F20;stroke-miterlimit:10;" points="50,100 0,50 0,25 25,0 50,25 75,0 100,25 100,50 50,100 "/>'};
 	var bullet={x:0,y:0,svg:'<polyline id="XMLID_1_" style="fill:none;stroke:#231F20;stroke-miterlimit:10;" points="25,25 40,10 60,10 100,50 78.5,50 50,80 50,20 20,50 0,50 40,90 60,90 75,75 "/>'};
-
+	var enemy2={x:0.5,y:0.5,svg:'<polyline class="st0" points="-5,71.9 -5,30.5 -26.3,1.2 -31,1.3 -30.8,71.9 -5,71.9 -26.3,101.2 -56.5,101.2 -78,71.9 -78,30.5 -56.5,1.2 -31,1.3 -31,23.6 -36.6,18.9 -45.2,19 -51.1,24 -52.9,31 -72.7,23.2 -52.9,31 -52.8,71.9 -78,71.9 -30.8,71.9 "/>'}
+	var enemy3={x:0.5,y:0.5,svg:'<polyline class="st0" points="-20,75.2 -20,67.3 13,67.3 -20,67.3 -20,39.1 -8.7,39.1 -53.9,39.1 -53.9,16.5 -53.9,67.3 -87,67.3 -53.9,67.3 -53.9,75.2 -87,75.2 -87,67.3 -65.3,39.1 -62.1,26.3 -53.9,16.5 -37,10.8 -21.9,15.1 -12.5,25 -8.7,39.1 13,67.3 13,75.2 -20,75.2 -22.9,82.9 -28.4,89.4 -37,91.6 -45.2,89.4 -51.9,82.5 -53.9,75.2 "/>'}
+	var enemy4={x:0.5,y:0.5,svg:'<polyline class="st0" points="-52.6,6.6 -52.6,30.2 -66.4,30.1 -15.7,30.2 -22.8,9.8 -40.9,0.8 -59.2,9.9 -66.4,30.3 -80.6,50.6 -66.4,70.9 -59.7,91.2 -41.1,100.8 -22.9,91.7 -15.6,70.8 -75.5,43.4 -38.3,60.5 -48.4,60.5 -54.3,67.7 -51.9,76.3 -43.9,80.6 -32.7,80.6 -23.5,76.7 -15.6,70.8 -1.1,50.5 -15.7,30.2 "/>'}
 function svg(source, scale){
 	var points = source.svg.split("points=\"")[1].split(" \"")[0].split(' ');
 	var max = {
@@ -264,7 +266,7 @@ function init(){
 		sword.side *= -1;
 		sword.x = lerp(sword.x, player.x, 0.9);
 		sword.y = lerp(sword.y, player.y, 0.9);
-		sword.rotation = slerp(sword.rotation,sword.trotation + Math.PI*sword.side/2 * 0.9*(1.0+sword.overshoot), 0.99);
+		sword.rotation = slerp(sword.rotation,player.trotation + Math.PI*sword.side/2 * 0.9*(1.0+sword.overshoot), 0.99);
 		sword.overshoot = 0.3;
 		var g = new PIXI.Graphics();
 		g.beginFill(0xFFFFFF,0.1); 
@@ -286,7 +288,7 @@ function init(){
 
 		g.endFill();
 		scene.addChild(g);
-		g.rotation = sword.trotation;
+		g.rotation = player.trotation;
 		g.x = player.x;
 		g.y = player.y;
 		g.alpha = 1;
@@ -357,14 +359,6 @@ function init(){
 	cursor = new PIXI.Graphics();
 	cursor.size = 3;
 
-
-	enemy = svg(sam,{x:48,y:48*0.8});
-	enemy.x = size.x/2;
-	enemy.y = size.y/2;
-	enemy.v = {};
-	enemy.v.x = 0;
-	enemy.v.y = 0;
-
 	bullets = {};
 
 
@@ -377,16 +371,70 @@ function init(){
 	}, bullets.max);
 	(function(){
 		var b = svg(bullet,{x:bullets.radius*2.5,y:bullets.radius*2.5});
-		//b.drawRect(0,0,bsize,bsize);
-		//b.rotation = Math.PI;
-		b.endFill();
 		bullets.tex = b.generateTexture();
 		b.destroy();
 	}());
 	bullets.pool = new Pool(bullets.max, Bullet);
 
 	scene.addChild(bullets.container);
+
+	stars = {};
+	stars.max = 100;
+	stars.radius = 1;
+	stars.container = new PIXI.ParticleContainer(stars.max, {
+		scale:true,
+		position:true,
+		rotation:true
+	}, bullets.max);
+	(function(){
+		// var b = svg(bullet,{x:bullets.radius*2.5,y:bullets.radius*2.5});
+		// stars.tex = b.generateTexture();
+		// b.destroy();
+		var s = new PIXI.Graphics();
+		s.beginFill(0xFFFFFF,1);
+		s.drawRect(0,0,1,1);
+		s.endFill();
+		stars.tex = s.generateTexture();
+		s.destroy();
+	}());
+	stars.pool = new Pool(stars.max, Star);
+	for(var i = 0; i < stars.max/2; ++i){
+		var s = stars.pool.add();
+		s.spr.x = Math.random()*size.x;
+		s.spr.y = Math.random()*size.y;
+	}
+
+	scene.addChild(stars.container);
+
+
+
+
+	//enemy = svg(sam,{x:48,y:48*0.8});
+	enemy = svg(enemy2,{x:48*0.8,y:48});
+	enemy.x = size.x/3;
+	enemy.y = size.y/3;
+	enemy.v = {};
+	enemy.v.x = 0;
+	enemy.v.y = 0;
 	scene.addChild(enemy);
+
+	enemy = svg(enemy3,{x:48*0.8,y:48});
+	enemy.x = size.x/2;
+	enemy.y = size.y/2;
+	enemy.v = {};
+	enemy.v.x = 0;
+	enemy.v.y = 0;
+	scene.addChild(enemy);
+
+	enemy = svg(enemy4,{x:48*0.8,y:48});
+	enemy.x = size.x*0.75;
+	enemy.y = size.y*0.75;
+	enemy.v = {};
+	enemy.v.x = 0;
+	enemy.v.y = 0;
+	scene.addChild(enemy);
+
+
 	scene.addChild(player);
 	scene.addChild(sword);
 	scene.addChild(cursor);
@@ -631,6 +679,28 @@ Bullet.prototype.live = function(player){
 	}
 }
 
+function Star(){
+	var s = this.spr = new PIXI.Sprite(stars.tex);
+}
+Star.prototype.kill = function(){
+	stars.container.removeChild(this.spr);
+	stars.pool.add();
+};
+Star.prototype.live = function(){
+	this.dead = false;
+	var r = Math.random();
+	this.spr.scale.x = this.spr.scale.y = r*2;
+	this.speed = r*0.1+0.05;
+	if(Math.random() > 0.5){
+		this.spr.x = Math.round(Math.random())*size.x;
+		this.spr.y = Math.random()*size.y;
+	}else{
+		this.spr.y = Math.round(Math.random())*size.y;
+		this.spr.x = Math.random()*size.x;
+	}
+	stars.container.addChild(this.spr);
+};
+
 function update(){
 	if(debug){
 		debug.clear();
@@ -652,18 +722,53 @@ function update(){
 	//title.scale.y = Math.sin(game.ticker.lastTime/200)/2+2;
 
 	var input = getInput();
-	player.v.x += input.move.x;
-	player.v.y += input.move.y;
-	player.x += player.v.x;
-	player.y += player.v.y;
-	player.v.x *= 0.7;
-	player.v.y *= 0.7;
-	//player.rotation = slerp(player.rotation, Math.atan2(player.v.y,player.v.x),0.1);
-	player.rotation = slerp(player.rotation, Math.atan2(
-		mouse.correctedPos.y - player.y,
-		mouse.correctedPos.x - player.x
-	), 0.2);
-	enemy.rotation += 0.02;
+
+	switch(parseInt(window.location.hash.substr(6))){
+		default:
+		case 0:
+			// free move
+			player.v.x += input.move.x/3;
+			player.v.y += input.move.y/3;
+			player.x += player.v.x;
+			player.y += player.v.y;
+			player.v.x *= 0.95;
+			player.v.y *= 0.95;
+			player.trotation = Math.atan2(
+			 	mouse.correctedPos.y - player.y,
+			 	mouse.correctedPos.x - player.x
+			);
+			player.rotation = slerp(player.rotation,player.trotation, 0.2);
+			break;
+		case 1:
+			// tank
+			player.trotation = (player.trotation || 0) + input.move.x/10;
+			player.rotation = slerp(player.rotation, player.trotation, 0.3);
+			player.v.x -= input.move.y*Math.cos(player.trotation);
+			player.v.y -= input.move.y*Math.sin(player.trotation);
+			player.x += player.v.x/2;
+			player.y += player.v.y/2;
+			player.v.x *= 0.9;
+			player.v.y *= 0.9;
+			break;
+		case 2:
+			// polar
+			player.trotation = Math.atan2(- player.y,size.x/2-player.x);
+			player.rotation = slerp(player.rotation, player.trotation, 0.3);
+			player.v.x -= input.move.y*Math.cos(player.trotation);
+			player.v.y -= input.move.y*Math.sin(player.trotation);
+			player.v.x += input.move.x*Math.cos(player.trotation+Math.PI/2);
+			player.v.y += input.move.x*Math.sin(player.trotation+Math.PI/2);
+			player.x += player.v.x/2;
+			player.y += player.v.y/2;
+			player.v.x *= 0.9;
+			player.v.y *= 0.9;
+			break;
+	}
+
+	
+
+	
+	//enemy.rotation += 0.02;
 
 	//cursor.x = mouse.correctedPos.x;
 	//cursor.y = mouse.correctedPos.y;
@@ -694,9 +799,9 @@ function update(){
 	sword.scale.x = lerp(sword.scale.x, 0.7, 0.05);
 	sword.scale.y = lerp(sword.scale.y, 0.7*sword.side, 0.05);
 	player.blocking = false;
-	if(keys.isDown(keys.SHIFT)){
+	if(getAction2()){
 		if(stamina.current > 0.5){
-			if(keys.isJustDown(keys.SHIFT)){
+			if(getJustAction2()){
 				sword.side *= -1;
 			}
 			player.block();
@@ -706,7 +811,7 @@ function update(){
 		}else{
 			stamina.drain(0); // prevent turtling regen
 		}
-	}else if(mouse.isJustDown() && stamina.current > 22){
+	}else if(getJustAction1() && stamina.current > 22){
 		player.attack();
 		stamina.drain(22);
 		sword.scale.x = sword.scale.y = 1;
@@ -721,6 +826,21 @@ function update(){
 		var b = bullets.pool.add(enemy);
 	}
 
+
+	for(var i = 0; i < stars.pool.live.length; ++i){
+		var s = stars.pool.live[i];
+		s.spr.x -= (player.v.x+0.05) * s.speed;
+		s.spr.y -= (player.v.y+0.05) * s.speed;
+		if(
+			s.spr.x < -stars.radius*2 ||
+			s.spr.y < -stars.radius*2 ||
+			s.spr.x > size.x+stars.radius*2 ||
+			s.spr.y > size.y+stars.radius*2
+		){
+			s.dead = true;
+		}
+	}
+	stars.pool.update();
 
 	var blockLine = player.getRotatedBlockLine();
 	for(var i = 0; i < bullets.pool.live.length; ++i){
@@ -788,24 +908,24 @@ function update(){
 	}
 	bullets.pool.update();
 
-	if(player.x > size.x){
-		player.v.x += size.x-player.x;
+	if(player.x > size.x+player.width){
+		player.x -= size.x+player.width;
 	}
-	if(player.x < 0){
-		player.v.x += -player.x;
+	if(player.x < -player.width){
+		player.x += size.x+player.width;
 	}
-	if(player.y > size.y){
-		player.v.y += size.y-player.y;
+	if(player.y > size.y+player.height){
+		player.y -= size.y+player.height;
 	}
-	if(player.y < 0){
-		player.v.y += -player.y;
+	if(player.y < -player.height){
+		player.y += size.y+player.height;
 	}
 
-	if(input.confirm){
-		screen_filter.uniforms.uScanDistort = 20;
-	}else{
+	//if(input.confirm){
+	//	screen_filter.uniforms.uScanDistort = 20;
+	//}else{
 		screen_filter.uniforms.uScanDistort *= 0.9;
-	}
+	//}
 
 	if(debug){
 		debug.draw();
@@ -850,6 +970,44 @@ function toggleMute(){
 	}else{
 		Howler.mute();
 	}
+}
+
+function getAction1(){
+	return keys.isDown(keys.Z) 
+	|| keys.isDown(keys.C)
+	|| keys.isDown(keys.SPACE)
+	|| keys.isDown(keys.CTRL)
+	|| gamepads.isDown(gamepads.A)
+	|| gamepads.isDown(gamepads.Y)
+	|| mouse.isDown();
+}
+
+function getJustAction1(){
+	return keys.isJustDown(keys.Z) 
+	|| keys.isJustDown(keys.C)
+	|| keys.isJustDown(keys.SPACE)
+	|| keys.isJustDown(keys.CTRL)
+	|| gamepads.isJustDown(gamepads.A)
+	|| gamepads.isJustDown(gamepads.Y)
+	|| mouse.isJustDown();
+}
+
+function getAction2(){
+	return keys.isDown(keys.X) 
+	|| keys.isDown(keys.V)
+	|| keys.isDown(keys.SHIFT)
+	|| keys.isDown(keys.CTRL)
+	|| gamepads.isDown(gamepads.X)
+	|| gamepads.isDown(gamepads.B);
+}
+
+function getJustAction2(){
+	return keys.isJustDown(keys.X) 
+	|| keys.isJustDown(keys.V)
+	|| keys.isJustDown(keys.SHIFT)
+	|| keys.isJustDown(keys.CTRL)
+	|| gamepads.isJustDown(gamepads.X)
+	|| gamepads.isJustDown(gamepads.B);
 }
 
 function getInput(){
