@@ -7,13 +7,15 @@ var resizeTimeout=null;
 var size={x:16 * 32,y:9 * 32};
 var postProcessScale = 3;
 var blurIt = 2;
-var decay = 0.95;
+var decay = 0.85;
 
 var sounds=[];
 
 var scaleMode = 1;
 
-var debug = true;
+var debug = {
+	enabled:false
+};
 
 toggleFullscreen = function(){
 	if (game.view.toggleFullscreen) {

@@ -141,7 +141,7 @@ function init(){
 	keys.init({
 		capture: [keys.LEFT,keys.RIGHT,keys.UP,keys.DOWN,keys.SPACE,keys.ENTER,keys.BACKSPACE,keys.ESCAPE,keys.W,keys.A,keys.S,keys.D,keys.P,keys.M]
 	});
-	mouse.init("canvas", false);
+	mouse.init("canvas", true);
 
 	// setup screen filter
 	screen_filter = new CustomFilter(PIXI.loader.resources.screen_shader.data);
@@ -149,12 +149,12 @@ function init(){
 	blur_filter = new CustomFilter(PIXI.loader.resources.blur_shader.data);
 	blur_filter.padding = 0;
 	blur_filter.padding = 0;
-	screen_filter.uniforms["uBufferSize"] = [nextPowerOfTwo(size.x*postProcessScale),nextPowerOfTwo(size.y*postProcessScale)];
-	screen_filter.uniforms["uSpriteSize"] = [size.x,size.y];
-	screen_filter.uniforms["uPostProcessScale"] = postProcessScale;
+	screen_filter.uniforms.uBufferSize = [nextPowerOfTwo(size.x*postProcessScale),nextPowerOfTwo(size.y*postProcessScale)];
+	screen_filter.uniforms.uSpriteSize = [size.x,size.y];
+	screen_filter.uniforms.uPostProcessScale = postProcessScale;
 	screen_filter.uniforms.uScanDistort = 0;
-	blur_filter.uniforms["uResolution"] = [size.x,size.y];
-	blur_filter.uniforms["uBlurAdd"] = 0.36;
+	blur_filter.uniforms.uResolution = [size.x,size.y];
+	blur_filter.uniforms.uBlurAdd = uBlurAddT = 0.36;
 
 	// setup main loop
 	var main = function(){
@@ -187,15 +187,21 @@ function init(){
 
 
 
-	if(debug){
+	if(debug.enabled){
 		debug = new PIXI.Graphics();
+		debug.enabled = true;
 		debug.drawList = [];
 		debug.draw = function(){
 			for(var i = 0; i < this.drawList.length; ++i){
 				this.drawList[i].debug();
 			}
 		}
+		debug.add=function(e){
+			debug.drawList.push(e);
+		}
 		debug.alpha=0.5;
+	}else{
+		debug.add = function(){};
 	}
 
 	// create render texture
@@ -216,10 +222,12 @@ function init(){
 	game.stage.addChild(renderSprite3);
 	renderSprite3.addChild(scene);
 
-	player = svg(ship,{x:32*0.95,y:32});
+	player = {
+		spr:svg(ship,{x:32*0.95,y:32})
+	};
 	player.radius = 10;
-	player.x = size.x/3;
-	player.y = size.y/3;
+	player.spr.x = size.x/3;
+	player.spr.y = size.y/3;
 	player.v = {};
 	player.v.x = 0;
 	player.v.y = 0;
@@ -236,26 +244,26 @@ function init(){
 			x: 15,
 			y: -48
 		},{
-			x: 15,
-			y: 48
+			x: 50,
+			y: 0
 		}],
 		[{
 			x: 15,
 			y: -48
 		},{
-			x: 50,
-			y: 0
+			x: 15,
+			y: 48
 		}],
 		[{
 			x: 15,
-			y: 48
+			y: 0
 		},{
 			x: 50,
 			y: 0
 		}],
 		[{
 			x: 15,
-			y: 0
+			y: 48
 		},{
 			x: 50,
 			y: 0
@@ -264,8 +272,8 @@ function init(){
 	player.attack = function(){
 		screen_filter.uniforms.uScanDistort += 3;
 		sword.side *= -1;
-		sword.x = lerp(sword.x, player.x, 0.9);
-		sword.y = lerp(sword.y, player.y, 0.9);
+		sword.x = lerp(sword.x, player.spr.x, 0.9);
+		sword.y = lerp(sword.y, player.spr.y, 0.9);
 		sword.rotation = slerp(sword.rotation,player.trotation + Math.PI*sword.side/2 * 0.9*(1.0+sword.overshoot), 0.99);
 		sword.overshoot = 0.3;
 		var g = new PIXI.Graphics();
@@ -289,8 +297,8 @@ function init(){
 		g.endFill();
 		scene.addChild(g);
 		g.rotation = player.trotation;
-		g.x = player.x;
-		g.y = player.y;
+		g.x = player.spr.x;
+		g.y = player.spr.y;
 		g.alpha = 1;
 		setTimeout(function(){
 			scene.removeChild(g);
@@ -298,26 +306,26 @@ function init(){
 		},0);
 	};
 	player.block = function(){
-		sword.x = lerp(sword.x, player.x + Math.cos(player.rotation)*25 + Math.cos(player.rotation-Math.PI/2*sword.side)*38, 0.9);
-		sword.y = lerp(sword.y, player.y + Math.sin(player.rotation)*25 + Math.sin(player.rotation-Math.PI/2*sword.side)*38, 0.9);
-		sword.trotation = player.rotation + Math.PI/2*sword.side;
+		sword.x = lerp(sword.x, player.spr.x + Math.cos(player.spr.rotation)*25 + Math.cos(player.spr.rotation-Math.PI/2*sword.side)*38, 0.9);
+		sword.y = lerp(sword.y, player.spr.y + Math.sin(player.spr.rotation)*25 + Math.sin(player.spr.rotation-Math.PI/2*sword.side)*38, 0.9);
+		sword.trotation = player.spr.rotation + Math.PI/2*sword.side;
 		sword.rotation = slerp(sword.rotation, sword.trotation, 0.5);
 		screen_filter.uniforms.uScanDistort += 0.1;
 		//sword.rotation += 0.05;
 	};
 	player.rotateLine = function(l){
 		var l = l.slice();
-		var p = player.toGlobal(new PIXI.Point(l[0].x,l[0].y));
+		var p = this.spr.toGlobal(new PIXI.Point(l[0].x,l[0].y));
 		l[0] = {
 			x: p.x,
 			y: p.y
 		};
-		p = player.toGlobal(new PIXI.Point(l[1].x,l[1].y));
+		p = this.spr.toGlobal(new PIXI.Point(l[1].x,l[1].y));
 		l[1] = {
 			x: p.x,
 			y: p.y
 		};
-		return l
+		return l;
 	};
 	player.getRotatedBlockLine = function(){
 		return this.rotateLine(this.blockLine);
@@ -329,28 +337,50 @@ function init(){
 		}
 		return ls;
 	};
-
-	if(debug){
-		debug.drawList.push(player);
-		player.debug = function(){
-			debug.beginFill(0xFF0000,1);
-			debug.lineStyle(0);
-			debug.drawCircle(player.x,player.y,player.radius);
-			debug.lineStyle(1,0xFF0000,1);
-
-			var l = player.getRotatedBlockLine();
-			debug.moveTo(l[0].x,l[0].y);
-			debug.lineTo(l[1].x,l[1].y);
-			debug.endFill();
-
-			l = player.getRotatedAttackLines();
-			for(var i = 0; i < l.length; ++i){
-				debug.moveTo(l[i][0].x,l[i][0].y);
-				debug.lineTo(l[i][1].x,l[i][1].y);
-				debug.endFill();
+	player.slash = function(enemy){
+		var pls = this.getRotatedAttackLines();
+		var els = enemy.getRotatedLines();
+		for(
+			var pl = (sword.side < 0) ? 0 : (pls.length-1);
+			(sword.side < 0) ? (pl < pls.length) : (pl >= 0);
+			(sword.side < 0) ? (++pl) : (--pl)
+		){
+		for(var el = 0; el < els.length; ++el){
+			var pll = pls[pl];
+			var ell = els[el];
+			var intersection = lineToLine(pll[0].x,pll[0].y,pll[1].x,pll[1].y, ell[0].x,ell[0].y,ell[1].x,ell[1].y);
+			if(intersection){
+				return {
+					attackLine: pll,
+					enemyLine: ell,
+					intersection: intersection
+				};
 			}
 		}
+		}
+		return false;
 	}
+	player.debug = function(){
+		debug.beginFill(0xFF0000,1);
+		debug.lineStyle(0);
+		debug.drawCircle(player.spr.x,player.spr.y,player.radius);
+
+		var l = player.getRotatedBlockLine();
+		debug.lineStyle(1,0x0000FF,1);
+		debug.moveTo(l[0].x,l[0].y);
+		debug.lineTo(l[1].x,l[1].y);
+		debug.endFill();
+
+		l = player.getRotatedAttackLines();
+		debug.lineStyle(1,0xFF0000,1);
+		for(var i = 0; i < l.length; ++i){
+			debug.moveTo(l[i][0].x,l[i][0].y);
+			debug.lineTo(l[i][1].x,l[i][1].y);
+			debug.endFill();
+		}
+	};
+
+	debug.add(player);
 
 	sword = svg(sword,{x:64,y:64*0.1});
 	sword.side = 1;
@@ -407,35 +437,100 @@ function init(){
 	scene.addChild(stars.container);
 
 
+	function Enemy(source){
+		this.v = {};
+		this.v.x = 0;
+		this.v.y = 0;
+		this.spr = svg(source.svg, source);
+		this.radius = Math.min(this.spr.width,this.spr.height)/2;
+		this.lines = [
+			[{
+				x:-this.spr.width/2,
+				y:-this.spr.height/2
+			},{
+				x: this.spr.width/2,
+				y:-this.spr.height/2
+			}],[{
+				x: this.spr.width/2,
+				y:-this.spr.height/2
+			},{
+				x: this.spr.width/2,
+				y: this.spr.height/2
+			}],[{
+				x: this.spr.width/2,
+				y: this.spr.height/2
+			},{
+				x:-this.spr.width/2,
+				y: this.spr.height/2
+			}],[{
+				x:-this.spr.width/2,
+				y: this.spr.height/2
+			},{
+				x:-this.spr.width/2,
+				y:-this.spr.height/2
+			}]
+		];
+		scene.addChild(this.spr);
+	}
+	Enemy.prototype.rotateLine = player.rotateLine;
+	Enemy.prototype.getRotatedLines = function(){
+		var ls = [];
+		for(var i = 0; i < this.lines.length; ++i){
+			ls.push(this.rotateLine(this.lines[i]));
+		}
+		return ls;
+	};
+	Enemy.prototype.debug = function(){
+		debug.beginFill(0xFF0000,1);
+		debug.lineStyle(0,0,0);
+		debug.drawCircle(this.spr.x, this.spr.y, this.radius);
+		var ls = this.getRotatedLines();
+		for(var i = 0; i < ls.length; ++i){
+			var l = ls[i];
+			debug.lineStyle(1,0xFF0000,1);
+			debug.moveTo(l[0].x,l[0].y);
+			debug.lineTo(l[1].x,l[1].y);
+		}
+		debug.endFill();
+	};
+	Enemy.prototype.update = function(){
+		this.spr.x += this.v.x;
+		this.spr.y += this.v.y;
+		this.v.x *= 0.9;
+		this.v.y *= 0.9;
+		this.trotation = Math.atan2(this.v.y,this.v.x);
+		this.spr.rotation = slerp(this.spr.rotation,this.trotation,0.1);
+	};
 
+	enemies = [];
 
 	//enemy = svg(sam,{x:48,y:48*0.8});
-	enemy = svg(enemy2,{x:48*0.8,y:48});
-	enemy.x = size.x/3;
-	enemy.y = size.y/3;
-	enemy.v = {};
-	enemy.v.x = 0;
-	enemy.v.y = 0;
-	scene.addChild(enemy);
+	e = new Enemy({svg:enemy2,x:48*0.8,y:48});
+	e.spr.x = size.x*0.75;
+	e.spr.y = size.y/3;
+	debug.add(e);
+	enemies.push(e);
 
-	enemy = svg(enemy3,{x:48*0.8,y:48});
-	enemy.x = size.x/2;
-	enemy.y = size.y/2;
-	enemy.v = {};
-	enemy.v.x = 0;
-	enemy.v.y = 0;
-	scene.addChild(enemy);
+	e = new Enemy({svg:enemy3,x:48,y:48*0.8});
+	e.spr.x = size.x/2;
+	e.spr.y = size.y/2;
+	debug.add(e);
+	enemies.push(e);
 
-	enemy = svg(enemy4,{x:48*0.8,y:48});
-	enemy.x = size.x*0.75;
-	enemy.y = size.y*0.75;
-	enemy.v = {};
-	enemy.v.x = 0;
-	enemy.v.y = 0;
-	scene.addChild(enemy);
+	e = new Enemy({svg:enemy4,x:48*0.7,y:48});
+	e.spr.x = size.x*0.75;
+	e.spr.y = size.y*0.75;
+	debug.add(e);
+	enemies.push(e);
+
+	e = new Enemy({svg:sam,x:48,y:48*0.8});
+	e.spr.x = size.x*0.25;
+	e.spr.y = size.y*0.75;
+	debug.add(e);
+	enemies.push(e);
 
 
-	scene.addChild(player);
+	scene.addChild(player.spr);
 	scene.addChild(sword);
 	scene.addChild(cursor);
 
@@ -607,7 +702,11 @@ function init(){
 	};
 	stamina.init();
 
-	if(debug){
+
+	extra = new PIXI.Graphics();
+	scene.addChild(extra);
+
+	if(debug.enabled){
 		scene.addChild(debug);
 	}
 	
@@ -662,21 +761,19 @@ Bullet.prototype.debug = function(){
 };
 Bullet.prototype.kill = function(){
 	bullets.container.removeChild(this.spr);
-	if(debug){
+	if(debug.enabled){
 		debug.drawList.splice(debug.drawList.indexOf(this),1);
 	}
 }
 Bullet.prototype.live = function(player){
 	this.dead = false;
-	this.spr.x = player.x;
-	this.spr.y = player.y;
-	this.v.x = Math.cos(player.rotation)/4;
-	this.v.y = Math.sin(player.rotation)/4;
+	this.spr.x = player.spr.x;
+	this.spr.y = player.spr.y;
+	this.v.x = Math.cos(player.spr.rotation)/4;
+	this.v.y = Math.sin(player.spr.rotation)/4;
 	this.spr.rotation = Math.atan2(this.v.y,this.v.x);
 	bullets.container.addChild(this.spr);
-	if(debug){
-		debug.drawList.push(this);
-	}
+	debug.add(this);
 }
 
 function Star(){
@@ -702,9 +799,10 @@ Star.prototype.live = function(){
 };
 
 function update(){
-	if(debug){
+	if(debug.enabled){
 		debug.clear();
 	}
+	extra.clear();
 
 	//menu.update();
 	stamina.update();
@@ -729,37 +827,37 @@ function update(){
 			// free move
 			player.v.x += input.move.x/3;
 			player.v.y += input.move.y/3;
-			player.x += player.v.x;
-			player.y += player.v.y;
+			player.spr.x += player.v.x;
+			player.spr.y += player.v.y;
 			player.v.x *= 0.95;
 			player.v.y *= 0.95;
 			player.trotation = Math.atan2(
-			 	mouse.correctedPos.y - player.y,
-			 	mouse.correctedPos.x - player.x
+			 	mouse.correctedPos.y - player.spr.y,
+			 	mouse.correctedPos.x - player.spr.x
 			);
-			player.rotation = slerp(player.rotation,player.trotation, 0.2);
+			player.spr.rotation = slerp(player.spr.rotation,player.trotation, 0.2);
 			break;
 		case 1:
 			// tank
 			player.trotation = (player.trotation || 0) + input.move.x/10;
-			player.rotation = slerp(player.rotation, player.trotation, 0.3);
+			player.spr.rotation = slerp(player.spr.rotation, player.trotation, 0.3);
 			player.v.x -= input.move.y*Math.cos(player.trotation);
 			player.v.y -= input.move.y*Math.sin(player.trotation);
-			player.x += player.v.x/2;
-			player.y += player.v.y/2;
+			player.spr.x += player.v.x/2;
+			player.spr.y += player.v.y/2;
 			player.v.x *= 0.9;
 			player.v.y *= 0.9;
 			break;
 		case 2:
 			// polar
-			player.trotation = Math.atan2(- player.y,size.x/2-player.x);
-			player.rotation = slerp(player.rotation, player.trotation, 0.3);
+			player.trotation = Math.atan2(- player.spr.y,size.x/2-player.spr.x);
+			player.spr.rotation = slerp(player.spr.rotation, player.trotation, 0.3);
 			player.v.x -= input.move.y*Math.cos(player.trotation);
 			player.v.y -= input.move.y*Math.sin(player.trotation);
 			player.v.x += input.move.x*Math.cos(player.trotation+Math.PI/2);
 			player.v.y += input.move.x*Math.sin(player.trotation+Math.PI/2);
-			player.x += player.v.x/2;
-			player.y += player.v.y/2;
+			player.spr.x += player.v.x/2;
+			player.spr.y += player.v.y/2;
 			player.v.x *= 0.9;
 			player.v.y *= 0.9;
 			break;
@@ -767,29 +865,31 @@ function update(){
 
 	
 
-	
-	//enemy.rotation += 0.02;
-
+	////////////
+	// cursor //
+	////////////
 	//cursor.x = mouse.correctedPos.x;
 	//cursor.y = mouse.correctedPos.y;
+	
 	cursor.clear();
 	cursor.beginFill(0x0,0.0);
 	cursor.lineStyle(1,0xFFFFFF,1);
-	//cursor.moveTo(mouse.correctedPos.x,mouse.correctedPos.y-cursor.size);
-	//cursor.lineTo(mouse.correctedPos.x,mouse.correctedPos.y+cursor.size);
-	//cursor.moveTo(mouse.correctedPos.x-cursor.size,mouse.correctedPos.y);
-	//cursor.lineTo(mouse.correctedPos.x+cursor.size,mouse.correctedPos.y);
+	cursor.moveTo(mouse.correctedPos.x,mouse.correctedPos.y-cursor.size);
+	cursor.lineTo(mouse.correctedPos.x,mouse.correctedPos.y+cursor.size);
+	cursor.moveTo(mouse.correctedPos.x-cursor.size,mouse.correctedPos.y);
+	cursor.lineTo(mouse.correctedPos.x+cursor.size,mouse.correctedPos.y);
+	var l = player.getRotatedAttackLines()[2];
+	cursor.lineStyle(0.1,0xFFFFFF,1);
+	cursor.moveTo(l[1].x+(Math.random()*2-1)*20,l[1].y+(Math.random()*2-1)*20);
+	cursor.lineTo(sword.x,sword.y);
 	cursor.lineStyle(0.2,0xFFFFFF,1);
-	cursor.moveTo(mouse.correctedPos.x+Math.random()*15,mouse.correctedPos.y+Math.random()*15);
-	cursor.lineTo(sword.x,sword.y);
-	cursor.moveTo(mouse.correctedPos.x+Math.random()*15,mouse.correctedPos.y+Math.random()*15);
-	cursor.lineTo(sword.x,sword.y);
-	cursor.moveTo(mouse.correctedPos.x+Math.random()*15,mouse.correctedPos.y+Math.random()*15);
+	cursor.moveTo(l[1].x+(Math.random()*2-1)*3,l[1].y+(Math.random()*2-1)*3);
 	cursor.lineTo(sword.x,sword.y);
 	cursor.endFill();
 
-	sword.x = lerp(sword.x, player.x + Math.cos(player.rotation+Math.PI/2*sword.side)*20, 0.05);
-	sword.y = lerp(sword.y, player.y + Math.sin(player.rotation+Math.PI/2*sword.side)*20, 0.05);
+
+	sword.x = lerp(sword.x, player.spr.x + Math.cos(player.spr.rotation+Math.PI/2*sword.side)*20, 0.05);
+	sword.y = lerp(sword.y, player.spr.y + Math.sin(player.spr.rotation+Math.PI/2*sword.side)*20, 0.05);
 	sword.trotation = Math.atan2(
 		mouse.correctedPos.y - sword.y,
 		mouse.correctedPos.x - sword.x
@@ -812,21 +912,115 @@ function update(){
 			stamina.drain(0); // prevent turtling regen
 		}
 	}else if(getJustAction1() && stamina.current > 22){
+		// hit enemies
+		for(var i = 0; i < enemies.length; ++i){
+			var e = enemies[i];
+			var p = player.slash(e);
+			if(p){
+				var dx = p.attackLine[1].x - p.attackLine[0].x;
+				var dy = p.attackLine[1].y - p.attackLine[0].y;
+				var l = magnitude({x:dx,y:dy});
+
+				dx/=l;
+				dy/=l;
+
+				dx*=5*(1-stamina.current/stamina.max/2);
+				dy*=5*(1-stamina.current/stamina.max/2);
+
+				e.v.x += dx;
+				e.v.y += dy;
+				e.hit = 4;
+
+				// slash mark
+				extra.beginFill(0,0);
+				for(var s = 0; s < 3; ++s){
+					extra.lineStyle(0.5,0xFFFFFF,1);
+					extra.moveTo(p.intersection.x + (Math.random()*2-1)*10*s,p.intersection.y + (Math.random()*2-1)*10*s);
+					extra.lineTo(e.spr.x + dx*20 + (Math.random()*2-1)*10*s,e.spr.y + dy*20 + (Math.random()*2-1)*10*s);
+				}
+				extra.endFill();
+				blur_filter.uniforms.uBlurAdd += 0.03;
+			}
+		}
+
 		player.attack();
 		stamina.drain(22);
 		sword.scale.x = sword.scale.y = 1;
 	}
-	if(player.invincible){
+
+	// thruster
+	extra.beginFill(0,0);
+	extra.lineStyle(1,0xFFFFFF,1);
+	var l = player.rotateLine([{x:-20+Math.random()*3,y:(Math.random()*2-1)*10},{x:0,y:0}]);
+	extra.moveTo(l[0].x, l[0].y);
+	extra.lineTo(l[0].x - player.v.x*2*(Math.random()*2-1), l[0].y - player.v.y*2*(Math.random()*2-1));
+	extra.endFill();
+
+
+	if(debug.enabled){
+		for(var i = 0; i < enemies.length; ++i){
+			var e = enemies[i];
+			var p = player.slash(e);
+			if(p){
+				debug.lineStyle(2,0xFFFF00,1);
+				debug.moveTo(p.attackLine[0].x,p.attackLine[0].y);
+				debug.lineTo(p.attackLine[1].x,p.attackLine[1].y);
+				debug.drawCircle(p.attackLine[1].x,p.attackLine[1].y,2);
+				debug.drawCircle(p.intersection.x,p.intersection.y,5);
+				debug.endFill();
+			}
+		}
+	}
+
+
+
+
+
+	if(player.invincible > 0){
 		player.invincible -= 1;
-		player.visible = player.invincible%6<3;
+		player.spr.visible = player.invincible%6<3;
 	}
 	sword.scale.y = Math.abs(sword.scale.y)*sword.side;
 
 	if(keys.isJustDown(keys.X) || keys.isDown(keys.C) && game.ticker.lastTime%100 < 10){
-		var b = bullets.pool.add(enemy);
+		var b = bullets.pool.add(enemies[0]);
 	}
 
 
+	/////////////
+	// enemies //
+	/////////////
+	for(var i = 0; i < enemies.length; ++i){
+		var e = enemies[i];
+		if(circToCirc(player.spr.x,player.spr.y,player.radius, e.spr.x,e.spr.y,e.radius)){
+			var dx = player.spr.x - e.spr.x;
+			var dy = player.spr.y - e.spr.y;
+			var l = magnitude({x:dx,y:dy});
+			dx/=l;
+			dy/=l;
+
+			dx *= 1;
+			dy *= 1;
+
+			player.v.x += dx;
+			e.v.x -= dx;
+			player.v.y += dy;
+			e.v.y -= dy;
+			screen_filter.uniforms.uScanDistort += 2;
+		}
+		e.update();
+		if(e.hit){
+			e.spr.visible = false;
+			e.hit -= 1;
+		}else{
+			e.spr.visible = true;
+		}
+	}
+
+
+	///////////////
+	// starfield //
+	///////////////
 	for(var i = 0; i < stars.pool.live.length; ++i){
 		var s = stars.pool.live[i];
 		s.spr.x -= (player.v.x+0.05) * s.speed;
@@ -842,6 +1036,9 @@ function update(){
 	}
 	stars.pool.update();
 
+	/////////////
+	// bullets //
+	/////////////
 	var blockLine = player.getRotatedBlockLine();
 	for(var i = 0; i < bullets.pool.live.length; ++i){
 		var b = bullets.pool.live[i];
@@ -873,7 +1070,7 @@ function update(){
 		if(l && player.blocking){
 			b.dead = true;
 		}
-		if(debug){
+		if(debug.enabled){
 			debug.beginFill(0,0);
 			debug.lineStyle(2,0x0000FF,1);
 			debug.moveTo(
@@ -899,7 +1096,7 @@ function update(){
 		}
 
 		// hit
-		if(!player.invincible && circToCirc(b.spr.x,b.spr.y,bullets.radius, player.x,player.y,player.radius)){
+		if(!player.invincible && circToCirc(b.spr.x,b.spr.y,bullets.radius, player.spr.x,player.spr.y,player.radius)){
 			b.dead = true;
 			health.damage();
 			screen_filter.uniforms.uScanDistort += 80;
@@ -908,17 +1105,27 @@ function update(){
 	}
 	bullets.pool.update();
 
-	if(player.x > size.x+player.width){
-		player.x -= size.x+player.width;
+
+	// wrap player
+	if(player.spr.x > size.x+player.spr.width){
+		player.spr.x -= size.x+player.spr.width;
+		sword.x = player.spr.x;
+		sword.y = player.spr.y;
 	}
-	if(player.x < -player.width){
-		player.x += size.x+player.width;
+	if(player.spr.x < -player.spr.width){
+		player.spr.x += size.x+player.spr.width;
+		sword.x = player.spr.x;
+		sword.y = player.spr.y;
 	}
-	if(player.y > size.y+player.height){
-		player.y -= size.y+player.height;
+	if(player.spr.y > size.y+player.spr.height){
+		player.spr.y -= size.y+player.spr.height;
+		sword.x = player.spr.x;
+		sword.y = player.spr.y;
 	}
-	if(player.y < -player.height){
-		player.y += size.y+player.height;
+	if(player.spr.y < -player.spr.height){
+		player.spr.y += size.y+player.spr.height;
+		sword.x = player.spr.x;
+		sword.y = player.spr.y;
 	}
 
 	//if(input.confirm){
@@ -927,7 +1134,7 @@ function update(){
 		screen_filter.uniforms.uScanDistort *= 0.9;
 	//}
 
-	if(debug){
+	if(debug.enabled){
 		debug.draw();
 	}
 
@@ -941,7 +1148,7 @@ function update(){
 		game.renderer.render(scene,source.texture);
 		bg.alpha = 1.0;
 		blur_filter.uniforms.uBlurDir = [0,1];
-
+		blur_filter.uniforms.uBlurAdd = lerp(blur_filter.uniforms.uBlurAdd, uBlurAddT, 0.1);
 		for(var i = 0; i < blurIt; ++i){
 			//blur_filter.uniforms.uBlurAdd = i/blurIt;
 			source = i % 2 ? renderSprite : renderSprite2;
