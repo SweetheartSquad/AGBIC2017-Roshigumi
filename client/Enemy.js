@@ -1,8 +1,8 @@
-function Enemy(source){
+function Enemy(type){
 	this.v = {};
 	this.v.x = 0;
 	this.v.y = 0;
-	this.spr = svg(source.svg, source);
+	this.spr = svg(type.source.svg, type.source);
 	this.radius = Math.min(this.spr.width,this.spr.height)/2;
 	this.lines = [
 		[{
@@ -34,7 +34,7 @@ function Enemy(source){
 	scene.addChild(this.spr);
 	this.frame = 0;
 	var k = Object.keys(BulletPatterns);
-	this.bulletpattern = BulletPatterns[k[Math.floor(Math.random()*k.length)]];
+	this.bulletpattern = type.pattern;
 }
 Enemy.prototype.rotateLine = Player.prototype.rotateLine;
 Enemy.prototype.getRotatedLines = function(){
@@ -58,30 +58,6 @@ Enemy.prototype.debug = function(){
 	debug.endFill();
 };
 Enemy.prototype.update = function(){
-	if(!this.target){
-		if(Math.random() < 0.01){
-			this.target = {
-				x:Math.random()*size.x*0.75 + 0.125,
-				y:Math.random()*size.y*0.75 + 0.125
-			};
-		}
-	}else{
-		var v = {
-			x: this.target.x - this.spr.x,
-			y: this.target.y - this.spr.y
-		};
-		var l = magnitude(v);
-		if(l < 1){
-			this.target = undefined;
-		}
-		v.x /= l;
-		v.y /= l;
-		v.x *= 0.1;
-		v.y *= 0.1;
-
-		this.v.x += v.x;
-		this.v.y += v.y;
-	}
 	this.spr.x += this.v.x;
 	this.spr.y += this.v.y;
 	this.v.x *= 0.9;
@@ -96,11 +72,12 @@ Enemy.prototype.update = function(){
 };
 
 
-function wait(frames, enemy){
+function wait(frames, moveFunc, enemy){
 	if(!enemy.waitOptions){
 		enemy.waitOptions = frames;
 	}
 	enemy.waitOptions -= 1;
+	moveFunc(enemy);
 	if(enemy.waitOptions <= 0){
 		enemy.waitOptions = undefined;
 		return true;
@@ -134,7 +111,7 @@ function shootCircle(enemy){
 		enemy.shootCircleOptions = 0;
 	}
 	var b = bullets.pool.add(enemy);
-	enemy.shootCircleOptions += 0.1;
+	enemy.shootCircleOptions += 0.2;
 	b.v.x = Math.cos(enemy.shootCircleOptions)/2;
 	b.v.y = Math.sin(enemy.shootCircleOptions)/2;
 	b.spr.x += b.v.x * enemy.radius;
@@ -142,18 +119,172 @@ function shootCircle(enemy){
 	return true;
 }
 
+function stop(){
+
+}
+function patrol(enemy){
+	if(!enemy.target){
+		if(Math.random() < 0.01){
+			enemy.target = {
+				x:Math.random()*size.x*0.75 + 0.125,
+				y:Math.random()*size.y*0.75 + 0.125
+			};
+		}
+	}else{
+		var v = {
+			x: enemy.target.x - enemy.spr.x,
+			y: enemy.target.y - enemy.spr.y
+		};
+		var l = magnitude(v);
+		if(l < 1){
+			enemy.target = undefined;
+		}
+		v.x /= l;
+		v.y /= l;
+		v.x *= 0.1;
+		v.y *= 0.1;
+
+		enemy.v.x += v.x;
+		enemy.v.y += v.y;
+	}
+}
+
+function wander(enemy){
+	if(!enemy.target){
+		var ratio = (Math.random()*2-1)*30;
+		enemy.target = {
+			frame: 1,
+			x: 150 + ratio,
+			y: 150 - ratio
+		};
+	}else{
+		enemy.target.frame+=1;
+		var v = {
+			x: ((Math.cos(enemy.target.frame/enemy.target.x)/2+0.5)*0.8+0.1)*size.x - enemy.spr.x,
+			y: ((Math.sin(enemy.target.frame/enemy.target.y)/2+0.5)*0.9+0.05)*size.y - enemy.spr.y
+		};
+		var l = magnitude(v);
+		if(l < 1){
+			enemy.target = undefined;
+		}
+		v.x /= l;
+		v.y /= l;
+		v.x *= 0.1;
+		v.y *= 0.1;
+
+		enemy.v.x += v.x;
+		enemy.v.y += v.y;
+	}
+}
+
+function moveToCorner(enemy){
+	if(!enemy.moveToCornerOptions){
+		enemy.moveToCornerOptions = {
+			x: (Math.round(Math.random())*0.8 + 0.1) * size.x,
+			y: (Math.round(Math.random())*0.9 + 0.05) * size.y
+		};
+	}
+	var v = {
+		x: enemy.moveToCornerOptions.x - enemy.spr.x,
+		y: enemy.moveToCornerOptions.y - enemy.spr.y
+	};
+	var l = magnitude(v);
+	v.x /= l;
+	v.y /= l;
+	v.x *= 0.3;
+	v.y *= 0.3;
+
+	enemy.v.x += v.x;
+	enemy.v.y += v.y;
+
+	if(l < 1){
+		enemy.v.x = -Math.sign(enemy.moveToCornerOptions.x-size.x/2);
+		enemy.v.y = -Math.sign(enemy.moveToCornerOptions.y-size.y/2);
+		enemy.moveToCornerOptions = undefined;
+		return true;
+	}
+	return false;
+}
+
+function shootArc(frames, framesDelay, enemy){
+	if(!enemy.shootArcOptions){
+		enemy.shootArcOptions = {
+			target: Math.atan2(size.y/2-enemy.spr.y,size.x/2-enemy.spr.x),
+			frames: frames
+		};
+	}
+	if(enemy.shootArcOptions.frames % framesDelay == 0){
+		var b = bullets.pool.add(enemy);
+		var a = enemy.shootArcOptions.frames/framesDelay/frames-0.5;
+		a *= frames/4;
+		a = Math.sin(a);
+		a += enemy.shootArcOptions.target;
+		b.v.x = Math.cos(a);
+		b.v.y = Math.sin(a);
+		b.spr.x += b.v.x * enemy.radius;
+		b.spr.y += b.v.y * enemy.radius;
+	}
+	enemy.shootArcOptions.frames -= 1;
+	if(enemy.shootArcOptions.frames <= 0){
+		enemy.shootArcOptions = undefined;
+		return true;
+	}
+	return false;
+}
 
 BulletPatterns = {
 	shootPlayer: [
-		wait.bind(undefined, 100),
+		wait.bind(undefined, 100, patrol),
 		shootPlayer
 	],
 	shootRandom: [
-		wait.bind(undefined, 30),
+		wait.bind(undefined, 200, patrol),
+		wait.bind(undefined, 5, stop),
+		shootRandom,
+		wait.bind(undefined, 5, stop),
+		shootRandom,
+		wait.bind(undefined, 5, stop),
+		shootRandom,
+		wait.bind(undefined, 5, stop),
+		shootRandom,
+		wait.bind(undefined, 5, stop),
+		shootRandom,
+		wait.bind(undefined, 5, stop),
+		shootRandom,
+		wait.bind(undefined, 5, stop),
 		shootRandom
 	],
 	shootCircle: [
-		wait.bind(undefined, 10),
+		wait.bind(undefined, 12, wander),
 		shootCircle
+	],
+	shootCorner: [
+		moveToCorner,
+		wait.bind(undefined, 10, stop),
+		shootArc.bind(undefined, 200, 4),
+		wait.bind(undefined, 60, stop)
+	],
+	none: [
+		wait.bind(undefined, 1, stop)
 	]
+};
+
+
+EnemyTypes = {
+	cross: {
+		source:{svg:enemy_cross,x:48,y:48*0.8},
+		pattern:BulletPatterns.shootRandom
+	},
+	triangle: {
+		source:{svg:enemy_triangle,x:48*0.8,y:48},
+		pattern:BulletPatterns.shootCircle
+	},
+	circle: {
+		source:{svg:enemy_circle,x:48,y:48*0.7},
+		pattern:BulletPatterns.shootPlayer
+	},
+	sam: {
+		source:{svg:enemy_sam,x:48*0.8,y:48},
+		pattern:BulletPatterns.shootCorner
+	}
 };

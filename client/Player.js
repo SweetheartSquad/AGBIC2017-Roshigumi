@@ -1,6 +1,6 @@
 function Player(){
 	this.spr = svg(ship,{x:32*0.95,y:32});
-	this.radius = 10;
+	this.radius = 8;
 	this.spr.x = size.x/3;
 	this.spr.y = size.y/3;
 	this.v = {};

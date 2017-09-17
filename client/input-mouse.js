@@ -1,10 +1,17 @@
 // setup inputs
 var mouse={
+
+	LEFT: 0,
+	MIDDLE: 1,
+	RIGHT: 2,
+	BACK: 3,
+	FORWARD: 5,
+
 	element:null,
 
-	down:false,
-	justDown:false,
-	justUp:false,
+	down:[],
+	justDown:[],
+	justUp:[],
 
 	pos:{
 		x:0,
@@ -19,18 +26,24 @@ var mouse={
 		y:0
 	},
 	mouseWheel: 0,
+	capture: [],
 
-	init: function(__elementId, __lock){
-		this.element = document.getElementById(__elementId);
+	init: function(options){
+		this.element = document.getElementById(options.element);
 		this.element.on("mouseup", mouse.on_up.bind(mouse));
 		this.element.on("mouseout", mouse.on_up.bind(mouse));
 		this.element.on("mousedown", mouse.on_down.bind(mouse));
 		this.element.on("mousemove", mouse.on_move.bind(mouse));
 		this.element.on("wheel", mouse.on_wheel.bind(mouse));
-		if(__lock){
+		if(!options.allowContextMenu){
+			this.element.on("contextmenu", mouse.on_contextmenu.bind(mouse));
+		}
+		if(options.lock){
 			this.lock = true;
 			this.lockMouse();
 		}
+
+		this.capture = options.capture;
 	},
 
 	lockMouse: function() {
@@ -39,8 +52,8 @@ var mouse={
 	},
 
 	update: function(){
-		this.justDown = false;
-		this.justUp = false;
+		this.justDown=[];
+		this.justUp=[];
 
 		this.mouseWheel = 0;
 		
@@ -54,18 +67,26 @@ var mouse={
 
 
 	on_down: function(event){
-		if(this.down!==true){
-			this.down=true;
-			this.justDown=true;
+		if(this.down[event.button]!==true){
+			this.down[event.button]=true;
+			this.justDown[event.button]=true;
+		}
+		if(this.capture.indexOf(event.button) != -1){
+			event.preventDefault();
+			return false;
 		}
 		if(this.lock){
 			this.lockMouse();
 		}
 	},
 	on_up: function(event){
-		this.down=false;
-		this.justDown=false;
-		this.justUp=true;
+		this.down[event.button]=false;
+		this.justDown[event.button]=false;
+		this.justUp[event.button]=true;
+		if(this.capture.indexOf(event.button) != -1){
+			event.preventDefault();
+			return false;
+		}
 	},
 	on_move: function(event){
 		if(this.lock) {
@@ -85,22 +106,26 @@ var mouse={
 	on_wheel: function(event){
 		this.mouseWheel = event.deltaY || event.originalEvent.wheelDelta;
 	},
+	on_contextmenu: function(event){
+		event.preventDefault();
+		return false;
+	},
 
-	isDown: function(_key){
-		return this.down;
+	isDown:function(button){
+		return this.down[button]===true;
 	},
-	isUp: function(_key){
-		return !this.isDown();
+	isUp:function(button){
+		return !this.isDown(button);
 	},
-	isJustDown: function(_key){
-		return this.justDown;
+	isJustDown:function(button){
+		return this.justDown[button]===true;
 	},
-	isJustUp: function(_key){
-		return this.justUp;
+	isJustUp:function(button){
+		return this.justUp[button]===true;
 	},
 
 	// returns -1 when moving down, 1 when moving up, 0 when not moving
-	getWheelDir: function(_key){
+	getWheelDir: function(button){
 		return Math.sign(this.mouseWheel);
 	}
 };
