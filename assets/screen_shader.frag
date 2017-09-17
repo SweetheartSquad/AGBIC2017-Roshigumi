@@ -9,6 +9,8 @@ uniform float uPostProcessScale;
 uniform float uTime;
 
 uniform float uScanDistort;
+uniform float uLensDistort;
+uniform float uChrAbbSeparation;
 
 float weight[5];
 float pxSize;
@@ -88,9 +90,9 @@ void main(void){
 	pxSize = 1.0/uPostProcessScale;
 	vec2 uv = vTextureCoord.xy;
     uv = scanDistort(uv);
-	uv = lensDistort(uv, 0.3);
+	uv = lensDistort(uv, uLensDistort);
 	vec3 fg = tex(uv);
-    fg += chrAbb(uv, 4.0, PI2*(uv.x+uv.y))/4.0;
+    fg += chrAbb(uv, uChrAbbSeparation, PI2*(uv.x+uv.y))/4.0;
     fg *= vignette(uv,0.1);
     uv = (vTextureCoord.xy);
 	fg *= grille(uv, vec2(0.6,0.3));
