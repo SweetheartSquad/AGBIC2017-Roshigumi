@@ -5,19 +5,13 @@ Menu.prototype.init = function(){
 	this.container = new PIXI.Container();
 	this.options = [
 		{
-			text: "1p",
+			text: "Start",
 			action: function(){
 				menu.deinit();
 				menu = null;
 				battle = new Battle();
 				screen_filter.uniforms.uScanDistort += 200;
 				screen_filter.uniforms.uChrAbbSeparation += 100;
-			}
-		},
-		{
-			text: "2p",
-			action: function(){
-				console.log('nah');
 			}
 		},
 		{

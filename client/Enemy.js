@@ -31,7 +31,6 @@ function Enemy(type){
 			y:-this.spr.height/2
 		}]
 	];
-	scene.addChild(this.spr);
 	this.frame = 0;
 	var k = Object.keys(BulletPatterns);
 	this.bulletpattern = type.pattern;

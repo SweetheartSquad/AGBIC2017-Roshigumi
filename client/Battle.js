@@ -3,7 +3,10 @@ function Battle(){
 }
 
 Battle.prototype.init = function(){
+	this.entities = new PIXI.Container();
+
 	player = new Player();
+	this.entities.addChild(player.spr);
 	debug.add(player);
 
 	sword = svg(swordsvg,{x:64,y:64*0.1});
@@ -61,31 +64,6 @@ Battle.prototype.init = function(){
 
 
 	enemies = [];
-
-	enemy = svg(enemy_sam,{x:48,y:48*0.8});
-	e = new Enemy(EnemyTypes.cross);
-	e.spr.x = size.x*0.75;
-	e.spr.y = size.y/3;
-	debug.add(e);
-	enemies.push(e);
-
-	e = new Enemy(EnemyTypes.circle);
-	e.spr.x = size.x/2;
-	e.spr.y = size.y/2;
-	debug.add(e);
-	enemies.push(e);
-
-	e = new Enemy(EnemyTypes.triangle);
-	e.spr.x = size.x*0.75;
-	e.spr.y = size.y*0.75;
-	debug.add(e);
-	enemies.push(e);
-
-	e = new Enemy(EnemyTypes.sam);
-	e.spr.x = size.x*0.25;
-	e.spr.y = size.y*0.75;
-	debug.add(e);
-	enemies.push(e);
 
 
 
@@ -180,25 +158,83 @@ Battle.prototype.init = function(){
 	};
 	stamina.init();
 
+	score = {
+		current: 0,
+		last: -1,
+		container: new PIXI.Container(),
+		init:function(){
+			this.container.x = size.x - 16;
+			this.container.y = 18;
+			this.container.addChild(new PIXI.Graphics());
+			score.add(1);
+		},
+		add: function(amount){
+			this.current += amount;
+		},
+		update:function(){
+			if(this.current !== this.last){
+				this.container.children[0].destroy();
+				var l = Math.ceil(this.current).toString(10);
+				while(l.length < 10){
+					l = "0"+l;
+				}
+				this.container.addChild(text(l, {x:10,y:10}, 0.3, {x:-0.5,y:0.5}));
+			}
+			this.last = this.current;
+		}
+	};
+	score.init();
+
 
 	extra = new PIXI.Graphics();
 
+	scene.addChild(this.entities);
+	this.entities.addChild(sword);
+	this.entities.addChild(cursor);
+	this.entities.addChild(extra);
 	scene.addChild(bullets.container);
 	scene.addChild(stars.container);
-	scene.addChild(player.spr);
-	scene.addChild(sword);
-	scene.addChild(cursor);
-	scene.addChild(extra);
 
 	scene.addChild(health.container);
 	scene.addChild(stamina.container);
+	scene.addChild(score.container);
+
+	e = new Enemy(EnemyTypes.circle);
+	e.spr.x = size.x/2;
+	e.spr.y = size.y/2;
+	debug.add(e);
+	enemies.push(e);
+	this.entities.addChild(e.spr);
+
+	e = new Enemy(EnemyTypes.triangle);
+	e.spr.x = size.x*0.75;
+	e.spr.y = size.y*0.75;
+	debug.add(e);
+	enemies.push(e);
+	this.entities.addChild(e.spr);
+
+	e = new Enemy(EnemyTypes.sam);
+	e.spr.x = size.x*0.25;
+	e.spr.y = size.y*0.75;
+	debug.add(e);
+	enemies.push(e);
+	this.entities.addChild(e.spr);
+
+	enemy = svg(enemy_sam,{x:48,y:48*0.8});
+	e = new Enemy(EnemyTypes.cross);
+	e.spr.x = size.x*0.75;
+	e.spr.y = size.y/3;
+	debug.add(e);
+	enemies.push(e);
+	this.entities.addChild(e.spr);
+
 	if(debug.enabled){
 		scene.addChild(debug);
 	}
-	
 };
 
 Battle.prototype.update = function(){
+	score.add(1/60);
 	extra.clear();
 	stamina.update();
 	mouse.correctedPos = {
@@ -328,6 +364,8 @@ Battle.prototype.update = function(){
 				if(blur_filter.uniforms.uBlurAdd < 0.43){
 					blur_filter.uniforms.uBlurAdd += 0.03;
 				}
+
+				score.add(10);
 			}
 		}
 
@@ -465,6 +503,8 @@ Battle.prototype.update = function(){
 			extra.lineStyle(0.8,0xFFFFFF,1);
 			extra.drawCircle(b.spr.x, b.spr.y, bullets.radius*3*(Math.random()/2+0.6));
 			extra.endFill();
+
+			score.add(1);
 		}
 		if(debug.enabled){
 			debug.beginFill(0,0);
@@ -534,11 +574,13 @@ Battle.prototype.update = function(){
 		sword.y = player.spr.y;
 	}
 
+
 	//if(input.confirm){
 	//	screen_filter.uniforms.uScanDistort = 20;
 	//}else{
 	//}
 
+	score.update();
 	if(debug.enabled){
 		debug.draw();
 	}

@@ -271,6 +271,7 @@ Star.prototype.live = function(){
 	var r = Math.random();
 	this.spr.scale.x = this.spr.scale.y = r*2;
 	this.speed = r*0.1+0.05;
+	this.speed*=10;
 	if(Math.random() > 0.5){
 		this.spr.x = Math.round(Math.random())*size.x;
 		this.spr.y = Math.random()*size.y;
