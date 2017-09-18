@@ -107,7 +107,7 @@ Battle.prototype.init = function(){
 		border: new PIXI.Graphics(),
 		fill: new PIXI.Graphics(),
 
-		width:32*3,
+		width:30*3,
 		height:8,
 
 		lastUse:0,
