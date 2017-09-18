@@ -81,12 +81,17 @@ ready(function(){
 
 	fontStyle={font: "8px font", align: "left"};
 
-	/*sounds["sfx_lose"] = new Howl({
-		urls:["assets/audio/sfx_7.wav"],
+	sounds["music"] = new Howl({
+		src:["assets/audio/roshigumi.ogg"],
 		autoplay:false,
-		loop:false,
-		volume:1
-	});*/
+		loop:true,
+		volume:0
+	});
+	sounds["music"].once("load", function(){
+		sounds["music"].volume(0);
+		sounds["music"].play();
+		sounds["music"].fade(0, 1, 3000);
+	});
 
 	PIXI.loader
 		.add("screen_shader","assets/screen_shader.frag")
