@@ -226,6 +226,7 @@ Pool.prototype.add = function(){
 		b.live.apply(b,arguments);
 		return b;
 	}
+	return;
 	console.warn("Pool exceeded max length!");
 };
 function Bullet(){
@@ -296,6 +297,8 @@ function update(){
 	screen_filter.uniforms.uScanDistort *= 0.9;
 	screen_filter.uniforms.uLensDistort = lerp(screen_filter.uniforms.uLensDistort, 0.3, 0.1);
 	screen_filter.uniforms.uChrAbbSeparation = lerp(screen_filter.uniforms.uChrAbbSeparation, 30.0, 0.05);
+	screen_filter.uniforms.uChrAbbRotation += 0.11;
+	screen_filter.uniforms.uInvert = lerp(screen_filter.uniforms.uInvert, 0.0, 0.1);
 
 	/////////////////////
 	// post-processing //

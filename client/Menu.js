@@ -107,6 +107,11 @@ Menu.prototype.update = function(){
 	}else if(getJustAction1()){
 		this.options[this.selection].action();
 	}
+
+	if(Math.random() < 0.005){
+		screen_filter.uniforms.uScanDistort += 10*Math.random();
+		screen_filter.uniforms.uChrAbbSeparation += 100*Math.random();
+	}
 };
 Menu.prototype.deselect = function(id){
 	this.options[id].scale.x = this.options[id].scale.y = 1.0;

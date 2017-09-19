@@ -11,6 +11,8 @@ uniform float uTime;
 uniform float uScanDistort;
 uniform float uLensDistort;
 uniform float uChrAbbSeparation;
+uniform float uChrAbbRotation;
+uniform float uInvert;
 
 float weight[5];
 float pxSize;
@@ -92,10 +94,10 @@ void main(void){
     uv = scanDistort(uv);
 	uv = lensDistort(uv, uLensDistort);
 	vec3 fg = tex(uv);
-    fg += chrAbb(uv, uChrAbbSeparation, PI2*(uv.x+uv.y))/4.0;
+    fg += chrAbb(uv, uChrAbbSeparation, uChrAbbRotation+PI2*(uv.x+uv.y))/4.0;
+	fg *= grille(vTextureCoord.xy, vec2(0.6,0.3));
+    fg = mix(fg, 1.0 - fg, uInvert);
     fg *= vignette(uv,0.1);
-    uv = (vTextureCoord.xy);
-	fg *= grille(uv, vec2(0.6,0.3));
 
 	gl_FragColor = vec4(fg, 1.0);
 }

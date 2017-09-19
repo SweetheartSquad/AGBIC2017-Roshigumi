@@ -1,17 +1,14 @@
 function Pickup(){
-	this.spr = svg(heart, {x:Pickup.radius, y:Pickup.radius});
+	this.spr = svg(heart, {x:Pickup.radius*2.5, y:Pickup.radius*2.5});
 	this.spr.rotation = (Math.random()*2 - 1) / 4;
 	this.v = {
-		x: Math.random()*2 - 1,
-		y: Math.random()*2 - 1,
+		x: 0,
+		y: 0,
 		r: (Math.random()*2 - 1) / 4
 	};
-	var l = magnitude(this.v);
-	this.v.x /= l;
-	this.v.y /= l;
 	this.delay = 30;
 }
-Pickup.radius = 32;
+Pickup.radius = 10;
 
 Pickup.prototype.update = function(){
 	this.spr.x += this.v.x;

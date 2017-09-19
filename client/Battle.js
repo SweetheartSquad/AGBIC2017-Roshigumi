@@ -55,8 +55,10 @@ Battle.prototype.init = function(){
 	stars.pool = new Pool(stars.max, Star);
 	for(var i = 0; i < stars.max/2; ++i){
 		var s = stars.pool.add();
-		s.spr.x = Math.random()*size.x;
-		s.spr.y = Math.random()*size.y;
+		if(s){
+			s.spr.x = Math.random()*size.x;
+			s.spr.y = Math.random()*size.y;
+		}
 	}
 
 
@@ -349,7 +351,11 @@ Battle.prototype.update = function(){
 						this.entities.addChild(h.spr);
 						h.spr.x = e.spr.x;
 						h.spr.y = e.spr.y;
+						h.v.x = e.v.x;
+						h.v.y = e.v.y;
 					}
+
+					score.add(100);
 
 					// effect
 					this.extra.lineStyle(4,0xFFFFFF,1);
@@ -359,6 +365,7 @@ Battle.prototype.update = function(){
 					this.extra.lineStyle(0.25,0xFFFFFF,1);
 					this.extra.drawCircle(e.spr.x,e.spr.y,50);
 					screen_filter.uniforms.uChrAbbSeparation += 128;
+					screen_filter.uniforms.uInvert -= 0.1;
 
 					// actually remove
 					e.dead = true;
@@ -494,6 +501,7 @@ Battle.prototype.update = function(){
 			// effect
 			blur_filter.uniforms.uBlurAdd += 0.1;
 			screen_filter.uniforms.uChrAbbSeparation += 1000;
+			screen_filter.uniforms.uInvert += 1;
 			this.extra.beginFill(0,0);
 			this.extra.lineStyle(5,0xFFFFFF,1);
 			this.extra.drawCircle(p.spr.x, p.spr.y, p.radius*2);
@@ -502,6 +510,7 @@ Battle.prototype.update = function(){
 			this.extra.endFill();
 
 			health.heal();
+			score.add(100);
 
 			// remove
 			p.spr.parent.removeChild(p.spr);
@@ -546,6 +555,7 @@ Battle.prototype.update = function(){
 
 			if(blur_filter.uniforms.uBlurAdd < 0.4){
 				blur_filter.uniforms.uBlurAdd += 0.01;
+				screen_filter.uniforms.uInvert -= 0.01;
 			}
 			this.extra.beginFill(0,0);
 			this.extra.lineStyle(0.8,0xFFFFFF,1);
@@ -584,6 +594,7 @@ Battle.prototype.update = function(){
 			b.dead = true;
 			health.damage();
 			screen_filter.uniforms.uScanDistort += 80;
+			screen_filter.uniforms.uInvert -= 1.0;
 			player.invincible = 100;
 			this.extra.beginFill(0,0);
 			this.extra.lineStyle(5,0xFFFFFF,1);

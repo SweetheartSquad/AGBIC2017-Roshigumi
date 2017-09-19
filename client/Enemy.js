@@ -96,36 +96,42 @@ function wait(frames, moveFunc, enemy){
 }
 function shootPlayer(enemy){
 	var b = bullets.pool.add(enemy);
-	b.v.x = player.spr.x - enemy.spr.x;
-	b.v.y = player.spr.y - enemy.spr.y;
-	var l = magnitude(b.v);
-	b.v.x/=l;
-	b.v.y/=l;
-	b.spr.x += b.v.x * enemy.radius;
-	b.spr.y += b.v.y * enemy.radius;
+	if(b){
+		b.v.x = player.spr.x - enemy.spr.x;
+		b.v.y = player.spr.y - enemy.spr.y;
+		var l = magnitude(b.v);
+		b.v.x/=l;
+		b.v.y/=l;
+		b.spr.x += b.v.x * enemy.radius;
+		b.spr.y += b.v.y * enemy.radius;
+	}
 	return true;
 }
 function shootRandom(enemy){
 	var b = bullets.pool.add(enemy);
-	b.v.x = Math.random()*2-1;
-	b.v.y = Math.random()*2-1;
-	var l = magnitude(b.v);
-	b.v.x/=l;
-	b.v.y/=l;
-	b.spr.x += b.v.x * enemy.radius;
-	b.spr.y += b.v.y * enemy.radius;
+	if(b){
+		b.v.x = Math.random()*2-1;
+		b.v.y = Math.random()*2-1;
+		var l = magnitude(b.v);
+		b.v.x/=l;
+		b.v.y/=l;
+		b.spr.x += b.v.x * enemy.radius;
+		b.spr.y += b.v.y * enemy.radius;
+	}
 	return true;
 }
 function shootCircle(enemy){
 	if(!enemy.shootCircleOptions){
 		enemy.shootCircleOptions = 0;
 	}
-	var b = bullets.pool.add(enemy);
-	enemy.shootCircleOptions += 0.2;
-	b.v.x = Math.cos(enemy.shootCircleOptions)/2;
-	b.v.y = Math.sin(enemy.shootCircleOptions)/2;
-	b.spr.x += b.v.x * enemy.radius;
-	b.spr.y += b.v.y * enemy.radius;
+		var b = bullets.pool.add(enemy);
+		if(b){
+		enemy.shootCircleOptions += 0.2;
+		b.v.x = Math.cos(enemy.shootCircleOptions)/2;
+		b.v.y = Math.sin(enemy.shootCircleOptions)/2;
+		b.spr.x += b.v.x * enemy.radius;
+		b.spr.y += b.v.y * enemy.radius;
+	}
 	return true;
 }
 
@@ -225,14 +231,16 @@ function shootArc(frames, framesDelay, enemy){
 	}
 	if(enemy.shootArcOptions.frames % framesDelay == 0){
 		var b = bullets.pool.add(enemy);
-		var a = enemy.shootArcOptions.frames/framesDelay/frames-0.5;
-		a *= frames/4;
-		a = Math.sin(a);
-		a += enemy.shootArcOptions.target;
-		b.v.x = Math.cos(a);
-		b.v.y = Math.sin(a);
-		b.spr.x += b.v.x * enemy.radius;
-		b.spr.y += b.v.y * enemy.radius;
+		if(b){
+			var a = enemy.shootArcOptions.frames/framesDelay/frames-0.5;
+			a *= frames/4;
+			a = Math.sin(a);
+			a += enemy.shootArcOptions.target;
+			b.v.x = Math.cos(a);
+			b.v.y = Math.sin(a);
+			b.spr.x += b.v.x * enemy.radius;
+			b.spr.y += b.v.y * enemy.radius;
+		}
 	}
 	enemy.shootArcOptions.frames -= 1;
 	if(enemy.shootArcOptions.frames <= 0){
