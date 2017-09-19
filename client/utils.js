@@ -8,15 +8,15 @@ function magnitude(v){
 	return Math.sqrt(v.x*v.x+v.y*v.y);
 }
 function slerp(from,to,by){
-	from/=Math.PI*2;
-	to/=Math.PI*2;
-	while(to-from > 0.5){
-		from+=1
+	from /= Math.PI*2;
+	to /= Math.PI*2;
+	var r = to-from;
+	if(r > 0.5){
+		from += Math.ceil(r);
+	}else if(r < -0.5){
+		from += Math.floor(r);
 	}
-	while(to-from < -0.5){
-		from-=1
-	}
-	return (from+by*(to-from))%1 * Math.PI*2;
+	return (from+by*(to-from)) * Math.PI*2;
 }
 function clamp(min,v,max){
 	return Math.max(min,Math.min(v,max));
