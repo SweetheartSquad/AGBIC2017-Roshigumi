@@ -175,7 +175,7 @@ Battle.prototype.init = function(){
 		update:function(){
 			if(this.current !== this.last){
 				this.container.children[0].destroy();
-				var l = Math.ceil(this.current).toString(10);
+				var l = Math.ceil(this.current*100).toString(10);
 				while(l.length < 10){
 					l = "0"+l;
 				}
