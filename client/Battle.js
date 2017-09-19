@@ -480,12 +480,12 @@ Battle.prototype.update = function(){
 		var p = this.pickups[i];
 		p.update();
 		if(p.spr.x < 0){
-			p.v.x += p.spr.x;
+			p.v.x -= p.spr.x;
 		}if(p.spr.x > size.x){
 			p.v.x += size.x - p.spr.x;
 		}
 		if(p.spr.y < 0){
-			p.v.y += p.spr.y;
+			p.v.y -= p.spr.y;
 		}if(p.spr.y > size.y){
 			p.v.y += size.y - p.spr.y;
 		}
