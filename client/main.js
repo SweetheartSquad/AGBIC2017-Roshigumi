@@ -1,52 +1,32 @@
 function svg(source, scale){
-	var points = source.svg.split("points=\"")[1].split(" \"")[0].split(' ');
-	var max = {
-		x:-99999,
-		y:-99999
-	};
-	var min = {
-		x:99999,
-		y:99999
-	};
-	for(var i = 0; i < points.length; ++i){
-		points[i] = points[i].split(',');
-		var x = parseFloat(points[i][0]);
-		var y = parseFloat(points[i][1]);
-		points[i] = {
-			x:x,
-			y:y
-		};
-
-		max.x = Math.max(max.x, x);
-		min.x = Math.min(min.x, x);
-		max.y = Math.max(max.y, y);
-		min.y = Math.min(min.y, y);
-	}
-	for(var i = 0; i < points.length; ++i){
-		points[i].x -= min.x;
-		points[i].y -= min.y;
-		points[i].x /= (max.x-min.x) || 1;
-		points[i].y /= (max.y-min.y) || 1;
-
-		points[i].x -= source.x;
-		points[i].y -= source.y;
-
-
-		points[i].x *= scale.x;
-		points[i].y *= scale.y;
-
-		points[i].x = Math.round(points[i].x);
-		points[i].y = Math.round(points[i].y);
-	}
+	var svg = data[source];
 	var g = new PIXI.Graphics();
-	g.beginFill(0x000000,0);
-	g.moveTo(points[0].x,points[0].y);
-	for(var i = 1; i < points.length; ++i){
-		g.lineStyle(1,0xFFFFFF,1);
-		g.lineTo(points[i].x,points[i].y);
-	}
-	for(var i = 0; i < points.length; ++i){
-		g.drawCircle(points[i].x,points[i].y,0.5);
+	for(var s = 0; s < svg.length; ++s){
+		var points = svg[s].svg;
+		var p = [];
+		for(var i = 0; i < points.length; ++i){
+			p[i] = {
+				x: points[i].x,
+				y: points[i].y
+			};
+			p[i].x -= svg[s].x;
+			p[i].y -= svg[s].y;
+
+			p[i].x *= scale.x;
+			p[i].y *= scale.y;
+
+			p[i].x = Math.round(p[i].x);
+			p[i].y = Math.round(p[i].y);
+		}
+		g.beginFill(0x000000,0);
+		g.moveTo(p[0].x,p[0].y);
+		for(var i = 1; i < p.length; ++i){
+			g.lineStyle(1,0xFFFFFF,1);
+			g.lineTo(p[i].x,p[i].y);
+		}
+		for(var i = 0; i < p.length; ++i){
+			g.drawCircle(p[i].x,p[i].y,0.5);
+		}
 	}
 	g.endFill();
 	return g;
@@ -62,7 +42,7 @@ function text(text,scale,spacing,anchor){
 	var t = new PIXI.Container();
 	//for(var shadow = 0; shadow < 2; ++shadow){
 		for(var letter = 0; letter < text.length; ++letter){
-			var a = alphabet[text[letter]] || alphabet['x'];
+			var a = text[letter] || 'x';
 			for(var line = 0; line < a.length; ++line){
 				var s = svg(a[line], scale);
 				s.x = letter*xadvance;

@@ -1,5 +1,5 @@
 function Pickup(){
-	this.spr = svg(heart, {x:Pickup.radius*2.5, y:Pickup.radius*2.5});
+	this.spr = svg("heart", {x:Pickup.radius*2.5, y:Pickup.radius*2.5});
 	this.spr.rotation = (Math.random()*2 - 1) / 4;
 	this.v = {
 		x: 0,

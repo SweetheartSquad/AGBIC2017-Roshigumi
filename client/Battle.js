@@ -8,7 +8,7 @@ Battle.prototype.init = function(){
 	player = new Player();
 	this.entities.addChild(player.spr);
 
-	sword = svg(swordsvg,{x:64,y:64*0.1});
+	sword = svg("swordsvg",{x:64,y:64*0.1});
 	sword.side = 1;
 	sword.overshoot=0;
 
@@ -26,7 +26,7 @@ Battle.prototype.init = function(){
 		rotation:true
 	}, bullets.max);
 	(function(){
-		var b = svg(bullet,{x:bullets.radius*3.5,y:bullets.radius*3.5});
+		var b = svg("bullet",{x:bullets.radius*3.5,y:bullets.radius*3.5});
 		bullets.tex = b.generateTexture();
 		b.destroy();
 	}());
@@ -42,9 +42,6 @@ Battle.prototype.init = function(){
 		rotation:true
 	}, bullets.max);
 	(function(){
-		// var b = svg(bullet,{x:bullets.radius*2.5,y:bullets.radius*2.5});
-		// stars.tex = b.generateTexture();
-		// b.destroy();
 		var s = new PIXI.Graphics();
 		s.beginFill(0xFFFFFF,1);
 		s.drawRect(0,0,1,1);
@@ -75,7 +72,7 @@ Battle.prototype.init = function(){
 		max: 3,
 		init: function(){
 			for(var i = 0; i < this.max; ++i){
-				var h = svg(heart,{x:24,y:24});
+				var h = svg("heart",{x:24,y:24});
 				h.x = 32*i;
 				this.hearts.push(h);
 				this.container.addChild(h);

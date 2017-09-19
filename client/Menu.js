@@ -55,7 +55,7 @@ Menu.prototype.init = function(){
 	ayy.addChild(ayy.line);
 	this.container.addChild(ayy);
 
-	var s = svg(swordsvg,{x:64*2,y:64*2*0.1});
+	var s = svg("swordsvg",{x:64*2,y:64*2*0.1});
 	s.drawCircle(38*2,0,40*2);
 	s.drawCircle(38*2,0,44*2);
 	s.rotation = Math.PI/2;
