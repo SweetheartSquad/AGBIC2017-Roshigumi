@@ -11,6 +11,8 @@ Battle.prototype.init = function(){
 	sword = svg("swordsvg",{x:64,y:64*0.1});
 	sword.side = 1;
 	sword.overshoot=0;
+	sword.x = player.spr.x;
+	sword.y = player.spr.y;
 
 	cursor = new PIXI.Graphics();
 	cursor.size = 3;
