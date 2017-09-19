@@ -292,21 +292,25 @@ EnemyTypes = {
 	cross: {
 		source:{svg:enemy_cross,x:48,y:48*0.8},
 		pattern:BulletPatterns.shootRandom,
-		health: 3
+		health: 3,
+		scoreThreshold: 1500
 	},
 	triangle: {
 		source:{svg:enemy_triangle,x:48*0.8,y:48},
 		pattern:BulletPatterns.shootCircle,
-		health: 3
+		health: 3,
+		scoreThreshold: 4000
 	},
 	circle: {
 		source:{svg:enemy_circle,x:48,y:48*0.7},
 		pattern:BulletPatterns.shootPlayer,
-		health: 3
+		health: 3,
+		scoreThreshold: 0
 	},
 	sam: {
 		source:{svg:enemy_sam,x:48*0.8,y:48},
 		pattern:BulletPatterns.shootCorner,
-		health: 3
+		health: 3,
+		scoreThreshold: 8000
 	}
 };
