@@ -32,8 +32,19 @@ function Enemy(type){
 		}]
 	];
 	this.frame = 0;
+	this.health = type.health;
+
+	if(Math.random() > 0.5){
+		this.spr.x = Math.round(Math.random())*(size.x+this.spr.width*2) - this.spr.width;
+		this.spr.y = Math.random()*size.y;
+	}else{
+		this.spr.y = Math.round(Math.random())*(size.y+this.spr.height*2) - this.spr.height;
+		this.spr.x = Math.random()*size.x;
+	}
+
 	var k = Object.keys(BulletPatterns);
 	this.bulletpattern = type.pattern;
+	debug.add(this);
 }
 Enemy.prototype.rotateLine = Player.prototype.rotateLine;
 Enemy.prototype.getRotatedLines = function(){
@@ -272,18 +283,22 @@ BulletPatterns = {
 EnemyTypes = {
 	cross: {
 		source:{svg:enemy_cross,x:48,y:48*0.8},
-		pattern:BulletPatterns.shootRandom
+		pattern:BulletPatterns.shootRandom,
+		health: 3
 	},
 	triangle: {
 		source:{svg:enemy_triangle,x:48*0.8,y:48},
-		pattern:BulletPatterns.shootCircle
+		pattern:BulletPatterns.shootCircle,
+		health: 3
 	},
 	circle: {
 		source:{svg:enemy_circle,x:48,y:48*0.7},
-		pattern:BulletPatterns.shootPlayer
+		pattern:BulletPatterns.shootPlayer,
+		health: 3
 	},
 	sam: {
 		source:{svg:enemy_sam,x:48*0.8,y:48},
-		pattern:BulletPatterns.shootCorner
+		pattern:BulletPatterns.shootCorner,
+		health: 3
 	}
 };

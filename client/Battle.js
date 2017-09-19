@@ -7,7 +7,6 @@ Battle.prototype.init = function(){
 
 	player = new Player();
 	this.entities.addChild(player.spr);
-	debug.add(player);
 
 	sword = svg(swordsvg,{x:64,y:64*0.1});
 	sword.side = 1;
@@ -199,35 +198,6 @@ Battle.prototype.init = function(){
 	scene.addChild(stamina.container);
 	scene.addChild(score.container);
 
-	e = new Enemy(EnemyTypes.circle);
-	e.spr.x = size.x/2;
-	e.spr.y = size.y/2;
-	debug.add(e);
-	enemies.push(e);
-	this.entities.addChild(e.spr);
-
-	e = new Enemy(EnemyTypes.triangle);
-	e.spr.x = size.x*0.75;
-	e.spr.y = size.y*0.75;
-	debug.add(e);
-	enemies.push(e);
-	this.entities.addChild(e.spr);
-
-	e = new Enemy(EnemyTypes.sam);
-	e.spr.x = size.x*0.25;
-	e.spr.y = size.y*0.75;
-	debug.add(e);
-	enemies.push(e);
-	this.entities.addChild(e.spr);
-
-	enemy = svg(enemy_sam,{x:48,y:48*0.8});
-	e = new Enemy(EnemyTypes.cross);
-	e.spr.x = size.x*0.75;
-	e.spr.y = size.y/3;
-	debug.add(e);
-	enemies.push(e);
-	this.entities.addChild(e.spr);
-
 	if(debug.enabled){
 		scene.addChild(debug);
 	}
@@ -366,6 +336,23 @@ Battle.prototype.update = function(){
 				}
 
 				score.add(10);
+
+				e.health -= 1;
+				if(e.health <= 0){
+					// kill enemy
+					extra.lineStyle(4,0xFFFFFF,1);
+					extra.drawCircle(e.spr.x,e.spr.y,30);
+					extra.lineStyle(0.5,0xFFFFFF,1);
+					extra.drawCircle(e.spr.x,e.spr.y,40);
+					extra.lineStyle(0.25,0xFFFFFF,1);
+					extra.drawCircle(e.spr.x,e.spr.y,50);
+					e.dead = true;
+
+					e.spr.parent.removeChild(e.spr);
+					e.spr.destroy();
+					enemies.splice(enemies.indexOf(e),1);
+					screen_filter.uniforms.uChrAbbSeparation += 128;
+				}
 			}
 		}
 
@@ -416,6 +403,17 @@ Battle.prototype.update = function(){
 	/////////////
 	// enemies //
 	/////////////
+	
+	//if(enemies.length < 4){
+		if(Math.random() < 0.01){
+			var k = Object.keys(EnemyTypes);
+			k = EnemyTypes[k[Math.floor(Math.random()*k.length)]];
+			e = new Enemy(k);
+			enemies.push(e);
+			this.entities.addChild(e.spr);
+		}
+	//}
+
 	for(var i = 0; i < enemies.length; ++i){
 		var e = enemies[i];
 		if(circToCirc(player.spr.x,player.spr.y,player.radius, e.spr.x,e.spr.y,e.radius)){

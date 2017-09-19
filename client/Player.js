@@ -44,6 +44,7 @@ function Player(){
 			y: 0
 		}]
 	];
+	debug.add(this);
 }
 Player.prototype.attack = function(){
 	screen_filter.uniforms.uScanDistort += 3;
