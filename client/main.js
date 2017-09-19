@@ -122,9 +122,9 @@ function init(){
 	    this.accumulator += game.ticker.elapsedMS;
 
 	    // call render if needed
-	    if (this.accumulator > this.timestep) {
+	    if (this.accumulator > this.timestep*0.9) {
 	    	update();
-	        this.accumulator -= this.timestep;
+	        this.accumulator = Math.max(0, this.accumulator-this.timestep);
 	    }
 		blur_filter.uniforms.uTime = screen_filter.uniforms.uTime = game.ticker.lastTime/1000%10000;
 	}
