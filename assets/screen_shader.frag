@@ -13,6 +13,7 @@ uniform float uLensDistort;
 uniform float uChrAbbSeparation;
 uniform float uChrAbbRotation;
 uniform float uInvert;
+uniform vec3 uPalette;
 
 float weight[5];
 float pxSize;
@@ -97,6 +98,10 @@ void main(void){
     fg += chrAbb(uv, uChrAbbSeparation, uChrAbbRotation+PI2*(uv.x+uv.y))/4.0;
 	fg *= grille(vTextureCoord.xy, vec2(0.6,0.3));
     fg = mix(fg, 1.0 - fg, uInvert);
+    fg.r = clamp(0.0, fg.r, 1.0);
+    fg.g = clamp(0.0, fg.g, 1.0);
+    fg.b = clamp(0.0, fg.b, 1.0);
+    fg = mix(uPalette, 1.0-uPalette, fg);
     fg *= vignette(uv,0.1);
 
 	gl_FragColor = vec4(fg, 1.0);
