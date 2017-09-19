@@ -99,9 +99,9 @@ function shootPlayer(enemy){
 	if(b){
 		b.v.x = player.spr.x - enemy.spr.x;
 		b.v.y = player.spr.y - enemy.spr.y;
-		var l = magnitude(b.v);
-		b.v.x/=l;
-		b.v.y/=l;
+		var l = 1/magnitude(b.v);
+		b.v.x*=l;
+		b.v.y*=l;
 		b.spr.x += b.v.x * enemy.radius;
 		b.spr.y += b.v.y * enemy.radius;
 	}
@@ -112,9 +112,9 @@ function shootRandom(enemy){
 	if(b){
 		b.v.x = Math.random()*2-1;
 		b.v.y = Math.random()*2-1;
-		var l = magnitude(b.v);
-		b.v.x/=l;
-		b.v.y/=l;
+		var l = 1/magnitude(b.v);
+		b.v.x*=l;
+		b.v.y*=l;
 		b.spr.x += b.v.x * enemy.radius;
 		b.spr.y += b.v.y * enemy.radius;
 	}
@@ -155,8 +155,9 @@ function patrol(enemy){
 		if(l < 1){
 			enemy.target = undefined;
 		}
-		v.x /= l;
-		v.y /= l;
+		l = 1/l;
+		v.x *= l;
+		v.y *= l;
 		v.x *= 0.1;
 		v.y *= 0.1;
 
@@ -183,8 +184,9 @@ function wander(enemy){
 		if(l < 1){
 			enemy.target = undefined;
 		}
-		v.x /= l;
-		v.y /= l;
+		l = 1/l;
+		v.x *= l;
+		v.y *= l;
 		v.x *= 0.1;
 		v.y *= 0.1;
 

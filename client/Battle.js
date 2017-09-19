@@ -313,10 +313,10 @@ Battle.prototype.update = function(){
 			if(p){
 				var dx = p.attackLine[1].x - p.attackLine[0].x;
 				var dy = p.attackLine[1].y - p.attackLine[0].y;
-				var l = magnitude({x:dx,y:dy});
+				var l = 1/magnitude({x:dx,y:dy});
 
-				dx/=l;
-				dy/=l;
+				dx*=l;
+				dy*=l;
 
 				dx*=5*(1-stamina.current/stamina.max/2);
 				dy*=5*(1-stamina.current/stamina.max/2);
@@ -442,9 +442,9 @@ Battle.prototype.update = function(){
 		if(circToCirc(player.spr.x,player.spr.y,player.radius, e.spr.x,e.spr.y,e.radius)){
 			var dx = player.spr.x - e.spr.x;
 			var dy = player.spr.y - e.spr.y;
-			var l = magnitude({x:dx,y:dy});
-			dx/=l;
-			dy/=l;
+			var l = 1/magnitude({x:dx,y:dy});
+			dx*=l;
+			dy*=l;
 
 			dx *= 1;
 			dy *= 1;
