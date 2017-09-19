@@ -424,15 +424,14 @@ Battle.prototype.update = function(){
 	// enemies //
 	/////////////
 	
-	//if(enemies.length < 4){
-		if(Math.random() < 0.002){
-			var k = Object.keys(EnemyTypes);
-			k = EnemyTypes[k[Math.floor(Math.random()*k.length)]];
-			e = new Enemy(k);
-			enemies.push(e);
-			this.entities.addChild(e.spr);
-		}
-	//}
+	// spawn
+	if(((health.current-enemies.length)*score.current) * (Math.random()/10+0.1) / 100 > 1 || enemies.length===0 && Math.random()<0.01){
+		var k = Object.keys(EnemyTypes);
+		k = EnemyTypes[k[Math.floor(Math.random()*k.length)]];
+		e = new Enemy(k);
+		enemies.push(e);
+		this.entities.addChild(e.spr);
+	}
 
 	for(var i = 0; i < enemies.length; ++i){
 		var e = enemies[i];
