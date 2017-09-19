@@ -184,13 +184,14 @@ Battle.prototype.init = function(){
 	};
 	score.init();
 
+	this.pickups = [];
 
-	extra = new PIXI.Graphics();
+	this.extra = new PIXI.Graphics();
 
 	scene.addChild(this.entities);
 	this.entities.addChild(sword);
 	this.entities.addChild(cursor);
-	this.entities.addChild(extra);
+	this.entities.addChild(this.extra);
 	scene.addChild(bullets.container);
 	scene.addChild(stars.container);
 
@@ -205,7 +206,7 @@ Battle.prototype.init = function(){
 
 Battle.prototype.update = function(){
 	score.add(1/60);
-	extra.clear();
+	this.extra.clear();
 	stamina.update();
 	mouse.correctedPos = {
 		x: mouse.pos.x/scaleMultiplier/postProcessScale,
@@ -324,13 +325,13 @@ Battle.prototype.update = function(){
 				e.hit = 4;
 
 				// slash mark
-				extra.beginFill(0,0);
+				this.extra.beginFill(0,0);
 				for(var s = 0; s < 3; ++s){
-					extra.lineStyle(0.5,0xFFFFFF,1);
-					extra.moveTo(p.intersection.x + (Math.random()*2-1)*10*s,p.intersection.y + (Math.random()*2-1)*10*s);
-					extra.lineTo(e.spr.x + dx*20 + (Math.random()*2-1)*10*s,e.spr.y + dy*20 + (Math.random()*2-1)*10*s);
+					this.extra.lineStyle(0.5,0xFFFFFF,1);
+					this.extra.moveTo(p.intersection.x + (Math.random()*2-1)*10*s,p.intersection.y + (Math.random()*2-1)*10*s);
+					this.extra.lineTo(e.spr.x + dx*20 + (Math.random()*2-1)*10*s,e.spr.y + dy*20 + (Math.random()*2-1)*10*s);
 				}
-				extra.endFill();
+				this.extra.endFill();
 				if(blur_filter.uniforms.uBlurAdd < 0.43){
 					blur_filter.uniforms.uBlurAdd += 0.03;
 				}
@@ -340,18 +341,30 @@ Battle.prototype.update = function(){
 				e.health -= 1;
 				if(e.health <= 0){
 					// kill enemy
-					extra.lineStyle(4,0xFFFFFF,1);
-					extra.drawCircle(e.spr.x,e.spr.y,30);
-					extra.lineStyle(0.5,0xFFFFFF,1);
-					extra.drawCircle(e.spr.x,e.spr.y,40);
-					extra.lineStyle(0.25,0xFFFFFF,1);
-					extra.drawCircle(e.spr.x,e.spr.y,50);
-					e.dead = true;
+					
+					// health
+					if(Math.random() < 10.1){
+						var h = new Pickup();
+						this.pickups.push(h);
+						this.entities.addChild(h.spr);
+						h.spr.x = e.spr.x;
+						h.spr.y = e.spr.y;
+					}
 
+					// effect
+					this.extra.lineStyle(4,0xFFFFFF,1);
+					this.extra.drawCircle(e.spr.x,e.spr.y,30);
+					this.extra.lineStyle(0.5,0xFFFFFF,1);
+					this.extra.drawCircle(e.spr.x,e.spr.y,40);
+					this.extra.lineStyle(0.25,0xFFFFFF,1);
+					this.extra.drawCircle(e.spr.x,e.spr.y,50);
+					screen_filter.uniforms.uChrAbbSeparation += 128;
+
+					// actually remove
+					e.dead = true;
 					e.spr.parent.removeChild(e.spr);
 					e.spr.destroy();
 					enemies.splice(enemies.indexOf(e),1);
-					screen_filter.uniforms.uChrAbbSeparation += 128;
 				}
 			}
 		}
@@ -362,12 +375,12 @@ Battle.prototype.update = function(){
 	}
 
 	// thruster
-	extra.beginFill(0,0);
-	extra.lineStyle(1,0xFFFFFF,1);
+	this.extra.beginFill(0,0);
+	this.extra.lineStyle(1,0xFFFFFF,1);
 	var l = player.rotateLine([{x:-20+Math.random()*3,y:(Math.random()*2-1)*10},{x:0,y:0}]);
-	extra.moveTo(l[0].x, l[0].y);
-	extra.lineTo(l[0].x - player.v.x*2*(Math.random()*2-1), l[0].y - player.v.y*2*(Math.random()*2-1));
-	extra.endFill();
+	this.extra.moveTo(l[0].x, l[0].y);
+	this.extra.lineTo(l[0].x - player.v.x*2*(Math.random()*2-1), l[0].y - player.v.y*2*(Math.random()*2-1));
+	this.extra.endFill();
 
 
 	if(debug.enabled){
@@ -405,7 +418,7 @@ Battle.prototype.update = function(){
 	/////////////
 	
 	//if(enemies.length < 4){
-		if(Math.random() < 0.01){
+		if(Math.random() < 0.002){
 			var k = Object.keys(EnemyTypes);
 			k = EnemyTypes[k[Math.floor(Math.random()*k.length)]];
 			e = new Enemy(k);
@@ -461,6 +474,43 @@ Battle.prototype.update = function(){
 	stars.pool.update();
 
 	/////////////
+	// pickups //
+	/////////////
+	for(var i = this.pickups.length-1; i >= 0; --i){
+		var p = this.pickups[i];
+		p.update();
+		if(p.spr.x < 0){
+			p.v.x += p.spr.x;
+		}if(p.spr.x > size.x){
+			p.v.x += size.x - p.spr.x;
+		}
+		if(p.spr.y < 0){
+			p.v.y += p.spr.y;
+		}if(p.spr.y > size.y){
+			p.v.y += size.y - p.spr.y;
+		}
+		// pickup the pickup
+		if(p.delay <= 0 && circToCirc(player.spr.x,player.spr.y,player.radius, p.spr.x,p.spr.y,Pickup.radius)){
+			// effect
+			blur_filter.uniforms.uBlurAdd += 0.1;
+			screen_filter.uniforms.uChrAbbSeparation += 1000;
+			this.extra.beginFill(0,0);
+			this.extra.lineStyle(5,0xFFFFFF,1);
+			this.extra.drawCircle(p.spr.x, p.spr.y, p.radius*2);
+			this.extra.lineStyle(3,0xFFFFFF,1);
+			this.extra.drawCircle(p.spr.x, p.spr.y, p.radius*3);
+			this.extra.endFill();
+
+			health.heal();
+
+			// remove
+			p.spr.parent.removeChild(p.spr);
+			p.spr.destroy();
+			this.pickups.splice(this.pickups.indexOf(p), 1);
+		}
+	}
+
+	/////////////
 	// bullets //
 	/////////////
 	var blockLine = player.getRotatedBlockLine();
@@ -497,10 +547,10 @@ Battle.prototype.update = function(){
 			if(blur_filter.uniforms.uBlurAdd < 0.4){
 				blur_filter.uniforms.uBlurAdd += 0.01;
 			}
-			extra.beginFill(0,0);
-			extra.lineStyle(0.8,0xFFFFFF,1);
-			extra.drawCircle(b.spr.x, b.spr.y, bullets.radius*3*(Math.random()/2+0.6));
-			extra.endFill();
+			this.extra.beginFill(0,0);
+			this.extra.lineStyle(0.8,0xFFFFFF,1);
+			this.extra.drawCircle(b.spr.x, b.spr.y, bullets.radius*3*(Math.random()/2+0.6));
+			this.extra.endFill();
 
 			score.add(1);
 		}
@@ -535,16 +585,16 @@ Battle.prototype.update = function(){
 			health.damage();
 			screen_filter.uniforms.uScanDistort += 80;
 			player.invincible = 100;
-			extra.beginFill(0,0);
-			extra.lineStyle(5,0xFFFFFF,1);
+			this.extra.beginFill(0,0);
+			this.extra.lineStyle(5,0xFFFFFF,1);
 			var x = player.spr.x;
 			var y = player.spr.y;
 			var r = Math.random() * 50 + 25;
-			extra.moveTo(x-b.v.x*r,y-b.v.y*r);
-			extra.lineTo(x+b.v.x*r,y+b.v.y*r);
-			extra.lineStyle(0.8,0xFFFFFF,1);
-			extra.drawCircle(x,y,40);
-			extra.endFill();
+			this.extra.moveTo(x-b.v.x*r,y-b.v.y*r);
+			this.extra.lineTo(x+b.v.x*r,y+b.v.y*r);
+			this.extra.lineStyle(0.8,0xFFFFFF,1);
+			this.extra.drawCircle(x,y,40);
+			this.extra.endFill();
 		}
 	}
 	bullets.pool.update();
