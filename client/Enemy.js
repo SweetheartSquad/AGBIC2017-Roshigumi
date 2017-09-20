@@ -95,42 +95,48 @@ function wait(frames, moveFunc, enemy){
 	return false;
 }
 function shootPlayer(enemy){
-	var b = bullets.pool.add(enemy);
-	if(b){
-		b.v.x = player.spr.x - enemy.spr.x;
-		b.v.y = player.spr.y - enemy.spr.y;
-		var l = 1/magnitude(b.v);
-		b.v.x*=l;
-		b.v.y*=l;
-		b.spr.x += b.v.x * enemy.radius;
-		b.spr.y += b.v.y * enemy.radius;
+	if(!player.dead){
+		var b = bullets.pool.add(enemy);
+		if(b){
+			b.v.x = player.spr.x - enemy.spr.x;
+			b.v.y = player.spr.y - enemy.spr.y;
+			var l = 1/magnitude(b.v);
+			b.v.x*=l;
+			b.v.y*=l;
+			b.spr.x += b.v.x * enemy.radius;
+			b.spr.y += b.v.y * enemy.radius;
+		}
 	}
 	return true;
 }
 function shootRandom(enemy){
-	var b = bullets.pool.add(enemy);
-	if(b){
-		b.v.x = Math.random()*2-1;
-		b.v.y = Math.random()*2-1;
-		var l = 1/magnitude(b.v);
-		b.v.x*=l;
-		b.v.y*=l;
-		b.spr.x += b.v.x * enemy.radius;
-		b.spr.y += b.v.y * enemy.radius;
+	if(!player.dead){
+		var b = bullets.pool.add(enemy);
+		if(b){
+			b.v.x = Math.random()*2-1;
+			b.v.y = Math.random()*2-1;
+			var l = 1/magnitude(b.v);
+			b.v.x*=l;
+			b.v.y*=l;
+			b.spr.x += b.v.x * enemy.radius;
+			b.spr.y += b.v.y * enemy.radius;
+		}
 	}
 	return true;
 }
 function shootCircle(enemy){
-	if(!enemy.shootCircleOptions){
-		enemy.shootCircleOptions = 0;
-	}
-		var b = bullets.pool.add(enemy);
-		if(b){
-		enemy.shootCircleOptions += 0.2;
-		b.v.x = Math.cos(enemy.shootCircleOptions)/2;
-		b.v.y = Math.sin(enemy.shootCircleOptions)/2;
-		b.spr.x += b.v.x * enemy.radius;
-		b.spr.y += b.v.y * enemy.radius;
+	if(!player.dead){
+		if(!enemy.shootCircleOptions){
+			enemy.shootCircleOptions = 0;
+		}
+			var b = bullets.pool.add(enemy);
+			if(b){
+			enemy.shootCircleOptions += 0.2;
+			b.v.x = Math.cos(enemy.shootCircleOptions)/2;
+			b.v.y = Math.sin(enemy.shootCircleOptions)/2;
+			b.spr.x += b.v.x * enemy.radius;
+			b.spr.y += b.v.y * enemy.radius;
+		}
 	}
 	return true;
 }
@@ -225,29 +231,31 @@ function moveToCorner(enemy){
 }
 
 function shootArc(frames, framesDelay, enemy){
-	if(!enemy.shootArcOptions){
-		enemy.shootArcOptions = {
-			target: Math.atan2(size.y/2-enemy.spr.y,size.x/2-enemy.spr.x),
-			frames: frames
-		};
-	}
-	if(enemy.shootArcOptions.frames % framesDelay == 0){
-		var b = bullets.pool.add(enemy);
-		if(b){
-			var a = enemy.shootArcOptions.frames/framesDelay/frames-0.5;
-			a *= frames/4;
-			a = Math.sin(a);
-			a += enemy.shootArcOptions.target;
-			b.v.x = Math.cos(a);
-			b.v.y = Math.sin(a);
-			b.spr.x += b.v.x * enemy.radius;
-			b.spr.y += b.v.y * enemy.radius;
+	if(!player.dead){
+		if(!enemy.shootArcOptions){
+			enemy.shootArcOptions = {
+				target: Math.atan2(size.y/2-enemy.spr.y,size.x/2-enemy.spr.x),
+				frames: frames
+			};
 		}
-	}
-	enemy.shootArcOptions.frames -= 1;
-	if(enemy.shootArcOptions.frames <= 0){
-		enemy.shootArcOptions = undefined;
-		return true;
+		if(enemy.shootArcOptions.frames % framesDelay == 0){
+			var b = bullets.pool.add(enemy);
+			if(b){
+				var a = enemy.shootArcOptions.frames/framesDelay/frames-0.5;
+				a *= frames/4;
+				a = Math.sin(a);
+				a += enemy.shootArcOptions.target;
+				b.v.x = Math.cos(a);
+				b.v.y = Math.sin(a);
+				b.spr.x += b.v.x * enemy.radius;
+				b.spr.y += b.v.y * enemy.radius;
+			}
+		}
+		enemy.shootArcOptions.frames -= 1;
+		if(enemy.shootArcOptions.frames <= 0){
+			enemy.shootArcOptions = undefined;
+			return true;
+		}
 	}
 	return false;
 }
