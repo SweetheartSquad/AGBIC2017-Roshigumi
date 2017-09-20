@@ -469,8 +469,6 @@ Battle.prototype.update = function(){
 			player.invincible -= 1;
 			player.spr.visible = player.invincible%6<3;
 		}
-		sword.scale.y = Math.abs(sword.scale.y)*sword.side;
-		sword.scale.y *= player.blocking ? -1 : 1;
 	}
 
 	/////////////
@@ -730,6 +728,11 @@ Battle.prototype.update = function(){
 			sword.x = player.spr.x;
 			sword.y = player.spr.y;
 		}
+	}
+
+	if(!player.dead){
+		sword.scale.y = Math.abs(sword.scale.y)*sword.side;
+		sword.scale.y *= player.blocking ? -1 : 1;
 	}
 
 	this.entities.x = lerp(this.entities.x, 0, 0.1);
