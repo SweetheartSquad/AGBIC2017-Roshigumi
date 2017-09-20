@@ -60,6 +60,25 @@ Battle.prototype.init = function(){
 		}
 	}
 
+	particles = {};
+	particles.max = 200;
+	particles.container = new PIXI.ParticleContainer(particles.max, {
+		scale:true,
+		position:true,
+		rotation:true
+	}, particles.max);
+	(function(){
+		var s = new PIXI.Graphics();
+		s.lineStyle(1,0xFFFFFF,1);
+		s.moveTo(0,0);
+		s.lineTo(20,0);
+		s.endFill();
+		particles.tex = s.generateTexture();
+		s.destroy();
+	}());
+	particles.pool = new Pool(particles.max, Particle);
+
+
 
 
 
@@ -195,6 +214,7 @@ Battle.prototype.init = function(){
 	this.entities.addChild(this.extra);
 	scene.addChild(bullets.container);
 	scene.addChild(stars.container);
+	scene.addChild(particles.container);
 
 	scene.addChild(health.container);
 	scene.addChild(stamina.container);
@@ -343,6 +363,10 @@ Battle.prototype.update = function(){
 				if(e.health <= 0){
 					// kill enemy
 					
+					for(var p = 0; p < 5+Math.random()*5; ++p){
+						particles.pool.add(e);
+					}
+
 					// health
 					if(Math.random()-score.current/10000 < 0.1*(1+(health.max-health.current)/health.max)){
 						var h = new Pickup();
@@ -482,6 +506,26 @@ Battle.prototype.update = function(){
 		}
 	}
 	stars.pool.update();
+
+
+	///////////////
+	// particles //
+	///////////////
+	for(var i = 0; i < particles.pool.live.length; ++i){
+		var p = particles.pool.live[i];
+		p.spr.x += p.v.x;
+		p.spr.y += p.v.y;
+		p.spr.rotation += p.v.r;
+		p.v.x *= 0.98;
+		p.v.y *= 0.98;
+		p.v.r *= 0.98;
+		p.spr.scale.x *= 0.99;
+		p.spr.scale.y *= 0.99;
+		if(p.spr.scale.x <= 0.01){
+			p.dead = true;
+		}
+	}
+	particles.pool.update();
 
 	/////////////
 	// pickups //

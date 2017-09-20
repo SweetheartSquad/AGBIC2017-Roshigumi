@@ -259,6 +259,26 @@ Star.prototype.live = function(){
 	stars.container.addChild(this.spr);
 };
 
+function Particle(){
+	var s = this.spr = new PIXI.Sprite(particles.tex);
+}
+Particle.prototype.kill = function(){
+	particles.container.removeChild(this.spr);
+};
+
+Particle.prototype.live = function(p){
+	this.spr.x = p.spr.x + (Math.random()*2-1)*p.radius;
+	this.spr.y = p.spr.y + (Math.random()*2-1)*p.radius;
+	this.spr.rotation = Math.random()*Math.PI*2;
+	this.v = {
+		x: (Math.random()*2-1)*3,
+		y: (Math.random()*2-1)*3,
+		r: (Math.random()*2-1)/2
+	};
+	this.spr.scale.x = this.spr.scale.y = Math.random()/2 + 0.5;
+	particles.container.addChild(this.spr);
+};
+
 function update(){
 	if(debug.enabled){
 		debug.clear();
