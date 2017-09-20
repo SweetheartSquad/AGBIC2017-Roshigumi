@@ -98,17 +98,15 @@ function init(){
 
 	// setup main loop
 	var main = function(){
-	    // update time
-	    this.accumulator += game.ticker.elapsedMS;
-
+		var d = game.ticker.lastTime - this.last;
 	    // call render if needed
-	    if (this.accumulator > this.timestep*0.9) {
+	    if (d > this.timestep) {
 	    	update();
-	        this.accumulator = Math.max(0, this.accumulator-this.timestep);
+		    this.last = game.ticker.lastTime - d%this.timestep;
 	    }
 		blur_filter.uniforms.uTime = screen_filter.uniforms.uTime = game.ticker.lastTime/1000%10000;
 	}
-	main.accumulator = 0;
+	main.last = game.ticker.lastTime;
 	main.timestep = 1000/60; // target ms/frame
 	game.ticker.add(main.bind(main));
 
