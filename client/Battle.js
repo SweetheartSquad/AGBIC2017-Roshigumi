@@ -6,7 +6,6 @@ Battle.prototype.init = function(){
 	this.entities = new PIXI.Container();
 
 	player = new Player();
-	this.entities.addChild(player.spr);
 
 	sword = svg("swordsvg",{x:64,y:64*0.1});
 	sword.side = 1;
@@ -222,18 +221,21 @@ Battle.prototype.init = function(){
 	this.pickups = [];
 
 	this.extra = new PIXI.Graphics();
-
-	scene.addChild(this.entities);
+	
+	this.entities.addChild(player.spr);
 	this.entities.addChild(sword);
 	this.entities.addChild(cursor);
-	this.entities.addChild(this.extra);
-	scene.addChild(bullets.container);
-	scene.addChild(stars.container);
-	scene.addChild(particles.container);
 
-	scene.addChild(health.container);
-	scene.addChild(stamina.container);
-	scene.addChild(score.container);
+	this.entities.addChild(bullets.container);
+	this.entities.addChild(stars.container);
+	this.entities.addChild(particles.container);
+
+	this.entities.addChild(health.container);
+	this.entities.addChild(stamina.container);
+	this.entities.addChild(score.container);
+	this.entities.addChild(this.extra);
+
+	scene.addChild(this.entities);
 
 	if(debug.enabled){
 		scene.addChild(debug);
@@ -363,6 +365,8 @@ Battle.prototype.update = function(){
 
 					e.v.x += dx;
 					e.v.y += dy;
+					this.entities.x += dx*2;
+					this.entities.y += dy*2;
 					e.hit = 4;
 
 					// slash mark
@@ -649,6 +653,8 @@ Battle.prototype.update = function(){
 				this.extra.endFill();
 
 				score.add(1);
+				this.entities.x += b.v.x*2;
+				this.entities.y += b.v.y*2;
 				sword.side *= -1;
 				sword.rotation += Math.round(Math.random()*2-1)*0.25;
 			}
@@ -694,6 +700,8 @@ Battle.prototype.update = function(){
 				this.extra.lineStyle(0.8,0xFFFFFF,1);
 				this.extra.drawCircle(x,y,40);
 				this.extra.endFill();
+				this.entities.x += b.v.x*5;
+				this.entities.y += b.v.y*5;
 			}
 		}
 	}
@@ -723,6 +731,9 @@ Battle.prototype.update = function(){
 			sword.y = player.spr.y;
 		}
 	}
+
+	this.entities.x = lerp(this.entities.x, 0, 0.1);
+	this.entities.y = lerp(this.entities.y, 0, 0.1);
 
 	score.update();
 	if(debug.enabled){
