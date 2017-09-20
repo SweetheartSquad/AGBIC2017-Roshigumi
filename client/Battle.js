@@ -341,6 +341,7 @@ Battle.prototype.update = function(){
 				player.blocking = true;
 				stamina.drain(0.3);
 				sword.scale.x = sword.scale.y = 1;
+				sword.overshoot = 0;
 			}else{
 				stamina.drain(0); // prevent turtling regen
 			}
@@ -465,6 +466,7 @@ Battle.prototype.update = function(){
 			player.spr.visible = player.invincible%6<3;
 		}
 		sword.scale.y = Math.abs(sword.scale.y)*sword.side;
+		sword.scale.y *= player.blocking ? -1 : 1;
 	}
 
 	/////////////
@@ -647,6 +649,8 @@ Battle.prototype.update = function(){
 				this.extra.endFill();
 
 				score.add(1);
+				sword.side *= -1;
+				sword.rotation += Math.round(Math.random()*2-1)*0.25;
 			}
 			if(debug.enabled){
 				debug.beginFill(0,0);

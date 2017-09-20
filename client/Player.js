@@ -88,9 +88,8 @@ Player.prototype.block = function(){
 	sword.x = lerp(sword.x, this.spr.x + Math.cos(this.spr.rotation)*25 + Math.cos(this.spr.rotation-Math.PI/2*sword.side)*38, 0.9);
 	sword.y = lerp(sword.y, this.spr.y + Math.sin(this.spr.rotation)*25 + Math.sin(this.spr.rotation-Math.PI/2*sword.side)*38, 0.9);
 	sword.trotation = this.spr.rotation + Math.PI/2*sword.side;
-	sword.rotation = slerp(sword.rotation, sword.trotation, 0.5);
+	sword.rotation = slerp(sword.rotation, sword.trotation, 1.0);
 	screen_filter.uniforms.uScanDistort += 0.1;
-	//sword.rotation += 0.05;
 };
 Player.prototype.rotateLine = function(l){
 	var l = l.slice();
