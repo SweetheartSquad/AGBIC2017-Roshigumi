@@ -42,7 +42,7 @@ Battle.prototype.init = function(){
 		scale:true,
 		position:true,
 		rotation:true
-	}, bullets.max);
+	}, stars.max);
 	(function(){
 		var s = new PIXI.Graphics();
 		s.beginFill(0xFFFFFF,1);
