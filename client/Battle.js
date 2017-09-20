@@ -294,13 +294,13 @@ Battle.prototype.update = function(){
 	sword.scale.y = lerp(sword.scale.y, 0.7*sword.side, 0.05);
 	player.blocking = false;
 	if(getAction2()){
-		if(stamina.current > 0.5){
+		if(stamina.current > 0.3){
 			if(getJustAction2()){
 				sword.side *= -1;
 			}
 			player.block();
 			player.blocking = true;
-			stamina.drain(0.5);
+			stamina.drain(0.3);
 			sword.scale.x = sword.scale.y = 1;
 		}else{
 			stamina.drain(0); // prevent turtling regen
