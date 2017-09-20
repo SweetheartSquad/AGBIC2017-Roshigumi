@@ -572,15 +572,15 @@ Battle.prototype.update = function(){
 	for(var i = this.pickups.length-1; i >= 0; --i){
 		var p = this.pickups[i];
 		p.update();
-		if(p.spr.x < 0){
-			p.v.x -= p.spr.x;
-		}if(p.spr.x > size.x){
-			p.v.x += size.x - p.spr.x;
+		if(p.spr.x < Pickup.radius){
+			p.v.x -= (p.spr.x-Pickup.radius);
+		}if(p.spr.x > size.x-Pickup.radius){
+			p.v.x += (size.x-Pickup.radius) - p.spr.x;
 		}
-		if(p.spr.y < 0){
-			p.v.y -= p.spr.y;
-		}if(p.spr.y > size.y){
-			p.v.y += size.y - p.spr.y;
+		if(p.spr.y < Pickup.radius){
+			p.v.y -= (p.spr.y-Pickup.radius);
+		}if(p.spr.y > size.y-Pickup.radius){
+			p.v.y += (size.y-Pickup.radius) - p.spr.y;
 		}
 		// pickup the pickup
 		if(!player.dead && p.delay <= 0 && circToCirc(player.spr.x,player.spr.y,player.radius, p.spr.x,p.spr.y,Pickup.radius)){
