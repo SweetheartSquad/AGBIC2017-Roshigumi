@@ -199,6 +199,7 @@ Pool.prototype.update=function(){
 Pool.prototype.add = function(){
 	if(this.live.length < this.count){
 		var b = this.dead.pop();
+		b.dead = false;
 		this.live.push(b);
 		b.live.apply(b,arguments);
 		return b;
@@ -227,7 +228,6 @@ Bullet.prototype.kill = function(){
 	}
 }
 Bullet.prototype.live = function(player){
-	this.dead = false;
 	this.spr.x = player.spr.x;
 	this.spr.y = player.spr.y;
 	this.v.x = Math.cos(player.spr.rotation)/4;
@@ -245,7 +245,6 @@ Star.prototype.kill = function(){
 	stars.pool.add();
 };
 Star.prototype.live = function(){
-	this.dead = false;
 	var r = Math.random();
 	this.spr.scale.x = this.spr.scale.y = r*2;
 	this.speed = r*0.1+0.05;
