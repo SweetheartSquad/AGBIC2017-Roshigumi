@@ -442,11 +442,6 @@ Battle.prototype.update = function(){
 	}
 	sword.scale.y = Math.abs(sword.scale.y)*sword.side;
 
-	if(keys.isJustDown(keys.X) || keys.isDown(keys.C) && game.ticker.lastTime%100 < 10){
-		var b = bullets.pool.add(enemies[0]);
-	}
-
-
 	/////////////
 	// enemies //
 	/////////////
