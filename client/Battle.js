@@ -255,48 +255,18 @@ Battle.prototype.update = function(){
 
 	if(!player.dead){
 		var input = getInput();
-
-		switch(parseInt(window.location.hash.substr(6))){
-			default:
-			case 0:
-				// free move
-				player.v.x += input.move.x/3;
-				player.v.y += input.move.y/3;
-				player.spr.x += player.v.x;
-				player.spr.y += player.v.y;
-				player.v.x *= 0.95;
-				player.v.y *= 0.95;
-				player.trotation = Math.atan2(
-				 	mouse.correctedPos.y - player.spr.y,
-				 	mouse.correctedPos.x - player.spr.x
-				);
-				player.spr.rotation = slerp(player.spr.rotation,player.trotation, 0.2);
-				break;
-			case 1:
-				// tank
-				player.trotation = (player.trotation || 0) + input.move.x/10;
-				player.spr.rotation = slerp(player.spr.rotation, player.trotation, 0.3);
-				player.v.x -= input.move.y*Math.cos(player.trotation);
-				player.v.y -= input.move.y*Math.sin(player.trotation);
-				player.spr.x += player.v.x/2;
-				player.spr.y += player.v.y/2;
-				player.v.x *= 0.9;
-				player.v.y *= 0.9;
-				break;
-			case 2:
-				// polar
-				player.trotation = Math.atan2(- player.spr.y,size.x/2-player.spr.x);
-				player.spr.rotation = slerp(player.spr.rotation, player.trotation, 0.3);
-				player.v.x -= input.move.y*Math.cos(player.trotation);
-				player.v.y -= input.move.y*Math.sin(player.trotation);
-				player.v.x += input.move.x*Math.cos(player.trotation+Math.PI/2);
-				player.v.y += input.move.x*Math.sin(player.trotation+Math.PI/2);
-				player.spr.x += player.v.x/2;
-				player.spr.y += player.v.y/2;
-				player.v.x *= 0.9;
-				player.v.y *= 0.9;
-				break;
-		}
+		// free move
+		player.v.x += input.move.x/3;
+		player.v.y += input.move.y/3;
+		player.spr.x += player.v.x;
+		player.spr.y += player.v.y;
+		player.v.x *= 0.95;
+		player.v.y *= 0.95;
+		player.trotation = Math.atan2(
+		 	mouse.correctedPos.y - player.spr.y,
+		 	mouse.correctedPos.x - player.spr.x
+		);
+		player.spr.rotation = slerp(player.spr.rotation,player.trotation, 0.2);
 	}
 
 	
@@ -422,6 +392,9 @@ Battle.prototype.update = function(){
 						e.spr.parent.removeChild(e.spr);
 						e.spr.destroy();
 						enemies.splice(enemies.indexOf(e),1);
+						if(debug.enabled){
+							debug.drawList.splice(debug.drawList.indexOf(e),1);
+						}
 					}else{
 						var s = sounds["slash-hit"].play();
 						howlPos(sounds["slash-hit"],s, e.spr.x,e.spr.y,0);
@@ -625,16 +598,17 @@ Battle.prototype.update = function(){
 
 		if(!player.dead){
 			// blocked
-			var l = lineToLine(
-				blockLine[0].x,
-				blockLine[0].y,
-				blockLine[1].x,
-				blockLine[1].y,
-				b.spr.x - bullets.radius*Math.cos(Math.atan2(b.v.y,b.v.x)),
-				b.spr.y - bullets.radius*Math.sin(Math.atan2(b.v.y,b.v.x)),
-				b.spr.x + b.v.x + bullets.radius*Math.cos(Math.atan2(b.v.y,b.v.x)),
-				b.spr.y + b.v.y + bullets.radius*Math.sin(Math.atan2(b.v.y,b.v.x))
-			);
+			//var l = lineToLine(
+			//	blockLine[0].x,
+			//	blockLine[0].y,
+			//	blockLine[1].x,
+			//	blockLine[1].y,
+			//	b.spr.x - bullets.radius*Math.cos(Math.atan2(b.v.y,b.v.x)),
+			//	b.spr.y - bullets.radius*Math.sin(Math.atan2(b.v.y,b.v.x)),
+			//	b.spr.x + b.v.x + bullets.radius*Math.cos(Math.atan2(b.v.y,b.v.x)),
+			//	b.spr.y + b.v.y + bullets.radius*Math.sin(Math.atan2(b.v.y,b.v.x))
+			//);
+			var l = circToCirc(b.spr.x,b.spr.y,bullets.radius, player.spr.x,player.spr.y,player.radius*3);
 			if(l && player.blocking){
 				b.dead = true;
 				var s = sounds["blocked"].play();
@@ -654,35 +628,14 @@ Battle.prototype.update = function(){
 				this.entities.x += b.v.x*2;
 				this.entities.y += b.v.y*2;
 				sword.side *= -1;
-				sword.rotation += Math.round(Math.random()*2-1)*0.25;
-			}
-			if(debug.enabled){
-				debug.beginFill(0,0);
-				debug.lineStyle(2,0x0000FF,1);
-				debug.moveTo(
-					blockLine[0].x,
-					blockLine[0].y
-				);
-				debug.lineTo(
-					blockLine[1].x,
-					blockLine[1].y
-				);
-				debug.moveTo(
-					b.spr.x - bullets.radius*Math.cos(Math.atan2(b.v.y,b.v.x)) + Math.cos(Math.atan2(player.v.y,player.v.x))*magnitude(player.v),
-					b.spr.y - bullets.radius*Math.sin(Math.atan2(b.v.y,b.v.x)) + Math.sin(Math.atan2(player.v.y,player.v.x))*magnitude(player.v)
-				);
-				debug.lineTo(
-					b.spr.x + b.v.x + bullets.radius*Math.cos(Math.atan2(b.v.y,b.v.x)) + Math.cos(Math.atan2(player.v.y,player.v.x))*magnitude(player.v),
-					b.spr.y + b.v.y + bullets.radius*Math.sin(Math.atan2(b.v.y,b.v.x)) + Math.sin(Math.atan2(player.v.y,player.v.x))*magnitude(player.v)
-				);
-				if(l){
-					debug.drawCircle(l.x,l.y,4);
-				}
-				debug.endFill();
-			}
-
-			// hit
-			if(!player.invincible && circToCirc(b.spr.x,b.spr.y,bullets.radius, player.spr.x,player.spr.y,player.radius)){
+				sword.x = b.spr.x;
+				sword.y = b.spr.y;
+				sword.rotation = Math.atan2(b.spr.y-player.spr.y, b.spr.x-player.spr.y);
+				sword.rotation += Math.PI/2*sword.side;
+				sword.x -= sword.width*Math.cos(sword.rotation)/2;
+				sword.y -= sword.width*Math.sin(sword.rotation)/2;
+				stamina.drain(1);
+			}else if(!player.invincible && circToCirc(b.spr.x,b.spr.y,bullets.radius, player.spr.x,player.spr.y,player.radius)){
 				b.dead = true;
 				health.damage();
 				screen_filter.uniforms.uScanDistort += 80;
@@ -700,6 +653,15 @@ Battle.prototype.update = function(){
 				this.extra.endFill();
 				this.entities.x += b.v.x*5;
 				this.entities.y += b.v.y*5;
+			}
+
+			if(debug.enabled){
+				debug.lineStyle(1,0xFF0000,1);
+				debug.drawCircle(b.spr.x,b.spr.y,bullets.radius);
+				if(l){
+					debug.lineStyle(2,0x0000FF,1);
+					debug.drawCircle(b.spr.x,b.spr.y,bullets.radius+3);
+				}
 			}
 		}
 	}

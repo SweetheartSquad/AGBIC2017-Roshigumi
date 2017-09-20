@@ -144,9 +144,11 @@ Player.prototype.debug = function(){
 	debug.drawCircle(this.spr.x,this.spr.y,this.radius);
 
 	var l = this.getRotatedBlockLine();
+	debug.beginFill(0,0);
 	debug.lineStyle(1,0x0000FF,1);
 	debug.moveTo(l[0].x,l[0].y);
 	debug.lineTo(l[1].x,l[1].y);
+	debug.drawCircle(this.spr.x, this.spr.y, this.radius*3);
 	debug.endFill();
 
 	l = this.getRotatedAttackLines();
