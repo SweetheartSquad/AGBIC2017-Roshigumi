@@ -66,8 +66,8 @@ Menu.prototype.init = function(){
 	this.thing.y = size.y/2;
 	this.container.addChild(this.thing);
 
-	this.selection = this.options.length-1;
-	this.next();
+	this.selection = 0;
+	this.select(this.selection);
 
 	scene.addChild(this.container);
 };
@@ -89,7 +89,9 @@ Menu.prototype.move = function(by){
 	}while(this.selection < 0){
 		this.selection += this.options.length;
 	}
-	this.select(this.selection);			
+	this.select(this.selection);
+	var s=sounds["menu"].play();
+	sounds["menu"].rate(1 + (Math.random()*2-1)*0.1,s);
 }
 Menu.prototype.update = function(){
 	mouse.update(); /// hack: update mouse to avoid accepting clicks on menu
@@ -106,6 +108,7 @@ Menu.prototype.update = function(){
 		this.prev();
 	}else if(getJustAction1()){
 		this.options[this.selection].action();
+		var s =sounds["menu"].play();
 	}
 
 	if(Math.random() < 0.005){

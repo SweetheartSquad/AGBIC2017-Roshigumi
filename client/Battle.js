@@ -113,6 +113,13 @@ Battle.prototype.init = function(){
 					var p = particles.pool.add(player);
 				}
 				player.dead=true;
+				var s = sounds["death"].play();
+				howlPos(sounds["death"],s, player.spr.x,player.spr.y,0);
+				
+				sounds["music"].fade(1,0.1,100);
+			}else{
+				var s = sounds["hurt"].play();
+				howlPos(sounds["hurt"],s, player.spr.x,player.spr.y,0);
 			}
 		},
 		heal: function(){
@@ -120,6 +127,9 @@ Battle.prototype.init = function(){
 				this.hearts[this.current].visible = true;
 				this.current += 1;
 			}
+			var s = sounds["heal"].play();
+			howlPos(sounds["heal"],s, player.spr.x,player.spr.y,0);
+			sounds["heal"].rate(1 + (Math.random()*2-1)*0.1,s);
 		}
 	};
 	health.init();
@@ -388,6 +398,9 @@ Battle.prototype.update = function(){
 						}
 
 						score.add(100);
+						var s = sounds["kill"].play();
+						howlPos(sounds["kill"],s, e.spr.x,e.spr.y,0);
+						sounds["kill"].rate(1 + (Math.random()*2-1)*0.1,s);
 
 						// effect
 						this.extra.lineStyle(4,0xFFFFFF,1);
@@ -404,6 +417,10 @@ Battle.prototype.update = function(){
 						e.spr.parent.removeChild(e.spr);
 						e.spr.destroy();
 						enemies.splice(enemies.indexOf(e),1);
+					}else{
+						var s = sounds["slash-hit"].play();
+						howlPos(sounds["slash-hit"],s, e.spr.x,e.spr.y,0);
+						sounds["slash-hit"].rate(1 + (Math.random()*2-1)*0.1,s);
 					}
 				}
 			}
@@ -616,6 +633,9 @@ Battle.prototype.update = function(){
 			);
 			if(l && player.blocking){
 				b.dead = true;
+				var s = sounds["blocked"].play();
+				howlPos(sounds["blocked"],s, b.spr.x, b.spr.y, 0);
+				sounds["blocked"].rate(1+(Math.random()*2-1)*0.1,s);
 
 				if(blur_filter.uniforms.uBlurAdd < 0.4){
 					blur_filter.uniforms.uBlurAdd += 0.01;

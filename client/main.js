@@ -227,14 +227,15 @@ Bullet.prototype.kill = function(){
 		debug.drawList.splice(debug.drawList.indexOf(this),1);
 	}
 }
-Bullet.prototype.live = function(player){
-	this.spr.x = player.spr.x;
-	this.spr.y = player.spr.y;
-	this.v.x = Math.cos(player.spr.rotation)/4;
-	this.v.y = Math.sin(player.spr.rotation)/4;
-	this.spr.rotation = Math.atan2(this.v.y,this.v.x);
+Bullet.prototype.live = function(e){
+	this.spr.x = e.spr.x;
+	this.spr.y = e.spr.y;
+	this.spr.rotation = Math.random()*Math.PI*2;
 	bullets.container.addChild(this.spr);
 	debug.add(this);
+	howlPos(sounds["shoot"], this.spr.x, this.spr.y, 0);
+	sounds["shoot"].rate(1+(Math.random()*2-1)*0.1);
+	sounds["shoot"].play();
 }
 
 function Star(){

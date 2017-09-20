@@ -81,6 +81,42 @@ ready(function(){
 
 	fontStyle={font: "8px font", align: "left"};
 
+	sounds["menu"] = new Howl({
+		src:["assets/audio/menu_option.wav"],
+		autoplay:false
+	});
+	sounds["death"] = new Howl({
+		src:["assets/audio/death.wav"],
+		autoplay:false
+	});
+	sounds["hurt"] = new Howl({
+		src:["assets/audio/hurt.wav"],
+		autoplay:false
+	});
+	sounds["heal"] = new Howl({
+		src:["assets/audio/hurt.wav"],
+		autoplay:false
+	});
+	sounds["shoot"] = new Howl({
+		src:["assets/audio/hurt.wav"],
+		autoplay:false
+	});
+	sounds["blocked"] = new Howl({
+		src:["assets/audio/hurt.wav"],
+		autoplay:false
+	});
+	sounds["slash"] = new Howl({
+		src:["assets/audio/hurt.wav"],
+		autoplay:false
+	});
+	sounds["slash-hit"] = new Howl({
+		src:["assets/audio/hurt.wav"],
+		autoplay:false
+	});
+	sounds["kill"] = new Howl({
+		src:["assets/audio/death.wav"],
+		autoplay:false
+	});
 	sounds["music"] = new Howl({
 		src:["assets/audio/roshigumi.ogg"],
 		autoplay:false,
@@ -102,6 +138,9 @@ ready(function(){
 		.load(init);
 });
 
+function howlPos(s,i,x,y,z){
+	s.pos((x/size.x - 0.5),z,(y/size.y - 0.5), i);
+}
 
 function CustomFilter(fragmentSource){
 	PIXI.Filter.call(this,
