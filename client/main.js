@@ -104,7 +104,6 @@ function init(){
 	    	update();
 		    this.last = game.ticker.lastTime - d%this.timestep;
 	    }
-		blur_filter.uniforms.uTime = screen_filter.uniforms.uTime = game.ticker.lastTime/1000%10000;
 	}
 	main.last = game.ticker.lastTime;
 	main.timestep = 1000/60; // target ms/frame
@@ -289,6 +288,7 @@ function update(){
 		bg.alpha = 1.0;
 		blur_filter.uniforms.uBlurDir = [0,1];
 		blur_filter.uniforms.uBlurAdd = lerp(blur_filter.uniforms.uBlurAdd, uBlurAddT, 0.1);
+		blur_filter.uniforms.uTime = screen_filter.uniforms.uTime = game.ticker.lastTime/1000%10000;
 		for(var i = 0; i < blurIt; ++i){
 			//blur_filter.uniforms.uBlurAdd = i/blurIt;
 			source = i % 2 ? renderSprite : renderSprite2;
