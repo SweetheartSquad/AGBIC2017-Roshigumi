@@ -102,11 +102,15 @@ Battle.prototype.init = function(){
 			this.container.x = 32;
 		},
 		damage: function(){
-			if(this.current > 0){
-				this.current -= 1;
-				this.hearts[this.current].visible = false;
-				if(this.current <= 0){
-					//DEAD
+			this.current = Math.max(0, this.current-1);
+			this.hearts[this.current].visible = false;
+			if(this.current <= 0){
+				//DEAD
+				screen_filter.uniforms.uScanDistort += 1000;
+				screen_filter.uniforms.uChrAbbSeparation += 1000;
+				screen_filter.uniforms.uLensDistort += 1;
+				for(var i = 0; i < 20+Math.random()*20; ++i){
+					var p = particles.pool.add(player);
 				}
 			}
 		},
