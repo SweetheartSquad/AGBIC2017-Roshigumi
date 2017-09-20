@@ -387,7 +387,7 @@ Battle.prototype.update = function(){
 						}
 
 						// health
-						if(Math.random()-score.current/10000 < 0.1*(1+(health.max-health.current)/health.max)){
+						if(Math.random()+score.current/10000 < 0.2*(1+(health.max-health.current)/health.max)){
 							var h = new Pickup();
 							this.pickups.push(h);
 							this.entities.addChild(h.spr);
