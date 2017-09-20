@@ -65,7 +65,6 @@ Player.prototype.attack = function(){
 	};
 	g.moveTo(arc.long*0.1,-arc.wide/2);
 	g.quadraticCurveTo(arc.long,0, arc.long*0.1,arc.wide/2);
-	//g.quadraticCurveTo(arc.long/2,0, arc.long*0.1,-arc.wide/2);
 
 	for(var i = 0; i < 8; ++i){
 		g.beginFill(0xFFFFFF,0); 
