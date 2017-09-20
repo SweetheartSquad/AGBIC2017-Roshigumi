@@ -1,48 +1,71 @@
+var mainMenu = [
+	{
+		text: "Start",
+		action: function(){
+			menu.deinit();
+			menu = null;
+			battle = new Battle();
+			screen_filter.uniforms.uScanDistort += 200;
+			screen_filter.uniforms.uChrAbbSeparation += 100;
+		}
+	},
+	{
+		text: "options",
+		action: function(){
+			menu.setOptions(optionsMenu);
+		}
+	},
+	{
+		text: "about",
+		action: function(){
+			menu.setOptions(aboutMenu);
+		}
+	}
+];
+
+var optionsMenu = [
+	{
+		text: "Palette",
+		action: function(){
+			screen_filter.uniforms.uPalette = [
+				Math.random()*2-1,
+				Math.random()*2-1,
+				Math.random()*2-1
+			];
+		}
+	},
+	{
+		text: "Back",
+		action: function(){
+			menu.setOptions(mainMenu);
+			menu.deselect(menu.selection);
+			menu.selection = 1;
+			menu.select(menu.selection);
+		}
+	}
+];
+
+var aboutMenu = [
+	{
+		text: "Back",
+		action: function(){
+			menu.setOptions(mainMenu);
+			menu.deselect(menu.selection);
+			menu.selection = 2;
+			menu.select(menu.selection);
+		}
+	}
+];
+
 function Menu(){
 	this.init();
 }
 Menu.prototype.init = function(){
 	this.container = new PIXI.Container();
-	this.options = [
-		{
-			text: "Start",
-			action: function(){
-				menu.deinit();
-				menu = null;
-				battle = new Battle();
-				screen_filter.uniforms.uScanDistort += 200;
-				screen_filter.uniforms.uChrAbbSeparation += 100;
-			}
-		},
-		{
-			text: "options",
-			action: function(){
-				console.log('nah');
-			}
-		},
-		{
-			text: "about",
-			action: function(){
-				console.log('nah');
-			}
-		}
-	];
-	this.options.container = new PIXI.Container();
-	this.options.container.x = size.x*0.915;
-	this.options.container.y = size.y*0.625;
-	this.container.addChild(this.options.container);
-	var textScale = {
-		x:10,
-		y:10
-	};
-	for(var i = 0; i < this.options.length; ++i){
-		var t = text(this.options[i].text, textScale, 0.5,{x:-0.5,y:0});
-		t.y += i*textScale.y*1.75;
-		this.options.container.addChild(t);
-		var a = this.options[i].action;
-		this.options[i] = t;
-		this.options[i].action = a;
-	}
+	this.optionsContainer = new PIXI.Container();
+	this.optionsContainer.x = size.x*0.915;
+	this.optionsContainer.y = size.y*0.625;
+	this.container.addChild(this.optionsContainer);
 
 	ayy = text("Rōshigumi", {x:5*4,y:16*4}, 0.25,{x:0,y:0});
 	ayy.x = size.x*0.7;
@@ -66,11 +89,35 @@ Menu.prototype.init = function(){
 	this.thing.y = size.y/2;
 	this.container.addChild(this.thing);
 
-	this.selection = 0;
-	this.select(this.selection);
+	this.setOptions(mainMenu);
 
 	scene.addChild(this.container);
 };
+Menu.prototype.setOptions = function(options){
+	if(this.options){
+		for(var i = 0; i < this.options.length; ++i){
+			var o = this.options[i];
+			o.parent.removeChild(o);
+			o.destroy();
+		}
+	}
+	var textScale = {
+		x:10,
+		y:10
+	};
+	this.options = options.slice();
+	for(var i = 0; i < this.options.length; ++i){
+		var t = text(this.options[i].text, textScale, 0.5,{x:-0.5,y:0});
+		t.y += i*textScale.y*1.75;
+		this.optionsContainer.addChild(t);
+		var a = this.options[i].action;
+		this.options[i] = t;
+		this.options[i].action = a;
+	}
+
+	this.selection = 0;
+	this.select(this.selection);
+}
 Menu.prototype.deinit = function(){
 	scene.removeChild(this.container);
 	this.container.destroy();
