@@ -124,16 +124,16 @@ function shootRandom(enemy){
 	}
 	return true;
 }
-function shootCircle(enemy){
+function shootRotateInCircle(enemy){
 	if(!player.dead){
-		if(!enemy.shootCircleOptions){
-			enemy.shootCircleOptions = 0;
+		if(!enemy.shootRotateInCircleOptions){
+			enemy.shootRotateInCircleOptions = 0;
 		}
-			var b = bullets.pool.add(enemy);
-			if(b){
-			enemy.shootCircleOptions += 0.2;
-			b.v.x = Math.cos(enemy.shootCircleOptions)/2;
-			b.v.y = Math.sin(enemy.shootCircleOptions)/2;
+		var b = bullets.pool.add(enemy);
+		if(b){
+			enemy.shootRotateInCircleOptions += 0.2;
+			b.v.x = Math.cos(enemy.shootRotateInCircleOptions)/2;
+			b.v.y = Math.sin(enemy.shootRotateInCircleOptions)/2;
 			b.spr.x += b.v.x * enemy.radius;
 			b.spr.y += b.v.y * enemy.radius;
 		}
@@ -199,6 +199,40 @@ function wander(enemy){
 		enemy.v.x += v.x;
 		enemy.v.y += v.y;
 	}
+}
+
+function chasePlayer(enemy){
+	if(!player.dead){
+		var v = {
+			x: player.spr.x - enemy.spr.x,
+			y: player.spr.y - enemy.spr.y
+		};
+		var l = 1/magnitude(v);
+		v.x *= l;
+		v.y *= l;
+
+		enemy.v.x += v.x;
+		enemy.v.y += v.y;
+	}
+}
+
+function shootCircle(amount, enemy){
+	if(!player.dead){
+		for(var i = 0; i < amount; ++i){
+			var a = i/amount * Math.PI*2 + enemy.rotation;
+			var b = bullets.pool.add(enemy);
+			if(b){
+				b.v.x = Math.cos(a);
+				b.v.y = Math.sin(a);
+				// var l = 1/magnitude(b.v);
+				// b.v.x*=l;
+				// b.v.y*=l;
+				b.spr.x += b.v.x * enemy.radius;
+				b.spr.y += b.v.y * enemy.radius;
+			}
+		}
+	}
+	return true;
 }
 
 function moveToCorner(enemy){
@@ -282,15 +316,27 @@ BulletPatterns = {
 		wait.bind(undefined, 5, stop),
 		shootRandom
 	],
-	shootCircle: [
+	shootRotateInCircle: [
 		wait.bind(undefined, 12, wander),
-		shootCircle
+		shootRotateInCircle
 	],
 	shootCorner: [
 		moveToCorner,
 		wait.bind(undefined, 10, stop),
 		shootArc.bind(undefined, 200, 4),
 		wait.bind(undefined, 60, stop)
+	],
+	shootCircle4: [
+		wait.bind(undefined, 120, wander),
+		wait.bind(undefined, 20, stop),
+		shootCircle.bind(undefined, 4),
+		wait.bind(undefined, 20, stop)
+	],
+	shootCircle8: [
+		wait.bind(undefined, 160, wander),
+		wait.bind(undefined, 30, stop),
+		shootCircle.bind(undefined, 8),
+		wait.bind(undefined, 30, stop)
 	],
 	none: [
 		wait.bind(undefined, 1, stop)
@@ -307,7 +353,7 @@ EnemyTypes = {
 	},
 	triangle: {
 		source:{svg: "enemy_triangle", x:48* 0.8,y:48},
-		pattern:BulletPatterns.shootCircle,
+		pattern:BulletPatterns.shootRotateInCircle,
 		health: 3,
 		scoreThreshold: 4000
 	},
