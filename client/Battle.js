@@ -362,7 +362,7 @@ Battle.prototype.update = function(){
 						}
 
 						// health
-						if(Math.random()+score.current/10000 < 0.2*(1+(health.max-health.current)/health.max)){
+						if(Math.random()+Math.min(0.19,score.current/10000) < 0.2*(1+(health.max-health.current)/health.max)){
 							var h = new Pickup();
 							this.pickups.push(h);
 							this.entities.addChild(h.spr);
@@ -450,7 +450,7 @@ Battle.prototype.update = function(){
 	
 	// spawn
 	if(!player.dead){
-		if((Math.max(0.01,health.current-enemies.length/Math.max(1,score.current/10000))*score.current) * Math.random() / 500 > 1 || enemies.length===0 && Math.random()<0.01){
+		if((Math.max(0.01,3-enemies.length/Math.max(1,score.current/10000))*score.current) * Math.random() / 500 > 1 || enemies.length===0 && Math.random()<0.01){
 			var k = Object.keys(EnemyTypes);
 			for(var i = k.length-1; i >= 0; --i){
 				if(score.current < EnemyTypes[k[i]].scoreThreshold){
