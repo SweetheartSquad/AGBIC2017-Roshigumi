@@ -354,7 +354,7 @@ BulletPatterns = {
 
 EnemyTypes = {
 	cross: {
-		source:{svg: "enemy_cross", x:48, y:48*0.8},
+		source:{svg: "enemy_cross", x:36, y:36*0.8},
 		pattern:BulletPatterns.shootRandom,
 		health: 3,
 		scoreThreshold: 1500
@@ -366,7 +366,7 @@ EnemyTypes = {
 		scoreThreshold: 4000
 	},
 	circle: {
-		source:{svg: "enemy_circle", x:48, y:48*0.7},
+		source:{svg: "enemy_circle", x:36, y:36*0.7},
 		pattern:BulletPatterns.shootPlayer,
 		health: 3,
 		scoreThreshold: 0
@@ -378,13 +378,13 @@ EnemyTypes = {
 		scoreThreshold: 8000
 	},
 	circle4: {
-		source:{svg: "enemy_card", x:48, y:48},
+		source:{svg: "enemy_card", x:24, y:24},
 		pattern:BulletPatterns.shootCircle4,
 		health: 3,
 		scoreThreshold: 750
 	},
 	circle6: {
-		source:{svg: "enemy_kam", x:48, y:48*0.9},
+		source:{svg: "enemy_kam", x:36, y:36*0.9},
 		pattern:BulletPatterns.shootCircle6,
 		health: 3,
 		scoreThreshold: 6000

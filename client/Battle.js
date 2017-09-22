@@ -20,7 +20,7 @@ Battle.prototype.init = function(){
 
 
 	bullets.max = 10000;
-	bullets.radius = 4;
+	bullets.radius = 3;
 	bullets.container = new PIXI.ParticleContainer(bullets.max, {
 		scale:false,
 		position:true,
