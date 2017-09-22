@@ -210,6 +210,8 @@ function chasePlayer(enemy){
 		var l = 1/magnitude(v);
 		v.x *= l;
 		v.y *= l;
+		v.x *= 0.2;
+		v.y *= 0.2;
 
 		enemy.v.x += v.x;
 		enemy.v.y += v.y;
@@ -219,11 +221,13 @@ function chasePlayer(enemy){
 function shootCircle(amount, enemy){
 	if(!player.dead){
 		for(var i = 0; i < amount; ++i){
-			var a = i/amount * Math.PI*2 + enemy.rotation;
+			var a = i/amount * Math.PI*2 + enemy.spr.rotation;
 			var b = bullets.pool.add(enemy);
 			if(b){
 				b.v.x = Math.cos(a);
 				b.v.y = Math.sin(a);
+				b.v.x *= 1.3;
+				b.v.y *= 1.3;
 				// var l = 1/magnitude(b.v);
 				// b.v.x*=l;
 				// b.v.y*=l;
@@ -330,12 +334,16 @@ BulletPatterns = {
 		wait.bind(undefined, 120, wander),
 		wait.bind(undefined, 20, stop),
 		shootCircle.bind(undefined, 4),
+		wait.bind(undefined, 20, stop),
+		shootCircle.bind(undefined, 4),
+		wait.bind(undefined, 20, stop),
+		shootCircle.bind(undefined, 4),
 		wait.bind(undefined, 20, stop)
 	],
-	shootCircle8: [
-		wait.bind(undefined, 160, wander),
+	shootCircle6: [
+		wait.bind(undefined, 160, chasePlayer),
 		wait.bind(undefined, 30, stop),
-		shootCircle.bind(undefined, 8),
+		shootCircle.bind(undefined, 6),
 		wait.bind(undefined, 30, stop)
 	],
 	none: [
@@ -368,5 +376,17 @@ EnemyTypes = {
 		pattern:BulletPatterns.shootCorner,
 		health: 3,
 		scoreThreshold: 8000
+	},
+	circle4: {
+		source:{svg: "enemy_card", x:48, y:48},
+		pattern:BulletPatterns.shootCircle4,
+		health: 3,
+		scoreThreshold: 750
+	},
+	circle6: {
+		source:{svg: "enemy_kam", x:48, y:48*0.9},
+		pattern:BulletPatterns.shootCircle6,
+		health: 3,
+		scoreThreshold: 6000
 	}
 };
