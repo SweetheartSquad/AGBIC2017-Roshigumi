@@ -39,8 +39,30 @@ ready(function(){
 			roundPixels:false,
 			clearBeforeRender:false,
 			autoResize:false,
-			backgroundColor: 0x000000
+			backgroundColor: 0x000000,
+			autoStart: false
 		});
+		game.ticker.stop();
+		game.main = {
+			timestep: 1000/60, // target ms/frame
+			curTime: Date.now(),
+			prevTime: 0,
+			loop: function(){
+				this.curTime = Date.now();
+				var d = this.curTime - this.prevTime;
+			    // call render if needed
+			    if (d > this.timestep) {
+			    	update();
+			    	game.render();
+				    this.prevTime = this.prevTime + d%this.timestep;
+			    }
+			    requestAnimationFrame(this.loop);
+			},
+			start: function(){
+				this.loop = this.loop.bind(this);
+				this.loop();
+			}
+		};
 		if(!game.renderer.gl){
 			throw "WebGL not supported";
 		}

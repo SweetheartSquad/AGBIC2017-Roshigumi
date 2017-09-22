@@ -152,7 +152,7 @@ Battle.prototype.init = function(){
 			this.container.y = 48+8;
 		},
 		update:function(){
-			var restoreTime = clamp(0, (game.ticker.lastTime - this.lastUse)/500, 1);
+			var restoreTime = clamp(0, (game.main.prevTime - this.lastUse)/500, 1);
 			if(restoreTime >= 1){
 				this.restore();
 			}
@@ -180,7 +180,7 @@ Battle.prototype.init = function(){
 			if(this.current < 0){
 				this.current = 0;
 			}
-			this.lastUse = game.ticker.lastTime;
+			this.lastUse = game.main.prevTime;
 		},
 		restore:function(){
 			this.current += 1;

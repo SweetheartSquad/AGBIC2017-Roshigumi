@@ -96,19 +96,6 @@ function init(){
 	blur_filter.uniforms.uResolution = [size.x,size.y];
 	blur_filter.uniforms.uBlurAdd = uBlurAddT = 0.36;
 
-	// setup main loop
-	var main = function(){
-		var d = game.ticker.lastTime - this.last;
-	    // call render if needed
-	    if (d > this.timestep) {
-	    	update();
-		    this.last = game.ticker.lastTime - d%this.timestep;
-	    }
-	}
-	main.last = game.ticker.lastTime;
-	main.timestep = 1000/60; // target ms/frame
-	game.ticker.add(main.bind(main));
-
 	scene = new PIXI.Container();
 	// screen background
 	(function(){
@@ -173,7 +160,7 @@ function init(){
 	// start the main loop
 	window.onresize = onResize;
 	onResize();
-	game.ticker.update();
+	game.main.start();
 }
 
 function Pool(count, type){
@@ -308,7 +295,7 @@ function update(){
 		bg.alpha = 1.0;
 		blur_filter.uniforms.uBlurDir = [0,1];
 		blur_filter.uniforms.uBlurAdd = lerp(blur_filter.uniforms.uBlurAdd, uBlurAddT, 0.1);
-		blur_filter.uniforms.uTime = screen_filter.uniforms.uTime = game.ticker.lastTime/1000%10000;
+		blur_filter.uniforms.uTime = screen_filter.uniforms.uTime = game.main.prevTime/1000%10000;
 		for(var i = 0; i < blurIt; ++i){
 			//blur_filter.uniforms.uBlurAdd = i/blurIt;
 			source = i % 2 ? renderSprite : renderSprite2;

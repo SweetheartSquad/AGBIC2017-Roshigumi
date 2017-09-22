@@ -145,7 +145,7 @@ Menu.prototype.update = function(){
 
 	// animation
 	this.thing.rotation += 0.01;
-	this.container.y = Math.sin(game.ticker.lastTime / 1200)*3;
+	this.container.y = Math.sin(game.main.prevTime / 1200)*3;
 
 	// interaction
 	var input = getInput();
