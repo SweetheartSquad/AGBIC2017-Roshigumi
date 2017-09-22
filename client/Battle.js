@@ -670,25 +670,17 @@ Battle.prototype.update = function(){
 
 	// wrap player
 	if(!player.dead){
-		if(player.spr.x > size.x+player.spr.width){
-			player.spr.x -= size.x+player.spr.width;
-			sword.x = player.spr.x;
-			sword.y = player.spr.y;
+		if(player.spr.x > size.x){
+			player.v.x -= player.spr.x - size.x;
 		}
-		if(player.spr.x < -player.spr.width){
-			player.spr.x += size.x+player.spr.width;
-			sword.x = player.spr.x;
-			sword.y = player.spr.y;
+		if(player.spr.x < 0){
+			player.v.x -= player.spr.x;
 		}
-		if(player.spr.y > size.y+player.spr.height){
-			player.spr.y -= size.y+player.spr.height;
-			sword.x = player.spr.x;
-			sword.y = player.spr.y;
+		if(player.spr.y > size.y){
+			player.v.y -= player.spr.y - size.y;
 		}
-		if(player.spr.y < -player.spr.height){
-			player.spr.y += size.y+player.spr.height;
-			sword.x = player.spr.x;
-			sword.y = player.spr.y;
+		if(player.spr.y < 0){
+			player.v.y -= player.spr.y;
 		}
 	}
 
