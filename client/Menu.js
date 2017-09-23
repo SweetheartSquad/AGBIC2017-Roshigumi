@@ -83,12 +83,26 @@ var optionsMenu = [
 		action: undefined
 	},
 	{
+		text: "Scaling",
+		action: function(){
+			if(scaleMode === 1){
+				scaleMode = 2;
+			}else{
+				scaleMode = 1;
+			}
+			optionsMenu[3].text = scaleModes[scaleMode];
+			menu.setOptions(optionsMenu, 2);
+			onResize();
+		}
+	},
+	{
+		text: "Scale to Fit",
+		action: undefined
+	},
+	{
 		text: "Back",
 		action: function(){
-			menu.setOptions(mainMenu);
-			menu.deselect(menu.selection);
-			menu.selection = 1;
-			menu.select(menu.selection);
+			menu.setOptions(mainMenu, 1);
 		}
 	}
 ];
@@ -113,10 +127,7 @@ var aboutMenu = [
 	{
 		text: "Back",
 		action: function(){
-			menu.setOptions(mainMenu);
-			menu.deselect(menu.selection);
-			menu.selection = 2;
-			menu.select(menu.selection);
+			menu.setOptions(mainMenu, 2);
 		}
 	}
 ];
@@ -157,7 +168,8 @@ Menu.prototype.init = function(){
 
 	scene.addChild(this.container);
 };
-Menu.prototype.setOptions = function(options){
+Menu.prototype.setOptions = function(options, defaultSelection){
+	defaultSelection = defaultSelection || 0;
 	if(this.options){
 		for(var i = 0; i < this.options.length; ++i){
 			var o = this.options[i];
@@ -182,8 +194,8 @@ Menu.prototype.setOptions = function(options){
 		}
 	}
 
-	this.selection = 0;
-	this.select(this.selection);
+	this.selection = defaultSelection;
+	this.select(defaultSelection);
 }
 Menu.prototype.deinit = function(){
 	scene.removeChild(this.container);

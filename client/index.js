@@ -12,6 +12,11 @@ var decay = 0.85;
 var sounds=[];
 
 var scaleMode = 1;
+var scaleModes = [
+	"Largest Multiple",
+	"Scale to Fit",
+	"One-to-One"
+];
 
 var debug = {
 	enabled:false
