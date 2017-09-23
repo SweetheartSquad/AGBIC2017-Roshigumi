@@ -68,6 +68,7 @@ Battle.prototype.init = function(){
 	}, particles.max);
 	(function(){
 		var s = new PIXI.Graphics();
+		s.beginFill(0,0);
 		s.lineStyle(1,0xFFFFFF,1);
 		s.moveTo(0,0);
 		s.lineTo(20,0);
@@ -282,13 +283,17 @@ Battle.prototype.update = function(){
 		cursor.lineTo(mouse.correctedPos.x,mouse.correctedPos.y+cursor.size);
 		cursor.moveTo(mouse.correctedPos.x-cursor.size,mouse.correctedPos.y);
 		cursor.lineTo(mouse.correctedPos.x+cursor.size,mouse.correctedPos.y);
+		cursor.endFill();
 		var l = player.getRotatedAttackLines()[2];
+		cursor.beginFill(0x0,0.0);
 		cursor.lineStyle(0.1,0xFFFFFF,1);
-		cursor.moveTo(l[1].x+(Math.random()*2-1)*20,l[1].y+(Math.random()*2-1)*20);
-		cursor.lineTo(sword.x,sword.y);
+		cursor.moveTo(mouse.correctedPos.x+(Math.random()*2-1)*3,mouse.correctedPos.y+(Math.random()*2-1)*3);
+		cursor.lineTo(player.spr.x,player.spr.y);
+		cursor.endFill();
+		cursor.beginFill(0x0,0.0);
 		cursor.lineStyle(0.2,0xFFFFFF,1);
-		cursor.moveTo(l[1].x+(Math.random()*2-1)*3,l[1].y+(Math.random()*2-1)*3);
-		cursor.lineTo(sword.x,sword.y);
+		cursor.moveTo(mouse.correctedPos.x+(Math.random()*2-1)*2,mouse.correctedPos.y+(Math.random()*2-1)*2);
+		cursor.lineTo(player.spr.x,player.spr.y);
 		cursor.endFill();
 	}
 
@@ -562,6 +567,7 @@ Battle.prototype.update = function(){
 			this.extra.beginFill(0,0);
 			this.extra.lineStyle(5,0xFFFFFF,1);
 			this.extra.drawCircle(p.spr.x, p.spr.y, p.radius*2);
+			this.extra.endFill();
 			this.extra.lineStyle(3,0xFFFFFF,1);
 			this.extra.drawCircle(p.spr.x, p.spr.y, p.radius*3);
 			this.extra.endFill();
@@ -648,6 +654,8 @@ Battle.prototype.update = function(){
 				var r = Math.random() * 50 + 25;
 				this.extra.moveTo(x-b.v.x*r,y-b.v.y*r);
 				this.extra.lineTo(x+b.v.x*r,y+b.v.y*r);
+				this.extra.endFill();
+				this.extra.beginFill(0,0);
 				this.extra.lineStyle(0.8,0xFFFFFF,1);
 				this.extra.drawCircle(x,y,40);
 				this.extra.endFill();
@@ -656,11 +664,15 @@ Battle.prototype.update = function(){
 			}
 
 			if(debug.enabled){
+				debug.beginFill(0,0);
 				debug.lineStyle(1,0xFF0000,1);
 				debug.drawCircle(b.spr.x,b.spr.y,bullets.radius);
+				debug.endFill();
 				if(l){
+					debug.beginFill(0,0);
 					debug.lineStyle(2,0x0000FF,1);
 					debug.drawCircle(b.spr.x,b.spr.y,bullets.radius+3);
+					debug.endFill();
 				}
 			}
 		}

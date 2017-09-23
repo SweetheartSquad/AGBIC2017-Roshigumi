@@ -18,11 +18,12 @@ function svg(source, scale){
 			p[i].x = Math.round(p[i].x);
 			p[i].y = Math.round(p[i].y);
 		}
-		g.beginFill(0x000000,0);
 		g.moveTo(p[0].x,p[0].y);
 		for(var i = 1; i < p.length; ++i){
+			g.beginFill(0x000000,0);
 			g.lineStyle(1,0xFFFFFF,1);
 			g.lineTo(p[i].x,p[i].y);
+			g.endFill();
 		}
 		for(var i = 0; i < p.length; ++i){
 			g.drawCircle(p[i].x,p[i].y,0.5);
@@ -236,7 +237,7 @@ Star.prototype.live = function(){
 	var r = Math.random();
 	this.spr.scale.x = this.spr.scale.y = r*2;
 	this.speed = r*0.1+0.05;
-	this.speed*=10;
+	this.speed*=4;
 	if(Math.random() > 0.5){
 		this.spr.x = Math.round(Math.random())*size.x;
 		this.spr.y = Math.random()*size.y;

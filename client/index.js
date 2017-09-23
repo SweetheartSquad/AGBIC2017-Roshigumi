@@ -29,6 +29,15 @@ toggleFullscreen = function(){
 };
 
 ready(function(){
+	if(!window.performance){
+		window.performance = {};
+	}
+	if("now" in window.performance === false){
+		var start = Date.now();
+		window.performance.now = function(){
+			return Date.now() - start;
+		};
+	}
 	try{
 		game = new PIXI.Application({
 			width: size.x*postProcessScale,
@@ -45,22 +54,22 @@ ready(function(){
 		game.ticker.stop();
 		game.main = {
 			timestep: 1000/60, // target ms/frame
-			curTime: Date.now(),
+			curTime: 0,
 			prevTime: 0,
-			loop: function(){
-				this.curTime = Date.now();
+			loop: function(timestamp){
+				this.curTime = timestamp;
 				var d = this.curTime - this.prevTime;
 			    // call render if needed
 			    if (d > this.timestep) {
 			    	update();
 			    	game.render();
-				    this.prevTime = this.prevTime + d%this.timestep;
+				    this.prevTime = this.prevTime + this.timestep;
 			    }
 			    requestAnimationFrame(this.loop);
 			},
 			start: function(){
 				this.loop = this.loop.bind(this);
-				this.loop();
+				this.loop(this.curTime);
 			}
 		};
 		if(!game.renderer.gl){
