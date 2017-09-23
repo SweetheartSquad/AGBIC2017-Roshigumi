@@ -1,3 +1,47 @@
+var palettes = [
+	{
+		name: "classic",
+		colour: [0.0,0.0,0.0]
+	},
+	{
+		name: "inverted",
+		colour: [1.0,1.0,1.0]
+	},
+	{
+		name: "infrared",
+		colour: [3, 1, -3]
+	},
+	{
+		name: "c64",
+		colour: [-0.75, -0.25, 0.25]
+	},
+	{
+		name: "dark-forest",
+		colour: [0.03, -1, -0.25]
+	},
+	{
+		name: "pulp",
+		colour: [-0.4358186449815582, 0.7842105259376866, 0.7070602956392871]
+	},
+	{
+		name: "vacuum",
+		colour: [0.1894904492215712, 0.40649907600077917, -0.35009832345733694]
+	},
+	{
+		name: "shimmer",
+		colour: [-100, -100, -100]
+	},
+	{
+		name: "cream",
+		colour: [1,0.6,0.6]
+	},
+	{
+		name: "industrial",
+		colour: [0.48930425124300214, 5.4162016834965385, 6.912143168052054]
+	}
+];
+var currentPalette = 0;
+
 var mainMenu = [
 	{
 		text: "Start",
@@ -19,6 +63,9 @@ var mainMenu = [
 		text: "about",
 		action: function(){
 			menu.setOptions(aboutMenu);
+			menu.deselect(menu.selection);
+			menu.selection = menu.options.length-1;
+			menu.select(menu.selection);
 		}
 	}
 ];
@@ -27,12 +74,13 @@ var optionsMenu = [
 	{
 		text: "Palette",
 		action: function(){
-			screen_filter.uniforms.uPalette = [
-				Math.random()*2-1,
-				Math.random()*2-1,
-				Math.random()*2-1
-			];
+			setPalette(currentPalette+1);
+			menu.setOptions(optionsMenu);
 		}
+	},
+	{
+		text: "palette name",
+		action: undefined
 	},
 	{
 		text: "Back",
@@ -46,6 +94,22 @@ var optionsMenu = [
 ];
 
 var aboutMenu = [
+	{
+		text: "Made for AGBIC2017",
+		action: undefined
+	},
+	{
+		text: "by SweetHeart Squad",
+		action: undefined
+	},
+	{
+		text: "based on famicase cart",
+		action: undefined
+	},
+	{
+		text: "by Rogue Cache",
+		action: undefined
+	},
 	{
 		text: "Back",
 		action: function(){
@@ -64,19 +128,19 @@ Menu.prototype.init = function(){
 	this.container = new PIXI.Container();
 	this.optionsContainer = new PIXI.Container();
 	this.optionsContainer.x = size.x*0.915;
-	this.optionsContainer.y = size.y*0.625;
+	this.optionsContainer.y = size.y*0.6125;
 	this.container.addChild(this.optionsContainer);
 
-	ayy = text("Rōshigumi", {x:5*4,y:16*4}, 0.25,{x:0,y:0});
-	ayy.x = size.x*0.7;
-	ayy.y = size.y*0.4;
-	ayy.line = new PIXI.Graphics();
-	ayy.line.lineStyle(4,0xFFFFFF,1);
-	ayy.line.moveTo(-ayy.width/2,ayy.height/2 + 4);
-	ayy.line.lineTo(ayy.width/2,ayy.height/2 + 4);
-	ayy.line.endFill();
-	ayy.addChild(ayy.line);
-	this.container.addChild(ayy);
+	title = text("Rōshigumi", {x:5*4,y:16*4}, 0.25,{x:0,y:0});
+	title.x = size.x*0.7;
+	title.y = size.y*0.4;
+	title.line = new PIXI.Graphics();
+	title.line.lineStyle(4,0xFFFFFF,1);
+	title.line.moveTo(-title.width/2,title.height/2 + 4);
+	title.line.lineTo(title.width/2,title.height/2 + 4);
+	title.line.endFill();
+	title.addChild(title.line);
+	this.container.addChild(title);
 
 	var s = svg("swordsvg",{x:64*2,y:64*2*0.1});
 	s.drawCircle(38*2,0,40*2);
@@ -102,17 +166,20 @@ Menu.prototype.setOptions = function(options){
 		}
 	}
 	var textScale = {
-		x:10,
+		x:8,
 		y:10
 	};
 	this.options = options.slice();
 	for(var i = 0; i < this.options.length; ++i){
 		var t = text(this.options[i].text, textScale, 0.5,{x:-0.5,y:0});
-		t.y += i*textScale.y*1.75;
+		t.y += i*textScale.y*1.8;
 		this.optionsContainer.addChild(t);
 		var a = this.options[i].action;
 		this.options[i] = t;
 		this.options[i].action = a;
+		if(!a){
+			this.options[i].alpha = 0.4;
+		}
 	}
 
 	this.selection = 0;
@@ -123,10 +190,14 @@ Menu.prototype.deinit = function(){
 	this.container.destroy();
 };
 Menu.prototype.next = function(){
-	this.move(1);
+	do{
+		this.move(1);
+	}while(!this.options[this.selection].action);
 };
 Menu.prototype.prev = function(){
-	this.move(-1);
+	do{
+		this.move(-1);
+	}while(!this.options[this.selection].action);
 };
 Menu.prototype.move = function(by){
 	this.deselect(this.selection);
@@ -167,5 +238,14 @@ Menu.prototype.deselect = function(id){
 	this.options[id].scale.x = this.options[id].scale.y = 1.0;
 };
 Menu.prototype.select = function(id){
-	this.options[id].scale.x = this.options[id].scale.y = 1.5;
+	this.options[id].scale.x = this.options[id].scale.y = 1.3;
 };
+
+
+function setPalette(palette){
+	currentPalette = palette;
+	currentPalette %= palettes.length;
+	screen_filter.uniforms.uPalette = palettes[currentPalette].colour;
+	optionsMenu[1].text = palettes[currentPalette].name;
+	localStorage.setItem("palette", currentPalette);
+}

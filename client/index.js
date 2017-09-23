@@ -17,6 +17,8 @@ var debug = {
 	enabled:false
 };
 
+var storage = window.localStorage;
+
 toggleFullscreen = function(){
 	if (game.view.toggleFullscreen) {
 		if(getFullscreenElement()) {

@@ -68,6 +68,7 @@ function text(text,scale,spacing,anchor){
 }
 
 function init(){
+
 	// initialize input managers
 	gamepads.init();
 	keys.init({
@@ -93,9 +94,11 @@ function init(){
 	screen_filter.uniforms.uLensDistort = 100;
 	screen_filter.uniforms.uChrAbbSeparation = 1000;
 	
-
 	blur_filter.uniforms.uResolution = [size.x,size.y];
 	blur_filter.uniforms.uBlurAdd = uBlurAddT = 0.36;
+
+	// read local storage
+	setPalette(localStorage.getItem("palette"));
 
 	scene = new PIXI.Container();
 	// screen background
