@@ -193,11 +193,15 @@ Menu.prototype.next = function(){
 	do{
 		this.move(1);
 	}while(!this.options[this.selection].action);
+	var s=sounds["menu"].play();
+	sounds["menu"].rate(1 + (Math.random()*2-1)*0.1,s);
 };
 Menu.prototype.prev = function(){
 	do{
 		this.move(-1);
 	}while(!this.options[this.selection].action);
+	var s=sounds["menu"].play();
+	sounds["menu"].rate(1 + (Math.random()*2-1)*0.1,s);
 };
 Menu.prototype.move = function(by){
 	this.deselect(this.selection);
@@ -208,8 +212,6 @@ Menu.prototype.move = function(by){
 		this.selection += this.options.length;
 	}
 	this.select(this.selection);
-	var s=sounds["menu"].play();
-	sounds["menu"].rate(1 + (Math.random()*2-1)*0.1,s);
 }
 Menu.prototype.update = function(){
 	mouse.update(); /// hack: update mouse to avoid accepting clicks on menu
