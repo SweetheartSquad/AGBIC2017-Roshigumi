@@ -147,7 +147,7 @@ function init(){
 	renderSprite2.filterArea = new PIXI.Rectangle(0,0,renderSprite2.width,renderSprite2.height);
 
 	game.stage.addChild(renderSprite3);
-	renderSprite3.addChild(scene);
+	game.stage.addChild(scene);
 	game.stage.filters = [screen_filter];
 	game.stage.filterArea = new PIXI.Rectangle(0,0,size.x*postProcessScale,size.y*postProcessScale);
 

@@ -3,8 +3,6 @@ function Battle(){
 }
 
 Battle.prototype.init = function(){
-	this.entities = new PIXI.Container();
-
 	player = new Player();
 
 	sword = svg("swordsvg",{x:64,y:64*0.1});
@@ -223,24 +221,22 @@ Battle.prototype.init = function(){
 
 	for(var i in EnemyTypes){
 		if(EnemyTypes.hasOwnProperty(i)){
-			this.entities.addChild(EnemyTypes[i].container);
+			scene.addChild(EnemyTypes[i].container);
 		}
 	}
 
-	this.entities.addChild(bullets.container);
-	this.entities.addChild(stars.container);
-	this.entities.addChild(particles.container);
+	scene.addChild(bullets.container);
+	scene.addChild(stars.container);
+	scene.addChild(particles.container);
 
-	this.entities.addChild(health.container);
-	this.entities.addChild(stamina.container);
-	this.entities.addChild(score.container);
+	scene.addChild(health.container);
+	scene.addChild(stamina.container);
+	scene.addChild(score.container);
 	
-	this.entities.addChild(player.spr);
-	this.entities.addChild(sword);
-	this.entities.addChild(cursor);
-	this.entities.addChild(this.extra);
-
-	scene.addChild(this.entities);
+	scene.addChild(player.spr);
+	scene.addChild(sword);
+	scene.addChild(cursor);
+	scene.addChild(this.extra);
 
 	if(debug.enabled){
 		scene.addChild(debug);
@@ -344,8 +340,8 @@ Battle.prototype.update = function(){
 
 					e.v.x += dx;
 					e.v.y += dy;
-					this.entities.x += dx*2;
-					this.entities.y += dy*2;
+					scene.x += dx*2;
+					scene.y += dy*2;
 					e.hit = 5;
 
 					// slash mark
@@ -374,7 +370,7 @@ Battle.prototype.update = function(){
 						if(Math.random()+Math.min(0.19,score.current/10000) < 0.2*(1+(health.max-health.current)/health.max)){
 							var h = new Pickup();
 							this.pickups.push(h);
-							this.entities.addChild(h.spr);
+							scene.addChild(h.spr);
 							h.spr.x = e.spr.x;
 							h.spr.y = e.spr.y;
 							h.v.x = e.v.x;
@@ -636,8 +632,8 @@ Battle.prototype.update = function(){
 				this.extra.endFill();
 
 				score.add(1);
-				this.entities.x += b.v.x*2;
-				this.entities.y += b.v.y*2;
+				scene.x += b.v.x*2;
+				scene.y += b.v.y*2;
 				sword.side *= -1;
 				sword.x = b.spr.x;
 				sword.y = b.spr.y;
@@ -664,8 +660,8 @@ Battle.prototype.update = function(){
 				this.extra.lineStyle(0.8,0xFFFFFF,1);
 				this.extra.drawCircle(x,y,40);
 				this.extra.endFill();
-				this.entities.x += b.v.x*5;
-				this.entities.y += b.v.y*5;
+				scene.x += b.v.x*5;
+				scene.y += b.v.y*5;
 			}
 
 			if(debug.enabled){
@@ -706,8 +702,8 @@ Battle.prototype.update = function(){
 		sword.scale.y *= player.blocking ? -1 : 1;
 	}
 
-	this.entities.x = lerp(this.entities.x, 0, 0.1);
-	this.entities.y = lerp(this.entities.y, 0, 0.1);
+	scene.x = lerp(scene.x, 0, 0.1);
+	scene.y = lerp(scene.y, 0, 0.1);
 
 	score.update();
 	if(debug.enabled){
