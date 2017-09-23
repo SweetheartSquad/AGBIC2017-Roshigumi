@@ -225,15 +225,20 @@ Bullet.prototype.kill = function(){
 		debug.drawList.splice(debug.drawList.indexOf(this),1);
 	}
 }
+Bullet.lastShot = 0;
 Bullet.prototype.live = function(e){
 	this.spr.x = e.spr.x;
 	this.spr.y = e.spr.y;
 	this.spr.rotation = Math.random()*Math.PI*2;
 	bullets.container.addChild(this.spr);
 	debug.add(this);
-	howlPos(sounds["shoot"], this.spr.x, this.spr.y, 0);
-	sounds["shoot"].rate(1+(Math.random()*2-1)*0.1);
-	sounds["shoot"].play();
+
+	if(game.main.curTime > Bullet.lastShot){
+		howlPos(sounds["shoot"], this.spr.x, this.spr.y, 0);
+		sounds["shoot"].rate(1+(Math.random()*2-1)*0.1);
+		sounds["shoot"].play();
+		Bullet.lastShot = game.main.curTime;
+	}
 }
 
 function Star(){
