@@ -145,6 +145,7 @@ Battle.prototype.init = function(){
 		current: 100,
 		max: 100,
 		border: new PIXI.Graphics(),
+		line: new PIXI.Graphics(),
 		fill: new PIXI.Graphics(),
 
 		width:30*3,
@@ -155,12 +156,33 @@ Battle.prototype.init = function(){
 		init:function(){
 			this.container.addChild(this.fill);
 			this.container.addChild(this.border);
-			this.container.x = 32-12;
-			this.container.y = 48+8;
+			this.container.addChild(this.line);
+			this.container.x = 32-12 + 0.5;
+			this.container.y = 48+8 + 0.5;
+
 			this.fill.beginFill(0xFFFFFF, 1);
 			this.fill.drawRect(0,0,this.width,this.height);
 			this.fill.endFill();
 			this.fill.cacheAsBitmap = true;
+
+			this.border.beginFill(0xFFFFFF,0);
+			this.border.lineStyle(1,0xFFFFFF,1);
+			this.border.drawRect(0,0,this.width,this.height);
+			this.border.drawCircle(0,0,1);
+			this.border.drawCircle(this.width,0,1);
+			this.border.drawCircle(this.width,this.height,1);
+			this.border.drawCircle(0,this.height,1);
+			this.border.endFill();
+			this.border.cacheAsBitmap = true;
+
+			this.line.beginFill(0xFFFFFF,0);
+			this.line.lineStyle(2,0xFFFFFF,1);
+			this.line.moveTo(0,0);
+			this.line.lineTo(this.height);
+			this.line.drawCircle(0,0,0.5);
+			this.line.drawCircle(0,this.height,1);
+			this.line.endFill();
+			this.line.cacheAsBitmap = true;
 		},
 		update:function(){
 			var restoreTime = clamp(0, (game.main.prevTime - this.lastUse)/500, 1);
@@ -170,18 +192,7 @@ Battle.prototype.init = function(){
 			this.fill.alpha = lerp(0.1, 0.2, restoreTime);
 			this.fill.width = this.current/this.max*this.width;
 
-			this.border.clear();
-			this.border.beginFill(0xFFFFFF,0);
-			this.border.lineStyle(1,0xFFFFFF,1);
-			this.border.drawRect(0,0,this.current/this.max*this.width,this.height);
-			this.border.drawRect(0,0,this.width,this.height);
-			this.border.drawCircle(0,0,1);
-			this.border.drawCircle(this.current/this.max*this.width,0,1);
-			this.border.drawCircle(this.current/this.max*this.width,this.height,1);
-			this.border.drawCircle(this.width,0,1);
-			this.border.drawCircle(this.width,this.height,1);
-			this.border.drawCircle(0,this.height,1);
-			this.border.endFill();
+			this.line.x = this.current/this.max*this.width;
 		},
 		drain:function(__amount){
 			this.current -= __amount;
@@ -205,7 +216,7 @@ Battle.prototype.init = function(){
 		container: new PIXI.Container(),
 		numbers: [],
 		init:function(){
-			this.container.x = size.x - 16;
+			this.container.x = size.x - 16 - 0.5;
 			this.container.y = 18;
 			for(var i = 0; i < 10; ++i){
 				var l="";
