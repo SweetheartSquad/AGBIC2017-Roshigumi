@@ -99,7 +99,7 @@ var aboutMenu = [
 		action: undefined
 	},
 	{
-		text: "by SweetHeart Squad",
+		text: "by SweetHeart♥Squad",
 		action: undefined
 	},
 	{
@@ -107,7 +107,7 @@ var aboutMenu = [
 		action: undefined
 	},
 	{
-		text: "by Rogue Cache",
+		text: "by Rogue■Cache",
 		action: undefined
 	},
 	{

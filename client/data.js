@@ -36,6 +36,9 @@ data = {
 	y: [{x:0.5,y:0.5,svg:'<polyline id="y" style="fill:none;stroke:#000000;stroke-miterlimit:1;" points="-159.9318237,360.4090881 -219.9659119,440.4545593 -219.9659119,520.5 -219.9659119,440.4545593 -280,360.4090881 "/>'}],
 	z: [{x:0.5,y:0.5,svg:'<polyline id="z" style="fill:none;stroke:#000000;stroke-miterlimit:1;" points="-139.9204559,360.4090881 -19.852272,360.4090881 -139.9204559,520.5 -19.852272,520.5 "/>'}],
 	' ': [{x:0.5,y:0.5,svg:'<polyline id="z" style="fill:none;stroke:#000000;stroke-miterlimit:1;" points=" "/>'}],
+	'-': [{x:0.5,y:0.0,svg:'<polyline id=":" style="fill:none;stroke:#000000;stroke-miterlimit:1;" points="-25,0 25,0"/>'}],
+	'♥': [{x:0.5,y:0.5,svg:'<polyline id="XMLID_1_" style="fill:none;stroke:#231F20;stroke-miterlimit:10;" points="50,100 0,50 0,25 25,0 50,25 75,0 100,25 100,50 50,100 "/>'}],
+	'■': [{x:0.5,y:0.5,svg:'<polyline id="XMLID_34_" class="st0" points="6.6,6.6 93.4,6.6 93.4,6.6 93.4,93.4 6.6,93.4 6.6,6.6 6.6,23.9 76.1,23.9 76.1,6.6 76.1,76.1 93.4,76.1 23.9,76.1 23.9,93.4 23.9,58.7 76.1,58.7 23.9,58.7 23.9,41.3 76.1,41.3 23.9,41.3 23.9,23.9 "/>'}],
 	ō: [
 		{x:0.5,y:0.5,svg:'<polyline id="o" style="fill:none;stroke:#000000;stroke-miterlimit:1;" points="0.1590909,160.2954559 0.1590909,0.2045455 120.227272,0.2045455 120.227272,160.2954559 0.1590909,160.2954559 "/>'},
 		{x:0.5,y:0.75,svg:'<polyline id="-" style="fill:none;stroke:#000000;stroke-miterlimit:1;" points="279.9659119,480.000061 400.0340881,480.000061 "/>'}
