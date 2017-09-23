@@ -346,7 +346,7 @@ Battle.prototype.update = function(){
 					e.v.y += dy;
 					this.entities.x += dx*2;
 					this.entities.y += dy*2;
-					e.hit = 4;
+					e.hit = 5;
 
 					// slash mark
 					this.extra.beginFill(0,0);
@@ -495,10 +495,12 @@ Battle.prototype.update = function(){
 		}
 		e.update();
 		if(e.hit){
-			e.spr.visible = false;
 			e.hit -= 1;
-		}else{
-			e.spr.visible = true;
+			if(e.hit){
+				e.spr.scale.x = e.spr.scale.y = 0;
+			}else{
+				e.spr.scale.x = e.spr.scale.y = 1/Enemy.graphicsScale;
+			}
 		}
 	}
 

@@ -408,7 +408,7 @@ function initEnemies(){
 			type.source.y /= Enemy.graphicsScale;
 			type.container = new PIXI.ParticleContainer(1000, {
 				position:true,
-				scale:false,
+				scale:true,
 				rotation:true
 			}, 1000);
 		}
