@@ -201,27 +201,55 @@ Battle.prototype.init = function(){
 
 	score = {
 		current: 0,
-		last: -1,
+		last: 0,
 		container: new PIXI.Container(),
+		numbers: [],
 		init:function(){
 			this.container.x = size.x - 16;
 			this.container.y = 18;
-			this.container.addChild(new PIXI.Graphics());
+			for(var i = 0; i < 10; ++i){
+				var l="";
+				this.numbers[i] = [];
+				for(var j = 0; j < 10; ++j){
+					l += i.toString();
+				}
+				var t = text(l, {x:10,y:10}, 0.3, {x:-0.5,y:0.5});
+				for(var c = t.children.length-1; c >= 0; --c){
+					var number = t.children[c];
+					this.numbers[i][c] = number;
+					number.cacheAsBitmap = true;
+					number.visible = false;
+					this.container.addChild(number);
+				}
+				t.destroy();
+			}
 			score.add(1);
 		},
 		add: function(amount){
 			this.current += amount;
 		},
 		update:function(){
-			if(this.current !== this.last){
-				this.container.children[0].destroy();
-				var l = Math.ceil(this.current*100).toString(10);
+			if(this.current > this.last){
+				var l = Math.ceil(this.last*100).toString(10);
 				while(l.length < 10){
 					l = "0"+l;
 				}
-				this.container.addChild(text(l, {x:10,y:10}, 0.3, {x:-0.5,y:0.5}));
+				for(var i = 0; i < 10; ++i){
+					var n = l[l.length-1-i];
+					this.numbers[n][10-1-i].visible = false;
+				}
+
+
+				l = Math.ceil(this.current*100).toString(10);
+				while(l.length < 10){
+					l = "0"+l;
+				}
+				for(var i = 0; i < 10; ++i){
+					var n = l[l.length-1-i];
+					this.numbers[n][10-1-i].visible = true;
+				}
+				this.last = this.current;
 			}
-			this.last = this.current;
 		}
 	};
 	score.init();
