@@ -406,11 +406,11 @@ function initEnemies(){
 			g.destroy();
 			type.source.x /= Enemy.graphicsScale;
 			type.source.y /= Enemy.graphicsScale;
-			type.container = new PIXI.ParticleContainer(1000, {
+			type.container = new PIXI.ParticleContainer(50, {
 				position:true,
 				scale:true,
 				rotation:true
-			}, 1000);
+			}, 50);
 		}
 	}
 }
