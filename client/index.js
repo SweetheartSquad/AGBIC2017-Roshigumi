@@ -11,7 +11,8 @@ var decay = 0.85;
 
 var sounds=[];
 
-var scaleMode = 1;
+var storage = window.localStorage;
+var scaleMode = storage.getItem("scaleMode") || 1;
 var scaleModes = [
 	"Largest Multiple",
 	"Scale to Fit",
@@ -21,8 +22,6 @@ var scaleModes = [
 var debug = {
 	enabled:false
 };
-
-var storage = window.localStorage;
 
 toggleFullscreen = function(){
 	if (game.view.toggleFullscreen) {

@@ -90,6 +90,7 @@ var optionsMenu = [
 			}else{
 				scaleMode = 1;
 			}
+			storage.setItem("scaleMode", scaleMode)
 			optionsMenu[3].text = scaleModes[scaleMode];
 			menu.setOptions(optionsMenu, 2);
 			onResize();
