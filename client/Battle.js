@@ -53,10 +53,8 @@ Battle.prototype.init = function(){
 	stars.pool = new Pool(stars.max, Star);
 	for(var i = 0; i < stars.max/2; ++i){
 		var s = stars.pool.add();
-		if(s){
-			s.spr.x = Math.random()*size.x;
-			s.spr.y = Math.random()*size.y;
-		}
+		s.spr.x = Math.random()*size.x;
+		s.spr.y = Math.random()*size.y;
 	}
 
 	particles = {};
