@@ -220,10 +220,6 @@ Battle.prototype.init = function(){
 	this.pickups = [];
 
 	this.extra = new PIXI.Graphics();
-	
-	this.entities.addChild(player.spr);
-	this.entities.addChild(sword);
-	this.entities.addChild(cursor);
 
 	for(var i in EnemyTypes){
 		if(EnemyTypes.hasOwnProperty(i)){
@@ -238,6 +234,10 @@ Battle.prototype.init = function(){
 	this.entities.addChild(health.container);
 	this.entities.addChild(stamina.container);
 	this.entities.addChild(score.container);
+	
+	this.entities.addChild(player.spr);
+	this.entities.addChild(sword);
+	this.entities.addChild(cursor);
 	this.entities.addChild(this.extra);
 
 	scene.addChild(this.entities);
