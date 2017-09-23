@@ -288,12 +288,12 @@ Battle.prototype.update = function(){
 		cursor.beginFill(0x0,0.0);
 		cursor.lineStyle(0.1,0xFFFFFF,1);
 		cursor.moveTo(mouse.correctedPos.x+(Math.random()*2-1)*3,mouse.correctedPos.y+(Math.random()*2-1)*3);
-		cursor.lineTo(player.spr.x,player.spr.y);
+		cursor.lineTo(player.spr.x + Math.cos(player.spr.rotation)*player.radius, player.spr.y + Math.sin(player.spr.rotation)*player.radius);
 		cursor.endFill();
 		cursor.beginFill(0x0,0.0);
 		cursor.lineStyle(0.2,0xFFFFFF,1);
 		cursor.moveTo(mouse.correctedPos.x+(Math.random()*2-1)*2,mouse.correctedPos.y+(Math.random()*2-1)*2);
-		cursor.lineTo(player.spr.x,player.spr.y);
+		cursor.lineTo(player.spr.x + Math.cos(player.spr.rotation)*player.radius, player.spr.y + Math.sin(player.spr.rotation)*player.radius);
 		cursor.endFill();
 	}
 
