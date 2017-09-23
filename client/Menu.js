@@ -259,7 +259,6 @@ Menu.prototype.select = function(id){
 function setPalette(palette){
 	currentPalette = palette;
 	currentPalette %= palettes.length;
-	screen_filter.uniforms.uPalette = palettes[currentPalette].colour;
 	optionsMenu[1].text = palettes[currentPalette].name;
 	localStorage.setItem("palette", currentPalette);
 }

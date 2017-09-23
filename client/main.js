@@ -100,6 +100,9 @@ function init(){
 
 	// read local storage
 	setPalette(localStorage.getItem("palette"));
+	screen_filter.uniforms.uPalette[0] = palettes[currentPalette].colour[0];
+	screen_filter.uniforms.uPalette[1] = palettes[currentPalette].colour[1];
+	screen_filter.uniforms.uPalette[2] = palettes[currentPalette].colour[2];
 
 	scene = new PIXI.Container();
 	// screen background
@@ -301,6 +304,9 @@ function update(){
 	screen_filter.uniforms.uChrAbbSeparation = lerp(screen_filter.uniforms.uChrAbbSeparation, 30.0, 0.05);
 	screen_filter.uniforms.uChrAbbRotation += 0.11;
 	screen_filter.uniforms.uInvert = lerp(screen_filter.uniforms.uInvert, 0.0, 0.1);
+	screen_filter.uniforms.uPalette[0] = lerp(screen_filter.uniforms.uPalette[0], palettes[currentPalette].colour[0], 0.3);
+	screen_filter.uniforms.uPalette[1] = lerp(screen_filter.uniforms.uPalette[1], palettes[currentPalette].colour[1], 0.3);
+	screen_filter.uniforms.uPalette[2] = lerp(screen_filter.uniforms.uPalette[2], palettes[currentPalette].colour[2], 0.3);
 
 	/////////////////////
 	// post-processing //
