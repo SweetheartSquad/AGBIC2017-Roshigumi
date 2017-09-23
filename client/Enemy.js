@@ -62,14 +62,16 @@ Enemy.prototype.debug = function(){
 	debug.beginFill(0xFF0000,1);
 	debug.lineStyle(0,0,0);
 	debug.drawCircle(this.spr.x, this.spr.y, this.radius);
+	debug.endFill();
 	var ls = this.getRotatedLines();
 	for(var i = 0; i < ls.length; ++i){
 		var l = ls[i];
+		debug.beginFill(0,0);
 		debug.lineStyle(1,0xFF0000,1);
 		debug.moveTo(l[0].x,l[0].y);
 		debug.lineTo(l[1].x,l[1].y);
+		debug.endFill();
 	}
-	debug.endFill();
 };
 Enemy.prototype.update = function(){
 	this.spr.x += this.v.x;

@@ -109,6 +109,7 @@ Battle.prototype.init = function(){
 					var p = particles.pool.add(player);
 				}
 				player.dead=true;
+				debug.drawList.splice(debug.drawList.indexOf(player),1);
 				var s = sounds["death"].play();
 				howlPos(sounds["death"],s, player.spr.x,player.spr.y,0);
 				
@@ -423,7 +424,7 @@ Battle.prototype.update = function(){
 	}
 
 
-	if(debug.enabled){
+	if(debug.enabled && !player.dead){
 		for(var i = 0; i < enemies.length; ++i){
 			var e = enemies[i];
 			var p = player.slash(e);
