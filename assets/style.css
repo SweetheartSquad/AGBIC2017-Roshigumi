@@ -40,6 +40,10 @@ canvas{
 	right:0;
 	bottom:0;
 
+	transition:
+	width 0.1s,
+	height 0.1s;
+
 	/*border:solid white 1px;*/
 }
 
