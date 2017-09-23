@@ -41,6 +41,7 @@ ready(function(){
 		};
 	}
 	try{
+		PIXI.ticker.shared.autoStart = false;
 		game = new PIXI.Application({
 			width: size.x*postProcessScale,
 			height: size.y*postProcessScale,
