@@ -143,13 +143,13 @@ function init(){
 	renderSprite3 = new PIXI.Sprite(renderTexture3);
 	renderSprite.filters = [blur_filter];
 	renderSprite2.filters = [blur_filter];
-	renderSprite3.filters = [screen_filter];
 	renderSprite.filterArea = new PIXI.Rectangle(0,0,renderSprite.width,renderSprite.height);
 	renderSprite2.filterArea = new PIXI.Rectangle(0,0,renderSprite2.width,renderSprite2.height);
-	renderSprite3.filterArea = new PIXI.Rectangle(0,0,renderSprite3.width,renderSprite3.height);
 
 	game.stage.addChild(renderSprite3);
 	renderSprite3.addChild(scene);
+	game.stage.filters = [screen_filter];
+	game.stage.filterArea = new PIXI.Rectangle(0,0,size.x*postProcessScale,size.y*postProcessScale);
 
 	
 	//border
