@@ -227,6 +227,12 @@ Battle.prototype.init = function(){
 	this.entities.addChild(sword);
 	this.entities.addChild(cursor);
 
+	for(var i in EnemyTypes){
+		if(EnemyTypes.hasOwnProperty(i)){
+			this.entities.addChild(EnemyTypes[i].container);
+		}
+	}
+
 	this.entities.addChild(bullets.container);
 	this.entities.addChild(stars.container);
 	this.entities.addChild(particles.container);
@@ -465,7 +471,6 @@ Battle.prototype.update = function(){
 			k = EnemyTypes[k[Math.floor(Math.random()*k.length)]];
 			e = new Enemy(k);
 			enemies.push(e);
-			this.entities.addChild(e.spr);
 		}
 	}
 

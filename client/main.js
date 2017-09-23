@@ -1,4 +1,4 @@
-function svg(source, scale){
+function svg(source, scale, circleScale){
 	var svg = data[source];
 	var g = new PIXI.Graphics();
 	for(var s = 0; s < svg.length; ++s){
@@ -26,7 +26,7 @@ function svg(source, scale){
 			g.endFill();
 		}
 		for(var i = 0; i < p.length; ++i){
-			g.drawCircle(p[i].x,p[i].y,0.5);
+			g.drawCircle(p[i].x,p[i].y,circleScale || 0.5);
 		}
 	}
 	g.endFill();
@@ -68,6 +68,7 @@ function text(text,scale,spacing,anchor){
 }
 
 function init(){
+	initEnemies();
 
 	// initialize input managers
 	gamepads.init();
@@ -231,9 +232,11 @@ Bullet.prototype.live = function(e){
 
 function Star(){
 	var s = this.spr = new PIXI.Sprite(stars.tex);
+	stars.container.addChild(s);
+	s.scale.x = s.scale.y = 0;
 }
 Star.prototype.kill = function(){
-	stars.container.removeChild(this.spr);
+	this.spr.scale.x = this.spr.scale.y = 0;
 	stars.pool.add();
 };
 Star.prototype.live = function(){
@@ -248,14 +251,15 @@ Star.prototype.live = function(){
 		this.spr.y = Math.round(Math.random())*size.y;
 		this.spr.x = Math.random()*size.x;
 	}
-	stars.container.addChild(this.spr);
 };
 
 function Particle(){
 	var s = this.spr = new PIXI.Sprite(particles.tex);
+	s.scale.x = s.scale.y = 0;
+	particles.container.addChild(s);
 }
 Particle.prototype.kill = function(){
-	particles.container.removeChild(this.spr);
+	this.spr.scale.x = this.spr.scale.y = 0;
 };
 
 Particle.prototype.live = function(p){
@@ -268,7 +272,6 @@ Particle.prototype.live = function(p){
 		r: (Math.random()*2-1)/2
 	};
 	this.spr.scale.x = this.spr.scale.y = Math.random()/2 + 0.5;
-	particles.container.addChild(this.spr);
 };
 
 function update(){

@@ -1,8 +1,11 @@
+Enemy.graphicsScale = 1.4;
 function Enemy(type){
 	this.v = {};
 	this.v.x = 0;
 	this.v.y = 0;
-	this.spr = svg(type.source.svg, type.source);
+	this.spr = new PIXI.Sprite(type.tex);
+	this.spr.anchor.x = this.spr.anchor.y = 0.5;
+	this.spr.scale.x = this.spr.scale.y = 1/Enemy.graphicsScale;
 	this.radius = Math.min(this.spr.width,this.spr.height)/2;
 	this.lines = [
 		[{
@@ -45,6 +48,7 @@ function Enemy(type){
 	var k = Object.keys(BulletPatterns);
 	this.bulletpattern = type.pattern;
 	debug.add(this);
+	type.container.addChild(this.spr);
 }
 Enemy.prototype.rotateLine = Player.prototype.rotateLine;
 Enemy.prototype.getRotatedLines = function(){
@@ -390,3 +394,23 @@ EnemyTypes = {
 		scoreThreshold: 6000
 	}
 };
+
+function initEnemies(){
+	for(var i in EnemyTypes){
+		if(EnemyTypes.hasOwnProperty(i)){
+			var type = EnemyTypes[i];
+			type.source.x *= Enemy.graphicsScale;
+			type.source.y *= Enemy.graphicsScale;
+			var g = svg(type.source.svg, type.source, Enemy.graphicsScale);
+			type.tex = g.generateTexture();
+			g.destroy();
+			type.source.x /= Enemy.graphicsScale;
+			type.source.y /= Enemy.graphicsScale;
+			type.container = new PIXI.ParticleContainer(1000, {
+				position:true,
+				scale:false,
+				rotation:true
+			}, 1000);
+		}
+	}
+}
