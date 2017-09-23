@@ -4,12 +4,14 @@ function Battle(){
 
 Battle.prototype.init = function(){
 	player = new Player();
+	player.spr.cacheAsBitmap = true;
 
 	sword = svg("swordsvg",{x:64,y:64*0.1});
 	sword.side = 1;
 	sword.overshoot=0;
 	sword.x = player.spr.x;
 	sword.y = player.spr.y;
+	sword.cacheAsBitmap = true;
 
 	cursor = new PIXI.Graphics();
 	cursor.size = 3;
@@ -96,10 +98,13 @@ Battle.prototype.init = function(){
 			}
 			this.container.y = 32;
 			this.container.x = 32;
+			this.container.cacheAsBitmap = true;
 		},
 		damage: function(){
 			this.current = Math.max(0, this.current-1);
 			this.hearts[this.current].visible = false;
+			this.container.cacheAsBitmap = false;
+			this.container.cacheAsBitmap = true;
 			if(this.current <= 0){
 				//DEAD
 				screen_filter.uniforms.uScanDistort += 1000;
@@ -124,6 +129,8 @@ Battle.prototype.init = function(){
 		heal: function(){
 			if(this.current < this.max){
 				this.hearts[this.current].visible = true;
+				this.container.cacheAsBitmap = false;
+				this.container.cacheAsBitmap = true;
 				this.current += 1;
 			}
 			var s = sounds["heal"].play();
@@ -150,17 +157,18 @@ Battle.prototype.init = function(){
 			this.container.addChild(this.border);
 			this.container.x = 32-12;
 			this.container.y = 48+8;
+			this.fill.beginFill(0xFFFFFF, 1);
+			this.fill.drawRect(0,0,this.width,this.height);
+			this.fill.endFill();
+			this.fill.cacheAsBitmap = true;
 		},
 		update:function(){
 			var restoreTime = clamp(0, (game.main.prevTime - this.lastUse)/500, 1);
 			if(restoreTime >= 1){
 				this.restore();
 			}
-
-			this.fill.clear();
-			this.fill.beginFill(0xFFFFFF, lerp(0.1, 0.2, restoreTime));
-			this.fill.drawRect(0,0,this.current/this.max*this.width,this.height);
-			this.fill.endFill();
+			this.fill.alpha = lerp(0.1, 0.2, restoreTime);
+			this.fill.width = this.current/this.max*this.width;
 
 			this.border.clear();
 			this.border.beginFill(0xFFFFFF,0);
@@ -237,6 +245,7 @@ Battle.prototype.init = function(){
 	scene.addChild(score.container);
 	
 	scene.addChild(player.spr);
+	scene.addChild(player.slashMark);
 	scene.addChild(sword);
 	scene.addChild(cursor);
 	scene.addChild(this.extra);
@@ -250,6 +259,7 @@ Battle.prototype.update = function(){
 	if(!player.dead){
 		score.add(1/60);
 		stamina.update();
+		player.slashMark.visible = false;
 	}
 	this.extra.clear();
 	mouse.correctedPos = {
@@ -719,5 +729,8 @@ Battle.prototype.update = function(){
 		delete player.spr;
 		sword.parent.removeChild(sword);
 		sword.destroy();
+		player.slashMark.parent.removeChild(player.slashMark);
+		player.slashMark.destroy();
+	}
 	}
 };

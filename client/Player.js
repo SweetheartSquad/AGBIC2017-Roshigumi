@@ -45,6 +45,24 @@ function Player(){
 		}]
 	];
 	debug.add(this);
+
+	this.slashMark = new PIXI.Graphics();
+	this.slashMark.beginFill(0xFFFFFF,0.1); 
+	var arc={
+		wide:125,
+		long:100
+	};
+	this.slashMark.moveTo(arc.long*0.1,-arc.wide/2);
+	this.slashMark.quadraticCurveTo(arc.long,0, arc.long*0.1,arc.wide/2);
+
+	for(var i = 0; i < 8; ++i){
+		this.slashMark.beginFill(0xFFFFFF,0); 
+		this.slashMark.lineStyle(i,0xFFFFFF,1.0);
+		this.slashMark.moveTo(arc.long*0.1,-arc.wide/2);
+		this.slashMark.quadraticCurveTo(arc.long*(i/8),0, arc.long*0.1,arc.wide/2);
+	}
+	this.slashMark.endFill();
+	this.slashMark.cacheAsBitmap = true;
 }
 Player.prototype.attack = function(){
 	var s = sounds["slash"].play();
@@ -56,33 +74,10 @@ Player.prototype.attack = function(){
 	sword.y = lerp(sword.y, this.spr.y, 0.9);
 	sword.rotation = slerp(sword.rotation,this.trotation + Math.PI*sword.side/2 * 0.9*(1.0+sword.overshoot), 0.99);
 	sword.overshoot = 0.3;
-	var g = new PIXI.Graphics();
-	g.beginFill(0xFFFFFF,0.1); 
-	//g.lineStyle(20,0xFFFFFF,0.5);
-	var arc={
-		wide:125,
-		long:100
-	};
-	g.moveTo(arc.long*0.1,-arc.wide/2);
-	g.quadraticCurveTo(arc.long,0, arc.long*0.1,arc.wide/2);
-
-	for(var i = 0; i < 8; ++i){
-		g.beginFill(0xFFFFFF,0); 
-		g.lineStyle(i,0xFFFFFF,1.0);
-		g.moveTo(arc.long*0.1,-arc.wide/2);
-		g.quadraticCurveTo(arc.long*(i/8),0, arc.long*0.1,arc.wide/2);
-	}
-
-	g.endFill();
-	scene.addChild(g);
-	g.rotation = this.trotation;
-	g.x = this.spr.x;
-	g.y = this.spr.y;
-	g.alpha = 1;
-	setTimeout(function(){
-		scene.removeChild(g);
-		g.destroy();
-	},0);
+	this.slashMark.visible = true;
+	this.slashMark.rotation = this.trotation;
+	this.slashMark.x = this.spr.x;
+	this.slashMark.y = this.spr.y;
 };
 Player.prototype.block = function(){
 	sword.x = lerp(sword.x, this.spr.x + Math.cos(this.spr.rotation)*25 + Math.cos(this.spr.rotation-Math.PI/2*sword.side)*38, 0.9);
