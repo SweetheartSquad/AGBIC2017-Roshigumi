@@ -153,12 +153,18 @@ function init(){
 
 	
 	//border
-	var g = new PIXI.Graphics();
-	g.beginFill(0x0,0);
-	g.lineStyle(1,0xFFFFFF,1);
-	g.drawRect(2,2,size.x-3,size.y-3);
-	g.endFill();
-	scene.addChild(g);
+	(function(){
+		var g = new PIXI.Graphics();
+		g.beginFill(0,0);
+		g.lineStyle(0,0xFFFFFF,1);
+		g.drawRect(0,0,size.x,size.y);
+		g.lineStyle(2,0xFFFFFF,1);
+		g.drawRect(1,1,size.x-2,size.y-2);
+		g.endFill();
+		t = g.generateTexture();
+		scene.addChild(new PIXI.Sprite(t));
+		g.destroy();
+	}());
 
 	menu = new Menu();
 	
