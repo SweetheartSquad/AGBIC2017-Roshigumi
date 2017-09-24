@@ -241,7 +241,7 @@ Battle.prototype.init = function(){
 		},
 		update:function(){
 			if(this.current > this.last){
-				var l = Math.ceil(this.last*100).toString(10);
+				var l = this.getScoreString(this.last);
 				while(l.length < 10){
 					l = "0"+l;
 				}
@@ -251,7 +251,7 @@ Battle.prototype.init = function(){
 				}
 
 
-				l = Math.ceil(this.current*100).toString(10);
+				l = this.getScoreString(this.current);
 				while(l.length < 10){
 					l = "0"+l;
 				}
@@ -261,6 +261,12 @@ Battle.prototype.init = function(){
 				}
 				this.last = this.current;
 			}
+		},
+		getScoreString: function(s){
+			if(arguments.length < 1){
+				s = this.current;
+			}
+			return Math.ceil(s*100).toString(10);
 		}
 	};
 	score.init();
@@ -763,6 +769,7 @@ Battle.prototype.update = function(){
 	}
 
 	if(player.dead && player.spr){
+		this.deadTime = game.main.curTime;
 		player.spr.parent.removeChild(player.spr);
 		player.spr.destroy();
 		delete player.spr;
@@ -770,6 +777,49 @@ Battle.prototype.update = function(){
 		sword.destroy();
 		player.slashMark.parent.removeChild(player.slashMark);
 		player.slashMark.destroy();
+	}
+	if(this.deadTime){
+		if(!this.highScore.gameOver && game.main.curTime-this.deadTime > 2000){
+			var t=this.highScore.gameOver = text("GAME OVER", {x:20,y:20}, 0.25, {x:0,y:0});
+			scene.addChild(t);
+			t.x = size.x/2;
+			t.y = size.y/2-40;
+		}
+		if(!this.highScore.score && game.main.curTime-this.deadTime > 3000){
+			var t=this.highScore.score = text("Score-"+score.getScoreString(), {x:10,y:10}, 0.5, {x:0,y:0});
+			scene.addChild(t);
+			t.x = size.x/2;
+			t.y = size.y/2+30-40;
+		}
+		if(!this.highScore.best && game.main.curTime-this.deadTime > 4000){
+			var t=this.highScore.best = text("Best-"+score.getScoreString(storage.getItem("highscore") || 0), {x:10,y:10}, 0.5, {x:0,y:0});
+			scene.addChild(t);
+			t.x = size.x/2;
+			t.y = size.y/2+50-40;
+		}
+		if(storage.getItem("highscore") < score.current){
+			if(!this.highScore.newBest && game.main.curTime-this.deadTime > 5000){
+				var t=this.highScore.newBest = text("♥New best♥", {x:20,y:20}, 0.25, {x:0,y:0});
+				scene.addChild(t);
+				t.x = size.x/2;
+				t.y = size.y/2+80-40;
+				storage.setItem("highscore", score.current);
+			}
+		}else if(!this.highScore.newBest){
+			if(!this.highScore.restart && game.main.curTime-this.deadTime > 5000){
+				var t=this.highScore.restart = text("attack-restart  block-menu", {x:10,y:10}, 0.5, {x:0,y:0});
+				scene.addChild(t);
+				t.x = size.x/2;
+				t.y = size.y/2+80-40;
+			}
+		}else{
+			if(!this.highScore.restart && game.main.curTime-this.deadTime > 6000){
+				var t=this.highScore.restart = text("attack-restart  block-menu", {x:10,y:10}, 0.5, {x:0,y:0});
+				scene.addChild(t);
+				t.x = size.x/2;
+				t.y = size.y/2+110-40;
+			}
+		}
 	}
 	}
 };
