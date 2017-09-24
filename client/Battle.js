@@ -846,6 +846,7 @@ Battle.prototype.update = function(){
 			if(getJustAction1()){
 				screen_filter.uniforms.uScanDistort += 200;
 				screen_filter.uniforms.uChrAbbSeparation += 100;
+				sounds["music"].fade(sounds["music"].volume(), 1, 1000);
 
 				this.deinit();
 				battle = new Battle();
@@ -853,6 +854,7 @@ Battle.prototype.update = function(){
 				screen_filter.uniforms.uScanDistort = 200;
 				screen_filter.uniforms.uLensDistort = 100;
 				screen_filter.uniforms.uChrAbbSeparation = 1000;
+				sounds["music"].fade(sounds["music"].volume(), 1, 1000);
 
 				this.deinit();
 				menu = new Menu();
