@@ -656,19 +656,9 @@ Battle.prototype.update = function(){
 		}
 
 		if(!player.dead){
-			// blocked
-			//var l = lineToLine(
-			//	blockLine[0].x,
-			//	blockLine[0].y,
-			//	blockLine[1].x,
-			//	blockLine[1].y,
-			//	b.spr.x - bullets.radius*Math.cos(Math.atan2(b.v.y,b.v.x)),
-			//	b.spr.y - bullets.radius*Math.sin(Math.atan2(b.v.y,b.v.x)),
-			//	b.spr.x + b.v.x + bullets.radius*Math.cos(Math.atan2(b.v.y,b.v.x)),
-			//	b.spr.y + b.v.y + bullets.radius*Math.sin(Math.atan2(b.v.y,b.v.x))
-			//);
 			var l = circToCirc(b.spr.x,b.spr.y,bullets.radius, player.spr.x,player.spr.y,player.radius*3);
 			if(l && player.blocking){
+				// blocked
 				b.dead = true;
 				var s = sounds["blocked"].play();
 				howlPos(sounds["blocked"],s, b.spr.x, b.spr.y, 0);
@@ -695,6 +685,7 @@ Battle.prototype.update = function(){
 				sword.y -= sword.width*Math.sin(sword.rotation)/2;
 				stamina.drain(1);
 			}else if(!player.invincible && circToCirc(b.spr.x,b.spr.y,bullets.radius, player.spr.x,player.spr.y,player.radius)){
+				// hit player
 				b.dead = true;
 				health.damage();
 				screen_filter.uniforms.uScanDistort += 80;
