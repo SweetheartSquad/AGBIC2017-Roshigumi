@@ -165,6 +165,7 @@ Menu.prototype.init = function(){
 	this.thing.y = size.y/2;
 	this.container.addChild(this.thing);
 
+	optionsMenu[3].text = scaleModes[scaleMode];
 	this.setOptions(mainMenu);
 
 	scene.addChild(this.container);
