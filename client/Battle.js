@@ -854,5 +854,8 @@ Battle.prototype.deinit = function(){
 			}
 		}
 	}
+	if(debug.enabled){
+		debug.drawList.length = 0;
+	}
 	delete battle;
 }
