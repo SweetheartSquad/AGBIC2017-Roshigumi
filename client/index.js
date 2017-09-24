@@ -12,7 +12,7 @@ var decay = 0.85;
 var sounds=[];
 
 var storage = window.localStorage;
-var scaleMode = storage.getItem("scaleMode") || 1;
+var scaleMode = parseInt(storage.getItem("scaleMode")) || 1;
 var scaleModes = [
 	"Largest Multiple",
 	"Scale to Fit",
