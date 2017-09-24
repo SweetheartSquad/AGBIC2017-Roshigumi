@@ -179,6 +179,9 @@ Menu.prototype.init = function(){
 	scene.addChild(this.container);
 };
 Menu.prototype.setOptions = function(options, defaultSelection){
+	screen_filter.uniforms.uScanDistort += 20;
+	screen_filter.uniforms.uChrAbbSeparation += 10;
+
 	defaultSelection = defaultSelection || 0;
 	if(this.options){
 		for(var i = 0; i < this.options.length; ++i){
