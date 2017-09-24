@@ -8,12 +8,20 @@ var palettes = [
 		colour: [1.0,1.0,1.0]
 	},
 	{
-		name: "infrared",
-		colour: [3, 1, -3]
-	},
-	{
 		name: "c64",
 		colour: [-0.75, -0.25, 0.25]
+	},
+	{
+		name: "neon",
+		colour: [0.5,0,-1]
+	},
+	{
+		name: "witch",
+		colour: [0.5,-0.3,10]
+	},
+	{
+		name: "infrared",
+		colour: [-3,-0.5,0.8]
 	},
 	{
 		name: "dark-forest",
@@ -28,16 +36,16 @@ var palettes = [
 		colour: [0.1894904492215712, 0.40649907600077917, -0.35009832345733694]
 	},
 	{
-		name: "shimmer",
-		colour: [-100, -100, -100]
-	},
-	{
 		name: "cream",
 		colour: [1,0.6,0.6]
 	},
 	{
 		name: "industrial",
 		colour: [0.48930425124300214, 5.4162016834965385, 6.912143168052054]
+	},
+	{
+		name: "shimmer",
+		colour: [-100, -100, -100]
 	}
 ];
 var currentPalette = 0;
