@@ -155,13 +155,13 @@ Player.prototype.debug = function(){
 	}
 };
 Player.prototype.update = function(){
-	player.spr.x += player.v.x;
-	player.spr.y += player.v.y;
-	player.v.x *= 0.95;
-	player.v.y *= 0.95;
-	player.trotation = Math.atan2(
-	 	mouse.correctedPos.y - player.spr.y,
-	 	mouse.correctedPos.x - player.spr.x
+	this.spr.x += this.v.x;
+	this.spr.y += this.v.y;
+	this.v.x *= 0.95;
+	this.v.y *= 0.95;
+	this.trotation = Math.atan2(
+	 	mouse.correctedPos.y - this.spr.y,
+	 	mouse.correctedPos.x - this.spr.x
 	);
-	player.spr.rotation = slerp(player.spr.rotation,player.trotation, 0.2);
+	this.spr.rotation = slerp(this.spr.rotation,this.trotation, 0.2);
 };
