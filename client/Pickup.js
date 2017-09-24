@@ -26,7 +26,7 @@ Pickup.prototype.action = function(){
 
 Pickup.types = {
 	heart: {
-		svg: "heart",
+		svg: "♥",
 		action: function(p){
 			score.add(100);
 

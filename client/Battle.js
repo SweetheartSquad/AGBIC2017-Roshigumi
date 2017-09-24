@@ -92,7 +92,7 @@ Battle.prototype.init = function(){
 		max: 3,
 		init: function(){
 			for(var i = 0; i < this.max; ++i){
-				var h = svg("heart",{x:24,y:24});
+				var h = svg("♥",{x:24,y:24});
 				h.x = 32*i;
 				this.hearts.push(h);
 				this.container.addChild(h);
