@@ -165,6 +165,12 @@ Player.prototype.update = function(){
 	 	mouse.correctedPos.x - this.spr.x
 	);
 	this.spr.rotation = slerp(this.spr.rotation,this.trotation, 0.2);
+	this.slashMark.visible = false;
+
+	if(this.invincible > 0){
+		this.invincible -= 1;
+		this.spr.visible = this.invincible%6<3;
+	}
 
 	for(var i = this.effects.length-1; i >= 0; --i){
 		var e = this.effects[i];

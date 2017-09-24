@@ -318,7 +318,6 @@ Battle.prototype.update = function(){
 	if(!player.dead){
 		score.add(1/60);
 		stamina.update();
-		player.slashMark.visible = false;
 	}
 	this.extra.clear();
 	mouse.correctedPos = {
@@ -332,33 +331,6 @@ Battle.prototype.update = function(){
 		player.v.x += input.move.x/3;
 		player.v.y += input.move.y/3;
 		player.update();
-	}
-
-	
-
-	////////////
-	// cursor //
-	////////////
-	cursor.clear();
-	if(!player.dead && !player.blocking){
-		cursor.beginFill(0x0,0.0);
-		cursor.lineStyle(1,0xFFFFFF,1);
-		cursor.moveTo(mouse.correctedPos.x,mouse.correctedPos.y-cursor.size);
-		cursor.lineTo(mouse.correctedPos.x,mouse.correctedPos.y+cursor.size);
-		cursor.moveTo(mouse.correctedPos.x-cursor.size,mouse.correctedPos.y);
-		cursor.lineTo(mouse.correctedPos.x+cursor.size,mouse.correctedPos.y);
-		cursor.endFill();
-		var l = player.getRotatedAttackLines()[2];
-		cursor.beginFill(0x0,0.0);
-		cursor.lineStyle(0.1,0xFFFFFF,1);
-		cursor.moveTo(mouse.correctedPos.x+(Math.random()*2-1)*3,mouse.correctedPos.y+(Math.random()*2-1)*3);
-		cursor.lineTo(player.spr.x + Math.cos(player.spr.rotation)*player.radius, player.spr.y + Math.sin(player.spr.rotation)*player.radius);
-		cursor.endFill();
-		cursor.beginFill(0x0,0.0);
-		cursor.lineStyle(0.2,0xFFFFFF,1);
-		cursor.moveTo(mouse.correctedPos.x+(Math.random()*2-1)*2,mouse.correctedPos.y+(Math.random()*2-1)*2);
-		cursor.lineTo(player.spr.x + Math.cos(player.spr.rotation)*player.radius, player.spr.y + Math.sin(player.spr.rotation)*player.radius);
-		cursor.endFill();
 	}
 
 	if(!player.dead){
@@ -534,15 +506,29 @@ Battle.prototype.update = function(){
 		}
 	}
 
-
-
-
-
-	if(!player.dead){
-		if(player.invincible > 0){
-			player.invincible -= 1;
-			player.spr.visible = player.invincible%6<3;
-		}
+	////////////
+	// cursor //
+	////////////
+	cursor.clear();
+	if(!player.dead && !player.blocking){
+		cursor.beginFill(0x0,0.0);
+		cursor.lineStyle(1,0xFFFFFF,1);
+		cursor.moveTo(mouse.correctedPos.x,mouse.correctedPos.y-cursor.size);
+		cursor.lineTo(mouse.correctedPos.x,mouse.correctedPos.y+cursor.size);
+		cursor.moveTo(mouse.correctedPos.x-cursor.size,mouse.correctedPos.y);
+		cursor.lineTo(mouse.correctedPos.x+cursor.size,mouse.correctedPos.y);
+		cursor.endFill();
+		var l = player.getRotatedAttackLines()[2];
+		cursor.beginFill(0x0,0.0);
+		cursor.lineStyle(0.1,0xFFFFFF,1);
+		cursor.moveTo(mouse.correctedPos.x+(Math.random()*2-1)*3,mouse.correctedPos.y+(Math.random()*2-1)*3);
+		cursor.lineTo(player.spr.x + Math.cos(player.spr.rotation)*player.radius, player.spr.y + Math.sin(player.spr.rotation)*player.radius);
+		cursor.endFill();
+		cursor.beginFill(0x0,0.0);
+		cursor.lineStyle(0.2,0xFFFFFF,1);
+		cursor.moveTo(mouse.correctedPos.x+(Math.random()*2-1)*2,mouse.correctedPos.y+(Math.random()*2-1)*2);
+		cursor.lineTo(player.spr.x + Math.cos(player.spr.rotation)*player.radius, player.spr.y + Math.sin(player.spr.rotation)*player.radius);
+		cursor.endFill();
 	}
 
 	/////////////
