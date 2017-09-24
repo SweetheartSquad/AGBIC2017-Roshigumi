@@ -232,6 +232,15 @@ Bullet.lastShot = 0;
 Bullet.prototype.live = function(e){
 	this.spr.x = e.spr.x;
 	this.spr.y = e.spr.y;
+	if(
+		this.spr.x < 0 
+		|| this.spr.x > size.x
+		|| this.spr.y < 0
+		|| this.spr.y > size.y
+	){
+		this.dead = true;
+		return;
+	}
 	this.spr.rotation = Math.random()*Math.PI*2;
 	bullets.container.addChild(this.spr);
 	debug.add(this);
