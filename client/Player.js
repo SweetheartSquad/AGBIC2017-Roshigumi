@@ -63,6 +63,7 @@ function Player(){
 	}
 	this.slashMark.endFill();
 	this.slashMark.cacheAsBitmap = true;
+	this.effects = [];
 }
 Player.prototype.attack = function(){
 	var s = sounds["slash"].play();
@@ -164,4 +165,14 @@ Player.prototype.update = function(){
 	 	mouse.correctedPos.x - this.spr.x
 	);
 	this.spr.rotation = slerp(this.spr.rotation,this.trotation, 0.2);
+
+	for(var i = this.effects.length-1; i >= 0; --i){
+		var e = this.effects[i];
+		e.every();
+		e.time -= 1;
+		if(e.time <= 0){
+			e.complete();
+			this.effects.splice(i,1);
+		}
+	}
 };

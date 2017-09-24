@@ -42,5 +42,43 @@ Pickup.types = {
 			health.heal();
 			score.add(100);
 		}
+	},
+	length: {
+		svg: "pickup_sword",
+		action: function(p){
+			var scaleBy = 1.5;
+			blur_filter.uniforms.uBlurAdd += 0.1;
+			screen_filter.uniforms.uChrAbbSeparation += 1000;
+			screen_filter.uniforms.uInvert -= 10;
+			for(var i = 0; i < player.attackLines.length; ++i){
+				player.attackLines[i][0].x *= scaleBy;
+				player.attackLines[i][0].y *= scaleBy;
+				player.attackLines[i][1].x *= scaleBy;
+				player.attackLines[i][1].y *= scaleBy;
+			}
+			player.slashMark.scale.x *= scaleBy;
+			player.slashMark.scale.y *= scaleBy;
+			
+			player.effects.push({
+				every: function(){
+					sword.scale.x += Math.sign(sword.scale.x)*scaleBy*0.02;
+					sword.scale.y += Math.sign(sword.scale.y)*scaleBy*0.02;
+				},
+				complete: function(){
+					blur_filter.uniforms.uBlurAdd -= 0.1;
+					screen_filter.uniforms.uScanDistort += 20;
+					screen_filter.uniforms.uInvert -= 10;
+					for(var i = 0; i < player.attackLines.length; ++i){
+						player.attackLines[i][0].x /= scaleBy;
+						player.attackLines[i][0].y /= scaleBy;
+						player.attackLines[i][1].x /= scaleBy;
+						player.attackLines[i][1].y /= scaleBy;
+					}
+					player.slashMark.scale.x /= scaleBy;
+					player.slashMark.scale.y /= scaleBy;
+				},
+				time: 600
+			});
+		}
 	}
 };

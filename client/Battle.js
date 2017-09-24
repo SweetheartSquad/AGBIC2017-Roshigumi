@@ -431,6 +431,31 @@ Battle.prototype.update = function(){
 							h.spr.y = e.spr.y;
 							h.v.x = e.v.x;
 							h.v.y = e.v.y;
+						}else{
+							// powerups
+							var allowPowerup = true;
+							if(player.effects.length > 0){
+								allowPowerup = false;
+							}else{
+								for(var i = 0; i < this.pickups.length; ++i){
+									if(this.pickups[i].type !== Pickup.types.heart){
+										allowPowerup = false;
+										break;
+									}
+								}
+							}
+							if(allowPowerup){
+								if(Math.random() < 0.1){
+									var t = Pickup.types.length;
+									var h = new Pickup(t);
+									this.pickups.push(h);
+									this.container.addChild(h.spr);
+									h.spr.x = e.spr.x;
+									h.spr.y = e.spr.y;
+									h.v.x = e.v.x;
+									h.v.y = e.v.y;
+								}
+							}
 						}
 
 						score.add(100);
