@@ -44,7 +44,7 @@ Pickup.types = {
 			health.heal();
 		}
 	},
-	length: {
+	swordExtend: {
 		svg: "pickup_sword",
 		action: function(p){
 			score.add(100);
@@ -110,4 +110,11 @@ Pickup.types = {
 			});
 		}
 	}
+};
+Pickup.getRandomPowerup = function(){
+	var t=[
+		this.types.swordExtend,
+		this.types.slowdown
+	];
+	return t[Math.floor(Math.random()*t.length)];
 };

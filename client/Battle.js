@@ -4,6 +4,7 @@ function Battle(){
 
 Battle.prototype.init = function(){
 	this.kills = 0;
+	this.powerupChance = 0.1;
 	this.container = new PIXI.Container();
 	player = new Player();
 	player.spr.cacheAsBitmap = true;
@@ -456,8 +457,9 @@ Battle.prototype.update = function(){
 								}
 							}
 							if(allowPowerup){
-								if(Math.random() < 0.1){
-									var t = Pickup.types.length;
+								if(Math.random() < this.powerupChance){
+									this.powerupChance = 0;
+									var t = Pickup.getRandomPowerup();
 									var h = new Pickup(t);
 									this.pickups.push(h);
 									this.container.addChild(h.spr);
@@ -465,6 +467,8 @@ Battle.prototype.update = function(){
 									h.spr.y = e.spr.y;
 									h.v.x = e.v.x;
 									h.v.y = e.v.y;
+								}else{
+									this.powerupChance += 0.05;
 								}
 							}
 						}
