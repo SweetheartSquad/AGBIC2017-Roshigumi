@@ -219,14 +219,14 @@ Menu.prototype.next = function(){
 		this.move(1);
 	}while(!this.options[this.selection].action);
 	var s=sounds["menu"].play();
-	sounds["menu"].rate(1 + (Math.random()*2-1)*0.1,s);
+	sounds["menu"].rate(0.85 + (Math.random()*2-1)*0.05,s);
 };
 Menu.prototype.prev = function(){
 	do{
 		this.move(-1);
 	}while(!this.options[this.selection].action);
 	var s=sounds["menu"].play();
-	sounds["menu"].rate(1 + (Math.random()*2-1)*0.1,s);
+	sounds["menu"].rate(1.15 + (Math.random()*2-1)*0.05,s);
 };
 Menu.prototype.move = function(by){
 	this.deselect(this.selection);
