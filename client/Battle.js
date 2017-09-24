@@ -432,7 +432,7 @@ Battle.prototype.update = function(){
 
 						// health
 						if(Math.random()+Math.min(0.19,score.current/10000) < 0.2*(1+(health.max-health.current)/health.max)){
-							var h = new Pickup();
+							var h = new Pickup(Pickup.types.heart);
 							this.pickups.push(h);
 							this.container.addChild(h.spr);
 							h.spr.x = e.spr.x;
@@ -626,19 +626,7 @@ Battle.prototype.update = function(){
 		// pickup the pickup
 		if(!player.dead && p.delay <= 0 && circToCirc(player.spr.x,player.spr.y,player.radius, p.spr.x,p.spr.y,Pickup.radius)){
 			// effect
-			blur_filter.uniforms.uBlurAdd += 0.1;
-			screen_filter.uniforms.uChrAbbSeparation += 1000;
-			screen_filter.uniforms.uInvert += 1;
-			this.extra.beginFill(0,0);
-			this.extra.lineStyle(5,0xFFFFFF,1);
-			this.extra.drawCircle(p.spr.x, p.spr.y, p.radius*2);
-			this.extra.endFill();
-			this.extra.lineStyle(3,0xFFFFFF,1);
-			this.extra.drawCircle(p.spr.x, p.spr.y, p.radius*3);
-			this.extra.endFill();
-
-			health.heal();
-			score.add(100);
+			p.action();
 
 			// remove
 			p.spr.parent.removeChild(p.spr);
