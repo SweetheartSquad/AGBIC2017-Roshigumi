@@ -123,7 +123,7 @@ Pickup.types = {
 				every: function(){
 					screen_filter.uniforms.uChrAbbSeparation += 3;
 					screen_filter.uniforms.uInvert += 0.01;
-					var r = (Math.random()*2-1)*Math.PI;
+					var r = (this.time*0.9)%(Math.PI*2);
 					player.spr.rotation += r;
 					player.block();
 					player.spr.rotation -= r;

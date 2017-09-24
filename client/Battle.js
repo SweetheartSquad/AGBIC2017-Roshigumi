@@ -334,17 +334,7 @@ Battle.prototype.update = function(){
 	}
 
 	if(!player.dead){
-		sword.x = lerp(sword.x, player.spr.x + Math.cos(player.spr.rotation+Math.PI/2*sword.side)*20, 0.05);
-		sword.y = lerp(sword.y, player.spr.y + Math.sin(player.spr.rotation+Math.PI/2*sword.side)*20, 0.05);
-		sword.trotation = Math.atan2(
-			mouse.correctedPos.y - sword.y,
-			mouse.correctedPos.x - sword.x
-		);
-		sword.rotation = slerp(sword.rotation,sword.trotation + Math.PI*sword.side/2 * 0.9*(1.0+sword.overshoot), 0.1);
-		sword.overshoot = lerp(sword.overshoot,0,0.1);
-		sword.scale.x = lerp(sword.scale.x, 0.7, 0.05);
-		sword.scale.y = lerp(sword.scale.y, 0.7*sword.side, 0.05);
-		if(getAction2()){
+		if(!player.blocking && getAction2()){
 			if(stamina.current > 0.3){
 				if(getJustAction2()){
 					sword.side *= -1;
