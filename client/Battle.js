@@ -777,6 +777,7 @@ Battle.prototype.update = function(){
 		sword.destroy();
 		player.slashMark.parent.removeChild(player.slashMark);
 		player.slashMark.destroy();
+		this.highScore = {};
 	}
 	if(this.deadTime){
 		if(!this.highScore.gameOver && game.main.curTime-this.deadTime > 2000){
