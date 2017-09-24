@@ -85,7 +85,7 @@ Pickup.types = {
 		}
 	},
 	slowdown: {
-		svg: 's', // TODO: add graphic
+		svg: 'clock',
 		action: function(p){
 			score.add(100);
 
