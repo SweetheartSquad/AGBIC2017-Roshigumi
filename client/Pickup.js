@@ -44,8 +44,8 @@ Pickup.types = {
 			health.heal();
 		}
 	},
-	swordExtend: {
-		svg: "pickup_sword",
+	extend: {
+		svg: "extend",
 		action: function(p){
 			score.add(100);
 
@@ -140,7 +140,7 @@ Pickup.types = {
 	}
 };
 Pickup.powerups = [
-	Pickup.types.swordExtend,
+	Pickup.types.extend,
 	Pickup.types.slowdown,
 	Pickup.types.shield
 ];
