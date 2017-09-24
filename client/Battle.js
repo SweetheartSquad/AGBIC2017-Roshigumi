@@ -3,6 +3,7 @@ function Battle(){
 }
 
 Battle.prototype.init = function(){
+	this.container = new PIXI.Container();
 	player = new Player();
 	player.spr.cacheAsBitmap = true;
 
@@ -107,24 +108,27 @@ Battle.prototype.init = function(){
 			this.container.cacheAsBitmap = true;
 			if(this.current <= 0){
 				//DEAD
-				screen_filter.uniforms.uScanDistort += 1000;
-				screen_filter.uniforms.uChrAbbSeparation += 1000;
-				screen_filter.uniforms.uLensDistort += 1;
-				for(var i = 0; i < 20+Math.random()*20; ++i){
-					var p = particles.pool.add(player);
-				}
-				player.dead=true;
-				if(debug.enabled){
-					debug.drawList.splice(debug.drawList.indexOf(player),1);
-				}
-				var s = sounds["death"].play();
-				howlPos(sounds["death"],s, player.spr.x,player.spr.y,0);
-				
-				sounds["music"].fade(1,0.1,100);
+				this.kill();
 			}else{
 				var s = sounds["hurt"].play();
 				howlPos(sounds["hurt"],s, player.spr.x,player.spr.y,0);
 			}
+		},
+		kill: function(){
+			screen_filter.uniforms.uScanDistort += 1000;
+			screen_filter.uniforms.uChrAbbSeparation += 1000;
+			screen_filter.uniforms.uLensDistort += 1;
+			for(var i = 0; i < 20+Math.random()*20; ++i){
+				var p = particles.pool.add(player);
+			}
+			player.dead=true;
+			if(debug.enabled){
+				debug.drawList.splice(debug.drawList.indexOf(player),1);
+			}
+			var s = sounds["death"].play();
+			howlPos(sounds["death"],s, player.spr.x,player.spr.y,0);
+			
+			sounds["music"].fade(1,0.1,100);
 		},
 		heal: function(){
 			if(this.current < this.max){
@@ -277,27 +281,29 @@ Battle.prototype.init = function(){
 
 	for(var i in EnemyTypes){
 		if(EnemyTypes.hasOwnProperty(i)){
-			scene.addChild(EnemyTypes[i].container);
+			this.container.addChild(EnemyTypes[i].container);
 		}
 	}
 
-	scene.addChild(bullets.container);
-	scene.addChild(stars.container);
-	scene.addChild(particles.container);
+	this.container.addChild(bullets.container);
+	this.container.addChild(stars.container);
+	this.container.addChild(particles.container);
 
-	scene.addChild(health.container);
-	scene.addChild(stamina.container);
-	scene.addChild(score.container);
+	this.container.addChild(health.container);
+	this.container.addChild(stamina.container);
+	this.container.addChild(score.container);
 	
-	scene.addChild(player.spr);
-	scene.addChild(player.slashMark);
-	scene.addChild(sword);
-	scene.addChild(cursor);
-	scene.addChild(this.extra);
+	this.container.addChild(player.spr);
+	this.container.addChild(player.slashMark);
+	this.container.addChild(sword);
+	this.container.addChild(cursor);
+	this.container.addChild(this.extra);
 
 	if(debug.enabled){
-		scene.addChild(debug);
+		this.container.addChild(debug);
 	}
+
+	scene.addChild(this.container);
 };
 
 Battle.prototype.update = function(){
@@ -428,7 +434,7 @@ Battle.prototype.update = function(){
 						if(Math.random()+Math.min(0.19,score.current/10000) < 0.2*(1+(health.max-health.current)/health.max)){
 							var h = new Pickup();
 							this.pickups.push(h);
-							scene.addChild(h.spr);
+							this.container.addChild(h.spr);
 							h.spr.x = e.spr.x;
 							h.spr.y = e.spr.y;
 							h.v.x = e.v.x;
@@ -782,26 +788,26 @@ Battle.prototype.update = function(){
 	if(this.deadTime){
 		if(!this.highScore.gameOver && game.main.curTime-this.deadTime > 2000){
 			var t=this.highScore.gameOver = text("GAME OVER", {x:20,y:20}, 0.25, {x:0,y:0});
-			scene.addChild(t);
+			this.container.addChild(t);
 			t.x = size.x/2;
 			t.y = size.y/2-40;
 		}
 		if(!this.highScore.score && game.main.curTime-this.deadTime > 3000){
 			var t=this.highScore.score = text("Score-"+score.getScoreString(), {x:10,y:10}, 0.5, {x:0,y:0});
-			scene.addChild(t);
+			this.container.addChild(t);
 			t.x = size.x/2;
 			t.y = size.y/2+30-40;
 		}
 		if(!this.highScore.best && game.main.curTime-this.deadTime > 4000){
 			var t=this.highScore.best = text("Best-"+score.getScoreString(storage.getItem("highscore") || 0), {x:10,y:10}, 0.5, {x:0,y:0});
-			scene.addChild(t);
+			this.container.addChild(t);
 			t.x = size.x/2;
 			t.y = size.y/2+50-40;
 		}
 		if(storage.getItem("highscore") < score.current){
 			if(!this.highScore.newBest && game.main.curTime-this.deadTime > 5000){
 				var t=this.highScore.newBest = text("♥New best♥", {x:20,y:20}, 0.25, {x:0,y:0});
-				scene.addChild(t);
+				this.container.addChild(t);
 				t.x = size.x/2;
 				t.y = size.y/2+80-40;
 				storage.setItem("highscore", score.current);
@@ -809,18 +815,48 @@ Battle.prototype.update = function(){
 		}else if(!this.highScore.newBest){
 			if(!this.highScore.restart && game.main.curTime-this.deadTime > 5000){
 				var t=this.highScore.restart = text("attack-restart  block-menu", {x:10,y:10}, 0.5, {x:0,y:0});
-				scene.addChild(t);
+				this.container.addChild(t);
 				t.x = size.x/2;
 				t.y = size.y/2+80-40;
 			}
 		}else{
 			if(!this.highScore.restart && game.main.curTime-this.deadTime > 6000){
 				var t=this.highScore.restart = text("attack-restart  block-menu", {x:10,y:10}, 0.5, {x:0,y:0});
-				scene.addChild(t);
+				this.container.addChild(t);
 				t.x = size.x/2;
 				t.y = size.y/2+110-40;
 			}
 		}
-	}
+
+		if(this.highScore.restart){
+			if(getJustAction1()){
+				screen_filter.uniforms.uScanDistort += 200;
+				screen_filter.uniforms.uChrAbbSeparation += 100;
+
+				this.deinit();
+				battle = new Battle();
+			}else if(getJustAction2()){
+				screen_filter.uniforms.uScanDistort = 200;
+				screen_filter.uniforms.uLensDistort = 100;
+				screen_filter.uniforms.uChrAbbSeparation = 1000;
+
+				this.deinit();
+				menu = new Menu();
+			}
+		}
 	}
 };
+
+Battle.prototype.deinit = function(){
+	this.container.parent.removeChild(this.container);
+	this.container.destroy();
+	for(var i in EnemyTypes){
+		if(EnemyTypes.hasOwnProperty(i)){
+			var c = EnemyTypes[i].container;
+			while(c.children.length > 0){
+				c.removeChildAt(0).destroy();
+			}
+		}
+	}
+	delete battle;
+}
