@@ -86,6 +86,9 @@ Player.prototype.block = function(){
 	sword.trotation = this.spr.rotation + Math.PI/2*sword.side;
 	sword.rotation = slerp(sword.rotation, sword.trotation, 1.0);
 	screen_filter.uniforms.uScanDistort += 0.1;
+	sword.scale.x = sword.scale.y = 1;
+	sword.overshoot = 0;
+	this.blocking = true;
 };
 Player.prototype.rotateLine = function(l){
 	var l = l.slice();
@@ -166,6 +169,7 @@ Player.prototype.update = function(){
 	);
 	this.spr.rotation = slerp(this.spr.rotation,this.trotation, 0.2);
 	this.slashMark.visible = false;
+	this.blocking = false;
 
 	if(this.invincible > 0){
 		this.invincible -= 1;

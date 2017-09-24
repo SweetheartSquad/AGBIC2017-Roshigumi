@@ -97,7 +97,7 @@ Pickup.types = {
 
 			player.effects.push({
 				every: function(){
-					screen_filter.uniforms.uInvert = 1;
+					screen_filter.uniforms.uInvert += 0.1;
 				},
 				complete: function(){
 					blur_filter.uniforms.uBlurAdd -= 0.1;
@@ -109,12 +109,41 @@ Pickup.types = {
 				time: 600
 			});
 		}
+	},
+	shield: {
+		svg: 'shield',
+		action: function(p){
+			score.add(100);
+
+			blur_filter.uniforms.uBlurAdd += 0.1;
+			screen_filter.uniforms.uChrAbbSeparation += 1000;
+			screen_filter.uniforms.uInvert += 1;
+
+			player.effects.push({
+				every: function(){
+					screen_filter.uniforms.uChrAbbSeparation += 3;
+					screen_filter.uniforms.uInvert += 0.01;
+					var r = (Math.random()*2-1)*Math.PI;
+					player.spr.rotation += r;
+					player.block();
+					player.spr.rotation -= r;
+				},
+				complete: function(){
+					blur_filter.uniforms.uBlurAdd -= 0.1;
+					screen_filter.uniforms.uScanDistort += 20;
+					screen_filter.uniforms.uInvert += 1;
+					screen_filter.uniforms.uChrAbbSeparation -= 200;
+				},
+				time: 600
+			});
+		}
 	}
 };
+Pickup.powerups = [
+	Pickup.types.swordExtend,
+	Pickup.types.slowdown,
+	Pickup.types.shield
+];
 Pickup.getRandomPowerup = function(){
-	var t=[
-		this.types.swordExtend,
-		this.types.slowdown
-	];
-	return t[Math.floor(Math.random()*t.length)];
+	return Pickup.powerups[Math.floor(Math.random()*Pickup.powerups.length)];
 };
