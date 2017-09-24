@@ -19,7 +19,7 @@ Battle.prototype.init = function(){
 
 	bullets = {};
 
-
+	bullets.speed = 1;
 	bullets.max = 10000;
 	bullets.radius = 3;
 	bullets.container = new PIXI.ParticleContainer(bullets.max, {
@@ -122,6 +122,12 @@ Battle.prototype.init = function(){
 				var p = particles.pool.add(player);
 			}
 			player.dead=true;
+
+			// complete all effects
+			for(var i = 0; i < player.effects.length; ++i){
+				player.effects[i].complete();
+			}
+
 			if(debug.enabled){
 				debug.drawList.splice(debug.drawList.indexOf(player),1);
 			}
@@ -658,8 +664,8 @@ Battle.prototype.update = function(){
 	var blockLine = !player.dead ? player.getRotatedBlockLine() : undefined;
 	for(var i = 0; i < bullets.pool.live.length; ++i){
 		var b = bullets.pool.live[i];
-		b.spr.x += b.v.x;
-		b.spr.y += b.v.y;
+		b.spr.x += b.v.x * bullets.speed;
+		b.spr.y += b.v.y * bullets.speed;
 		b.spr.rotation += 0.4;
 		
 		// out of range

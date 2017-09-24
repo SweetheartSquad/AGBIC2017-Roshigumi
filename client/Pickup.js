@@ -28,6 +28,8 @@ Pickup.types = {
 	heart: {
 		svg: "heart",
 		action: function(p){
+			score.add(100);
+
 			blur_filter.uniforms.uBlurAdd += 0.1;
 			screen_filter.uniforms.uChrAbbSeparation += 1000;
 			screen_filter.uniforms.uInvert += 1;
@@ -40,12 +42,13 @@ Pickup.types = {
 			battle.extra.endFill();
 
 			health.heal();
-			score.add(100);
 		}
 	},
 	length: {
 		svg: "pickup_sword",
 		action: function(p){
+			score.add(100);
+
 			var scaleBy = 1.5;
 			blur_filter.uniforms.uBlurAdd += 0.1;
 			screen_filter.uniforms.uChrAbbSeparation += 1000;
@@ -76,6 +79,32 @@ Pickup.types = {
 					}
 					player.slashMark.scale.x /= scaleBy;
 					player.slashMark.scale.y /= scaleBy;
+				},
+				time: 600
+			});
+		}
+	},
+	slowdown: {
+		svg: 's', // TODO: add graphic
+		action: function(p){
+			score.add(100);
+
+			blur_filter.uniforms.uBlurAdd += 0.1;
+			screen_filter.uniforms.uChrAbbSeparation += 1000;
+
+			bullets.speed = 0.1;
+			Enemy.speed = 0.1;
+
+			player.effects.push({
+				every: function(){
+					screen_filter.uniforms.uInvert = 1;
+				},
+				complete: function(){
+					blur_filter.uniforms.uBlurAdd -= 0.1;
+					screen_filter.uniforms.uScanDistort += 20;
+					
+					bullets.speed = 1;
+					Enemy.speed = 1;
 				},
 				time: 600
 			});

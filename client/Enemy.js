@@ -1,4 +1,3 @@
-Enemy.graphicsScale = 1.4;
 function Enemy(type){
 	this.v = {};
 	this.v.x = 0;
@@ -50,6 +49,8 @@ function Enemy(type){
 	debug.add(this);
 	type.container.addChild(this.spr);
 }
+Enemy.graphicsScale = 1.4;
+Enemy.speed = 1;
 Enemy.prototype.rotateLine = Player.prototype.rotateLine;
 Enemy.prototype.getRotatedLines = function(){
 	var ls = [];
@@ -74,8 +75,8 @@ Enemy.prototype.debug = function(){
 	}
 };
 Enemy.prototype.update = function(){
-	this.spr.x += this.v.x;
-	this.spr.y += this.v.y;
+	this.spr.x += this.v.x * Enemy.speed;
+	this.spr.y += this.v.y * Enemy.speed;
 	this.v.x *= 0.9;
 	this.v.y *= 0.9;
 	this.trotation = Math.atan2(this.v.y,this.v.x);
