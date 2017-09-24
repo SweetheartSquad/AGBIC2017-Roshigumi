@@ -154,3 +154,14 @@ Player.prototype.debug = function(){
 		debug.endFill();
 	}
 };
+Player.prototype.update = function(){
+	player.spr.x += player.v.x;
+	player.spr.y += player.v.y;
+	player.v.x *= 0.95;
+	player.v.y *= 0.95;
+	player.trotation = Math.atan2(
+	 	mouse.correctedPos.y - player.spr.y,
+	 	mouse.correctedPos.x - player.spr.x
+	);
+	player.spr.rotation = slerp(player.spr.rotation,player.trotation, 0.2);
+};

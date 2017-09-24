@@ -323,15 +323,7 @@ Battle.prototype.update = function(){
 		// free move
 		player.v.x += input.move.x/3;
 		player.v.y += input.move.y/3;
-		player.spr.x += player.v.x;
-		player.spr.y += player.v.y;
-		player.v.x *= 0.95;
-		player.v.y *= 0.95;
-		player.trotation = Math.atan2(
-		 	mouse.correctedPos.y - player.spr.y,
-		 	mouse.correctedPos.x - player.spr.x
-		);
-		player.spr.rotation = slerp(player.spr.rotation,player.trotation, 0.2);
+		player.update();
 	}
 
 	
