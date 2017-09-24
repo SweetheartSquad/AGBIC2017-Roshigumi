@@ -543,6 +543,7 @@ Battle.prototype.update = function(){
 		var e = enemies[i];
 
 		if(!player.dead){
+			// bump
 			if(circToCirc(player.spr.x,player.spr.y,player.radius, e.spr.x,e.spr.y,e.radius)){
 				var dx = player.spr.x - e.spr.x;
 				var dy = player.spr.y - e.spr.y;
@@ -553,10 +554,10 @@ Battle.prototype.update = function(){
 				dx *= 1;
 				dy *= 1;
 
-				player.v.x += dx;
-				e.v.x -= dx;
-				player.v.y += dy;
-				e.v.y -= dy;
+				player.v.x += dx * Math.max(1, e.radius - player.radius)/10;
+				e.v.x -= dx * Math.max(1, player.radius - e.radius)/10;
+				player.v.y += dy * Math.max(1, e.radius - player.radius)/10;
+				e.v.y -= dy * Math.max(1, player.radius - e.radius)/10;
 				screen_filter.uniforms.uScanDistort += 2;
 			}
 		}
