@@ -166,6 +166,7 @@ ready(function(){
 		sounds["music"].play();
 		sounds["music"].fade(0, 1, 3000);
 	});
+	Howler.orientation(0,1,0, 0,0,1);
 
 	PIXI.loader
 		.add("screen_shader","assets/screen_shader.frag")
@@ -177,7 +178,7 @@ ready(function(){
 });
 
 function howlPos(s,i,x,y,z){
-	s.pos((x/size.x - 0.5),z,(y/size.y - 0.5), i);
+	s.pos((x/size.x - 0.5),(y/size.y - 0.5),z, i);
 }
 
 function CustomFilter(fragmentSource){
