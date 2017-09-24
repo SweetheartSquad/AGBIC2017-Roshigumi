@@ -3,6 +3,7 @@ function Battle(){
 }
 
 Battle.prototype.init = function(){
+	this.kills = 0;
 	this.container = new PIXI.Container();
 	player = new Player();
 	player.spr.cacheAsBitmap = true;
@@ -423,13 +424,17 @@ Battle.prototype.update = function(){
 					e.health -= 1;
 					if(e.health <= 0){
 						// kill enemy
+						this.kills += 1;
 						
 						for(var p = 0; p < 5+Math.random()*5; ++p){
 							particles.pool.add(e);
 						}
 
 						// health
-						if(Math.random()+Math.min(0.19,score.current/10000) < 0.2*(1+(health.max-health.current)/health.max)){
+						if(
+							(this.kills === 1 && health.current < health.max)
+							|| (Math.random()+Math.min(0.19,score.current/10000) < 0.2*(1+(health.max-health.current)/health.max))
+						){
 							var h = new Pickup(Pickup.types.heart);
 							this.pickups.push(h);
 							this.container.addChild(h.spr);
@@ -437,7 +442,7 @@ Battle.prototype.update = function(){
 							h.spr.y = e.spr.y;
 							h.v.x = e.v.x;
 							h.v.y = e.v.y;
-						}else{
+						}else if(this.kills > 3){
 							// powerups
 							var allowPowerup = true;
 							if(player.effects.length > 0){
