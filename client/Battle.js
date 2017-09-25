@@ -572,6 +572,8 @@ Battle.prototype.update = function(){
 				//spawn boss
 				bullets.replace();
 				this.boss.enemy = new Enemy(EnemyTypes.boss);
+				this.boss.enemy.spr.x = size.x/2;
+				this.boss.enemy.spr.y = -this.boss.enemy.radius*16;
 				enemies.push(this.boss.enemy);
 			}else{
 				if(!this.boss.dead && this.boss.enemy && enemies.length === 0){
@@ -683,7 +685,6 @@ Battle.prototype.update = function(){
 			enemies.push(new Enemy(k));
 		}
 	}
-
 	for(var i = 0; i < enemies.length; ++i){
 		var e = enemies[i];
 
