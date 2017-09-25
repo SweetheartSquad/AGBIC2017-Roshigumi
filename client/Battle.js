@@ -3,7 +3,7 @@ function Battle(){
 }
 
 Battle.prototype.init = function(){
-	sounds["thruster"].rate(4,sounds["thruster"].play());
+	sounds["thruster"].play();
 
 	this.kills = 0;
 	this.powerupChance = 0.1;
@@ -389,7 +389,8 @@ Battle.prototype.update = function(){
 		player.v.y += input.move.y/3;
 		player.update();
 
-		sounds["thruster"].volume((Math.abs(player.v.x)+Math.abs(player.v.y))/20);
+		sounds["thruster"].volume((Math.abs(player.v.x)+Math.abs(player.v.y))/8);
+		howlPos(sounds["thruster"], player.spr.x, player.spr.y, 0, sounds["thruster"]._sounds[0].id);
 	}
 
 	if(keys.isJustDown(keys.ESCAPE)){
