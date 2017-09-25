@@ -533,26 +533,18 @@ Battle.prototype.update = function(){
 	////////////
 	// cursor //
 	////////////
-	cursor.clear();
-	cursor.beginFill(0x0,0.0);
-	cursor.lineStyle(1,0xFFFFFF,1);
-	cursor.moveTo(mouse.correctedPos.x,mouse.correctedPos.y-cursor.size);
-	cursor.lineTo(mouse.correctedPos.x,mouse.correctedPos.y+cursor.size);
-	cursor.moveTo(mouse.correctedPos.x-cursor.size,mouse.correctedPos.y);
-	cursor.lineTo(mouse.correctedPos.x+cursor.size,mouse.correctedPos.y);
-	cursor.endFill();
 	if(!player.dead && !player.blocking){
 		var l = player.getRotatedAttackLines()[2];
-		cursor.beginFill(0x0,0.0);
-		cursor.lineStyle(0.1,0xFFFFFF,1);
-		cursor.moveTo(mouse.correctedPos.x+(Math.random()*2-1)*3,mouse.correctedPos.y+(Math.random()*2-1)*3);
-		cursor.lineTo(player.spr.x + Math.cos(player.spr.rotation)*player.radius, player.spr.y + Math.sin(player.spr.rotation)*player.radius);
-		cursor.endFill();
-		cursor.beginFill(0x0,0.0);
-		cursor.lineStyle(0.2,0xFFFFFF,1);
-		cursor.moveTo(mouse.correctedPos.x+(Math.random()*2-1)*2,mouse.correctedPos.y+(Math.random()*2-1)*2);
-		cursor.lineTo(player.spr.x + Math.cos(player.spr.rotation)*player.radius, player.spr.y + Math.sin(player.spr.rotation)*player.radius);
-		cursor.endFill();
+		this.extra.beginFill(0x0,0.0);
+		this.extra.lineStyle(0.1,0xFFFFFF,1);
+		this.extra.moveTo(mouse.correctedPos.x+(Math.random()*2-1)*3,mouse.correctedPos.y+(Math.random()*2-1)*3);
+		this.extra.lineTo(player.spr.x + Math.cos(player.spr.rotation)*player.radius, player.spr.y + Math.sin(player.spr.rotation)*player.radius);
+		this.extra.endFill();
+		this.extra.beginFill(0x0,0.0);
+		this.extra.lineStyle(0.2,0xFFFFFF,1);
+		this.extra.moveTo(mouse.correctedPos.x+(Math.random()*2-1)*2,mouse.correctedPos.y+(Math.random()*2-1)*2);
+		this.extra.lineTo(player.spr.x + Math.cos(player.spr.rotation)*player.radius, player.spr.y + Math.sin(player.spr.rotation)*player.radius);
+		this.extra.endFill();
 	}
 
 	/////////////

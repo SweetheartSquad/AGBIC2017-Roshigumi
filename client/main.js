@@ -170,7 +170,16 @@ function init(){
 	}());
 
 	cursor = new PIXI.Graphics();
-	cursor.size = 3;
+	cursor.size = 3.5;
+	cursor.clear();
+	cursor.beginFill(0x0,0.0);
+	cursor.lineStyle(1,0xFFFFFF,1);
+	cursor.moveTo(0,0-cursor.size);
+	cursor.lineTo(0,0+cursor.size);
+	cursor.moveTo(0-cursor.size,0);
+	cursor.lineTo(0+cursor.size,0);
+	cursor.endFill();
+	cursor.cacheAsBitmap = true;
 	scene.addChild(cursor);
 
 	menu = new Menu();
@@ -317,6 +326,9 @@ function update(){
 	}else if(battle){
 		battle.update();
 	}
+
+	cursor.x = mouse.correctedPos.x;
+	cursor.y = mouse.correctedPos.y;
 	
 	screen_filter.uniforms.uScanDistort *= 0.9;
 	screen_filter.uniforms.uLensDistort = lerp(screen_filter.uniforms.uLensDistort, 0.3, 0.1);

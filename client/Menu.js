@@ -243,14 +243,6 @@ Menu.prototype.update = function(){
 	var mouseActive = Math.abs(mouse.delta.x)+Math.abs(mouse.delta.y) > 0 || m;
 	mouse.update(); /// hack: update mouse to avoid accepting clicks on menu
 
-	cursor.clear();
-	cursor.beginFill(0x0,0.0);
-	cursor.lineStyle(1,0xFFFFFF,1);
-	cursor.moveTo(mouse.correctedPos.x,mouse.correctedPos.y-cursor.size);
-	cursor.lineTo(mouse.correctedPos.x,mouse.correctedPos.y+cursor.size);
-	cursor.moveTo(mouse.correctedPos.x-cursor.size,mouse.correctedPos.y);
-	cursor.lineTo(mouse.correctedPos.x+cursor.size,mouse.correctedPos.y);
-	cursor.endFill();
 	// animation
 	this.thing.rotation += 0.01;
 	this.container.y = Math.sin(game.main.prevTime / 1200)*3;
