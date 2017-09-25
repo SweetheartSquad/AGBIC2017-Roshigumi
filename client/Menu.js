@@ -59,12 +59,14 @@ var mainMenu = [
 			battle = new Battle();
 			screen_filter.uniforms.uScanDistort += 200;
 			screen_filter.uniforms.uChrAbbSeparation += 100;
+			sounds["menu"].play();
 		}
 	},
 	{
 		text: "options",
 		action: function(){
 			menu.setOptions(optionsMenu);
+			sounds["menu"].play();
 		}
 	},
 	{
@@ -74,6 +76,7 @@ var mainMenu = [
 			menu.deselect(menu.selection);
 			menu.selection = menu.options.length-1;
 			menu.select(menu.selection);
+			sounds["menu"].play();
 		}
 	}
 ];
@@ -84,6 +87,7 @@ var optionsMenu = [
 		action: function(){
 			setPalette(currentPalette+1);
 			menu.setOptions(optionsMenu);
+			sounds["menu"].play();
 		}
 	},
 	{
@@ -102,6 +106,7 @@ var optionsMenu = [
 			optionsMenu[3].text = scaleModes[scaleMode];
 			menu.setOptions(optionsMenu, 2);
 			onResize();
+			sounds["menu"].play();
 		}
 	},
 	{
@@ -112,6 +117,7 @@ var optionsMenu = [
 		text: "Back",
 		action: function(){
 			menu.setOptions(mainMenu, 1);
+			sounds["menuback"].play();
 		}
 	}
 ];
@@ -137,6 +143,7 @@ var aboutMenu = [
 		text: "Back",
 		action: function(){
 			menu.setOptions(mainMenu, 2);
+			sounds["menuback"].play();
 		}
 	}
 ];
@@ -215,18 +222,28 @@ Menu.prototype.deinit = function(){
 	this.container.destroy(true);
 };
 Menu.prototype.next = function(){
+	var s = this.selection;
 	do{
 		this.move(1);
 	}while(!this.options[this.selection].action);
-	var s=sounds["menu"].play();
-	sounds["menu"].rate(0.85 + (Math.random()*2-1)*0.05,s);
+	if(s === this.selection){
+		var s =sounds["menuback"].play();
+	}else{
+		var s=sounds["menu"].play();
+		sounds["menu"].rate(0.85 + (Math.random()*2-1)*0.05,s);
+	}
 };
 Menu.prototype.prev = function(){
+	var s = this.selection;
 	do{
 		this.move(-1);
 	}while(!this.options[this.selection].action);
-	var s=sounds["menu"].play();
-	sounds["menu"].rate(1.15 + (Math.random()*2-1)*0.05,s);
+	if(s === this.selection){
+		var s =sounds["menuback"].play();
+	}else{
+		var s=sounds["menu"].play();
+		sounds["menu"].rate(1.15 + (Math.random()*2-1)*0.05,s);
+	}
 };
 Menu.prototype.move = function(by){
 	this.deselect(this.selection);
@@ -261,7 +278,6 @@ Menu.prototype.update = function(){
 					this.select(i);
 					if(m){
 						this.options[i].action();
-						var s =sounds["menu"].play();
 						break;
 					}
 				}
@@ -274,7 +290,6 @@ Menu.prototype.update = function(){
 			this.prev();
 		}else if(getJustAction1()){
 			this.options[this.selection].action();
-			var s =sounds["menu"].play();
 		}
 	}
 
@@ -283,6 +298,7 @@ Menu.prototype.update = function(){
 			quit();
 		}else{
 			this.setOptions(mainMenu, 0);
+			var s =sounds["menuback"].play();
 		}
 	}
 

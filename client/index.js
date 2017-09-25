@@ -129,6 +129,10 @@ ready(function(){
 		src:["assets/audio/menu_option.wav"],
 		autoplay:false
 	});
+	sounds["menuback"] = new Howl({
+		src:["assets/audio/menuback.wav"],
+		autoplay:false
+	});
 	sounds["death"] = new Howl({
 		src:["assets/audio/death.wav"],
 		autoplay:false
@@ -138,28 +142,38 @@ ready(function(){
 		autoplay:false
 	});
 	sounds["heal"] = new Howl({
-		src:["assets/audio/hurt.wav"],
+		src:["assets/audio/powerup.wav"],
 		autoplay:false
 	});
 	sounds["shoot"] = new Howl({
-		src:["assets/audio/hurt.wav"],
+		src:["assets/audio/shoot.wav"],
 		autoplay:false
 	});
 	sounds["blocked"] = new Howl({
-		src:["assets/audio/hurt.wav"],
+		src:["assets/audio/block.wav"],
 		autoplay:false
 	});
 	sounds["slash"] = new Howl({
-		src:["assets/audio/hurt.wav"],
+		src:["assets/audio/slash.wav"],
 		autoplay:false
 	});
 	sounds["slash-hit"] = new Howl({
-		src:["assets/audio/hurt.wav"],
+		src:["assets/audio/enemyhit.wav"],
 		autoplay:false
 	});
 	sounds["kill"] = new Howl({
-		src:["assets/audio/death.wav"],
+		src:["assets/audio/enemykill.wav"],
 		autoplay:false
+	});
+	sounds["boss"] = new Howl({
+		src:["assets/audio/boss spawn.wav"],
+		autoplay:false
+	});
+	sounds["thruster"] = new Howl({
+		src:["assets/audio/thruster.wav"],
+		autoplay:false,
+		loop:true,
+		volume:0
 	});
 	sounds["music"] = new Howl({
 		src:["assets/audio/roshigumi.ogg"],

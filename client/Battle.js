@@ -3,6 +3,8 @@ function Battle(){
 }
 
 Battle.prototype.init = function(){
+	sounds["thruster"].rate(4,sounds["thruster"].play());
+
 	this.kills = 0;
 	this.powerupChance = 0.1;
 	this.container = new PIXI.Container();
@@ -152,6 +154,7 @@ Battle.prototype.init = function(){
 			if(this.current <= 0){
 				//DEAD
 				this.kill();
+				sounds["thruster"].stop();
 			}else{
 				var s = sounds["hurt"].play();
 				howlPos(sounds["hurt"],s, player.spr.x,player.spr.y,0);
@@ -186,9 +189,6 @@ Battle.prototype.init = function(){
 				this.container.cacheAsBitmap = true;
 				this.current += 1;
 			}
-			var s = sounds["heal"].play();
-			howlPos(sounds["heal"],s, player.spr.x,player.spr.y,0);
-			sounds["heal"].rate(1 + (Math.random()*2-1)*0.1,s);
 		}
 	};
 	health.init();
@@ -388,6 +388,8 @@ Battle.prototype.update = function(){
 		player.v.x += input.move.x/3;
 		player.v.y += input.move.y/3;
 		player.update();
+
+		sounds["thruster"].volume((Math.abs(player.v.x)+Math.abs(player.v.y))/20);
 	}
 
 	if(keys.isJustDown(keys.ESCAPE)){
@@ -396,6 +398,7 @@ Battle.prototype.update = function(){
 				health.damage();
 			}
 		}else{
+			sounds["menuback"].play();
 			this.deinit();
 			menu = new Menu();
 			return;
@@ -589,6 +592,8 @@ Battle.prototype.update = function(){
 			this.boss.name.alpha = lerp(this.boss.name.alpha, 1, 0.01);
 			if(!this.boss.enemy){
 				//spawn boss
+
+				sounds["boss"].play();
 				bullets.replace();
 				this.boss.enemy = new Enemy(EnemyTypes.boss);
 				this.boss.enemy.spr.x = size.x/2;
@@ -800,6 +805,9 @@ Battle.prototype.update = function(){
 		if(!player.dead && p.delay <= 0 && circToCirc(player.spr.x,player.spr.y,player.radius, p.spr.x,p.spr.y,Pickup.radius)){
 			// effect
 			p.action();
+			var s = sounds["heal"].play();
+			howlPos(sounds["heal"],s, player.spr.x,player.spr.y,0);
+			sounds["heal"].rate(1 + (Math.random()*2-1)*0.1,s);
 
 			// remove
 			p.spr.parent.removeChild(p.spr);
@@ -939,18 +947,21 @@ Battle.prototype.update = function(){
 	}
 	if(this.deadTime){
 		if(!this.highScore.gameOver && game.main.curTime-this.deadTime > 2000){
+			sounds["menuback"].play();
 			var t=this.highScore.gameOver = text("GAME OVER", {x:20,y:20}, 0.25, {x:0,y:0});
 			this.container.addChild(t);
 			t.x = size.x/2;
 			t.y = size.y/2-40;
 		}
 		if(!this.highScore.score && game.main.curTime-this.deadTime > 3000){
+			sounds["menuback"].play();
 			var t=this.highScore.score = text("Score-"+score.getScoreString(), {x:10,y:10}, 0.5, {x:0,y:0});
 			this.container.addChild(t);
 			t.x = size.x/2;
 			t.y = size.y/2+30-40;
 		}
 		if(!this.highScore.best && game.main.curTime-this.deadTime > 4000){
+			sounds["menuback"].play();
 			var t=this.highScore.best = text("Best-"+score.getScoreString(storage.getItem("highscore") || 0), {x:10,y:10}, 0.5, {x:0,y:0});
 			this.container.addChild(t);
 			t.x = size.x/2 + 5*1.5;
@@ -958,6 +969,7 @@ Battle.prototype.update = function(){
 		}
 		if(storage.getItem("highscore") < score.current){
 			if(!this.highScore.newBest && game.main.curTime-this.deadTime > 5000){
+				sounds["heal"].play();
 				var t=this.highScore.newBest = text("♥New best♥", {x:20,y:20}, 0.25, {x:0,y:0});
 				this.container.addChild(t);
 				t.x = size.x/2;
@@ -966,6 +978,7 @@ Battle.prototype.update = function(){
 			}
 		}else if(!this.highScore.newBest){
 			if(!this.highScore.restart && game.main.curTime-this.deadTime > 5000){
+				sounds["menuback"].play();
 				var t=this.highScore.restart = text("attack-restart  block-menu", {x:10,y:10}, 0.5, {x:0,y:0});
 				this.container.addChild(t);
 				t.x = size.x/2;
@@ -973,6 +986,7 @@ Battle.prototype.update = function(){
 			}
 		}else{
 			if(!this.highScore.restart && game.main.curTime-this.deadTime > 6000){
+				sounds["menuback"].play();
 				var t=this.highScore.restart = text("attack-restart  block-menu", {x:10,y:10}, 0.5, {x:0,y:0});
 				this.container.addChild(t);
 				t.x = size.x/2;
@@ -982,6 +996,7 @@ Battle.prototype.update = function(){
 
 		if(this.highScore.restart){
 			if(getJustAction1()){
+				sounds["menu"].play();
 				screen_filter.uniforms.uScanDistort += 200;
 				screen_filter.uniforms.uChrAbbSeparation += 100;
 				sounds["music"].fade(sounds["music"].volume(), 1, 1000);
@@ -989,6 +1004,7 @@ Battle.prototype.update = function(){
 				this.deinit();
 				battle = new Battle();
 			}else if(getJustAction2()){
+				sounds["menuback"].play();
 				screen_filter.uniforms.uScanDistort = 200;
 				screen_filter.uniforms.uLensDistort = 100;
 				screen_filter.uniforms.uChrAbbSeparation = 1000;
@@ -1002,6 +1018,7 @@ Battle.prototype.update = function(){
 };
 
 Battle.prototype.deinit = function(){
+	sounds["thruster"].stop();
 	bullets.revert();
 	this.container.parent.removeChild(this.container);
 	for(var i in EnemyTypes){
