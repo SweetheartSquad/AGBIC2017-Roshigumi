@@ -507,7 +507,7 @@ Battle.prototype.update = function(){
 						score.add(100);
 						var s = sounds["kill"].play();
 						howlPos(sounds["kill"],s, e.spr.x,e.spr.y,0);
-						sounds["kill"].rate(1 + (Math.random()*2-1)*0.1,s);
+						sounds["kill"].rate(1 + (Math.random()*2-1)*0.25,s);
 
 						// effect
 						this.extra.lineStyle(4,0xFFFFFF,1);
