@@ -32,6 +32,8 @@ var keys={
 	I: 73,
 	O: 79,
 	P: 80,
+	SQUARE_BRACKET_OPEN: 219,
+	SQUARE_BRACKET_CLOSE: 221,
 
 	A: 65,
 	S: 83,
@@ -42,6 +44,9 @@ var keys={
 	J: 74,
 	K: 75,
 	L: 76,
+	SEMI_COLON: 186,
+	SINGLE_QUOTE: 222,
+	BACK_SLASH: 220,
 
 	Z: 90,
 	X: 88,
@@ -50,6 +55,9 @@ var keys={
 	B: 66,
 	N: 78,
 	M: 77,
+	COMMA: 188,
+	PERIOD: 190,
+	SLASH: 191,
 
 	SHIFT: 16,
 	CTRL: 17,
@@ -57,10 +65,6 @@ var keys={
 	ENTER: 13,
 	BACKSPACE: 8,
 	ESCAPE: 27,
-	SEMI_COLON: 186,
-	SQUARE_BRACKET_OPEN: 219,
-	SQUARE_BRACKET_CLOSE: 221,
-	SINGLE_QUOTE: 222,
 
 	capture:[],
 

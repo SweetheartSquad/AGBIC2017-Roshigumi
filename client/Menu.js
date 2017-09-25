@@ -8,8 +8,8 @@ var palettes = [
 		colour: [1.0,1.0,1.0]
 	},
 	{
-		name: "c64",
-		colour: [-0.75, -0.25, 0.25]
+		name: "winnitron",
+		colour: [-3, 0, 0.25]
 	},
 	{
 		name: "neon",

@@ -75,12 +75,14 @@ function init(){
 	keys.init({
 		capture: [keys.ESCAPE,keys.LEFT,keys.RIGHT,keys.UP,keys.DOWN,keys.SPACE,keys.ENTER,keys.BACKSPACE,keys.ESCAPE,keys.W,keys.A,keys.S,keys.D,keys.P,keys.M]
 	});
-	mouse.init({
-		element: "canvas",
-		lock: true,
-		capture: [mouse.LEFT, mouse.RIGHT],
-		allowContextMenu: false
-	});
+	if(!winnitronMode){
+		mouse.init({
+			element: "canvas",
+			lock: true,
+			capture: [mouse.LEFT, mouse.RIGHT],
+			allowContextMenu: false
+		});
+	}
 
 	// setup screen filter
 	screen_filter = new CustomFilter(screen_shader);
@@ -99,8 +101,11 @@ function init(){
 	blur_filter.uniforms.uBlurAdd = uBlurAddT = 0.36;
 
 	// read local storage
-	setPalette(localStorage.getItem("palette"));
-	screen_filter.uniforms.uPalette[0] = palettes[currentPalette].colour[0];
+	if(winnitronMode){
+		setPalette(2);
+	}else{
+		setPalette(localStorage.getItem("palette"));
+	}screen_filter.uniforms.uPalette[0] = palettes[currentPalette].colour[0];
 	screen_filter.uniforms.uPalette[1] = palettes[currentPalette].colour[1];
 	screen_filter.uniforms.uPalette[2] = palettes[currentPalette].colour[2];
 
@@ -171,14 +176,16 @@ function init(){
 
 	cursor = new PIXI.Graphics();
 	cursor.size = 3.5;
-	cursor.beginFill(0x0,0.0);
-	cursor.lineStyle(1,0xFFFFFF,1);
-	cursor.moveTo(0,0-cursor.size);
-	cursor.lineTo(0,0+cursor.size);
-	cursor.moveTo(0-cursor.size,0);
-	cursor.lineTo(0+cursor.size,0);
-	cursor.endFill();
-	cursor.cacheAsBitmap = true;
+	if(!winnitronMode){
+		cursor.beginFill(0x0,0.0);
+		cursor.lineStyle(1,0xFFFFFF,1);
+		cursor.moveTo(0,0-cursor.size);
+		cursor.lineTo(0,0+cursor.size);
+		cursor.moveTo(0-cursor.size,0);
+		cursor.lineTo(0+cursor.size,0);
+		cursor.endFill();
+		cursor.cacheAsBitmap = true;
+	}
 	scene.addChild(cursor);
 
 	menu = new Menu();
@@ -315,10 +322,17 @@ function update(){
 	if(debug.enabled){
 		debug.clear();
 	}
-	mouse.correctedPos = {
-		x: mouse.pos.x/scaleMultiplier/postProcessScale,
-		y: mouse.pos.y/scaleMultiplier/postProcessScale
-	};
+	if(winnitronMode){
+		mouse.correctedPos = {
+			x: size.x/2,
+			y: size.y/2
+		};
+	}else{
+		mouse.correctedPos = {
+			x: mouse.pos.x/scaleMultiplier/postProcessScale,
+			y: mouse.pos.y/scaleMultiplier/postProcessScale
+		};
+	}
 
 	if(menu){
 		menu.update();
@@ -366,7 +380,9 @@ function update(){
 	///////////////////////////
 		gamepads.update();
 		keys.update();
-		mouse.update();
+		if(!winnitronMode){
+			mouse.update();
+		}
 
 		// keep mouse within screen
 		mouse.pos.x = clamp(0, mouse.pos.x, size.x * scaleMultiplier*postProcessScale);
@@ -381,6 +397,9 @@ function toggleMute(){
 }
 
 function getAction1(){
+	if(winnitronMode){
+		return keys.isDown(keys.PERIOD);
+	}
 	return keys.isDown(keys.Z) 
 	|| keys.isDown(keys.C)
 	|| keys.isDown(keys.SPACE)
@@ -394,6 +413,9 @@ function getAction1(){
 }
 
 function getJustAction1(){
+	if(winnitronMode){
+		return keys.isJustDown(keys.PERIOD);
+	}
 	return keys.isJustDown(keys.Z) 
 	|| keys.isJustDown(keys.C)
 	|| keys.isJustDown(keys.SPACE)
@@ -407,6 +429,9 @@ function getJustAction1(){
 }
 
 function getAction2(){
+	if(winnitronMode){
+		return keys.isDown(keys.SLASH);
+	}
 	return keys.isDown(keys.X) 
 	|| keys.isDown(keys.V)
 	|| keys.isDown(keys.SHIFT)
@@ -419,6 +444,9 @@ function getAction2(){
 }
 
 function getJustAction2(){
+	if(winnitronMode){
+		return keys.isJustDown(keys.SLASH);
+	}
 	return keys.isJustDown(keys.X) 
 	|| keys.isJustDown(keys.V)
 	|| keys.isJustDown(keys.SHIFT)
@@ -431,8 +459,6 @@ function getJustAction2(){
 }
 
 function getInput(){
-	gamepads.deadZone = 0.25;
-	gamepads.snapZone = 0.1;
 	var res = {
 		up: false,
 		down: false,
@@ -443,65 +469,85 @@ function getInput(){
 			y:0
 		}
 	};
+	if(winnitronMode){
+		res.up |= keys.isJustDown(keys.UP);
+		res.down |= keys.isJustDown(keys.DOWN);
+		res.left |= keys.isJustDown(keys.LEFT);
+		res.right |= keys.isJustDown(keys.RIGHT);
+		if(keys.isDown(keys.DOWN)){
+			res.move.y += 1;
+		}
+		if(keys.isDown(keys.UP)){
+			res.move.y -= 1;
+		}if(keys.isDown(keys.LEFT)){
+			res.move.x -= 1;
+		}
+		if(keys.isDown(keys.RIGHT)){
+			res.move.x += 1;
+		}
+	} else {
+		gamepads.deadZone = 0.25;
+		gamepads.snapZone = 0.1;
+		
+		res.up |= keys.isJustDown(keys.UP);
+		res.up |= keys.isJustDown(keys.W);
+		res.up |= gamepads.isJustDown(gamepads.DPAD_UP);
+		res.up |= gamepads.axisJustPast(gamepads.LSTICK_V, gamepads.deadZone);
 
-	res.up |= keys.isJustDown(keys.UP);
-	res.up |= keys.isJustDown(keys.W);
-	res.up |= gamepads.isJustDown(gamepads.DPAD_UP);
-	res.up |= gamepads.axisJustPast(gamepads.LSTICK_V, gamepads.deadZone);
+		if(
+			keys.isDown(keys.UP) ||
+			keys.isDown(keys.W) ||
+			gamepads.isDown(gamepads.DPAD_UP)
+		){
+			res.move.y -= 1;
+		}if(gamepads.axisPast(gamepads.LSTICK_V, gamepads.deadZone)){
+			res.move.y += gamepads.getAxis(gamepads.LSTICK_V);
+		}
 
-	if(
-		keys.isDown(keys.UP) ||
-		keys.isDown(keys.W) ||
-		gamepads.isDown(gamepads.DPAD_UP)
-	){
-		res.move.y -= 1;
-	}if(gamepads.axisPast(gamepads.LSTICK_V, gamepads.deadZone)){
-		res.move.y += gamepads.getAxis(gamepads.LSTICK_V);
-	}
+		res.down |= keys.isJustDown(keys.DOWN);
+		res.down |= keys.isJustDown(keys.S);
+		res.down |= gamepads.isJustDown(gamepads.DPAD_DOWN);
+		res.down |= gamepads.axisJustPast(gamepads.LSTICK_V, -gamepads.deadZone);
 
-	res.down |= keys.isJustDown(keys.DOWN);
-	res.down |= keys.isJustDown(keys.S);
-	res.down |= gamepads.isJustDown(gamepads.DPAD_DOWN);
-	res.down |= gamepads.axisJustPast(gamepads.LSTICK_V, -gamepads.deadZone);
+		if(
+			keys.isDown(keys.DOWN) ||
+			keys.isDown(keys.S) ||
+			gamepads.isDown(gamepads.DPAD_DOWN)
+		){
+			res.move.y += 1;
+		}if(gamepads.axisPast(gamepads.LSTICK_V, -gamepads.deadZone)){
+			res.move.y += gamepads.getAxis(gamepads.LSTICK_V);
+		}
 
-	if(
-		keys.isDown(keys.DOWN) ||
-		keys.isDown(keys.S) ||
-		gamepads.isDown(gamepads.DPAD_DOWN)
-	){
-		res.move.y += 1;
-	}if(gamepads.axisPast(gamepads.LSTICK_V, -gamepads.deadZone)){
-		res.move.y += gamepads.getAxis(gamepads.LSTICK_V);
-	}
+		res.left |= keys.isJustDown(keys.LEFT);
+		res.left |= keys.isJustDown(keys.A);
+		res.left |= gamepads.isJustDown(gamepads.DPAD_LEFT);
+		res.left |= gamepads.axisJustPast(gamepads.LSTICK_H, -gamepads.deadZone);
 
-	res.left |= keys.isJustDown(keys.LEFT);
-	res.left |= keys.isJustDown(keys.A);
-	res.left |= gamepads.isJustDown(gamepads.DPAD_LEFT);
-	res.left |= gamepads.axisJustPast(gamepads.LSTICK_H, -gamepads.deadZone);
+		if(
+			keys.isDown(keys.LEFT) ||
+			keys.isDown(keys.A) ||
+			gamepads.isDown(gamepads.DPAD_LEFT)
+		){
+			res.move.x -= 1;
+		}if(gamepads.axisPast(gamepads.LSTICK_H, -gamepads.deadZone)){
+			res.move.x += gamepads.getAxis(gamepads.LSTICK_H);
+		}
 
-	if(
-		keys.isDown(keys.LEFT) ||
-		keys.isDown(keys.A) ||
-		gamepads.isDown(gamepads.DPAD_LEFT)
-	){
-		res.move.x -= 1;
-	}if(gamepads.axisPast(gamepads.LSTICK_H, -gamepads.deadZone)){
-		res.move.x += gamepads.getAxis(gamepads.LSTICK_H);
-	}
+		res.right |= keys.isJustDown(keys.RIGHT);
+		res.right |= keys.isJustDown(keys.D);
+		res.right |= gamepads.isJustDown(gamepads.DPAD_RIGHT);
+		res.right |= gamepads.axisJustPast(gamepads.LSTICK_H, gamepads.deadZone);
 
-	res.right |= keys.isJustDown(keys.RIGHT);
-	res.right |= keys.isJustDown(keys.D);
-	res.right |= gamepads.isJustDown(gamepads.DPAD_RIGHT);
-	res.right |= gamepads.axisJustPast(gamepads.LSTICK_H, gamepads.deadZone);
-
-	if(
-		keys.isDown(keys.RIGHT) ||
-		keys.isDown(keys.D) ||
-		gamepads.isDown(gamepads.DPAD_RIGHT)
-	){
-		res.move.x += 1;
-	}if(gamepads.axisPast(gamepads.LSTICK_H, gamepads.deadZone)){
-		res.move.x += gamepads.getAxis(gamepads.LSTICK_H);
+		if(
+			keys.isDown(keys.RIGHT) ||
+			keys.isDown(keys.D) ||
+			gamepads.isDown(gamepads.DPAD_RIGHT)
+		){
+			res.move.x += 1;
+		}if(gamepads.axisPast(gamepads.LSTICK_H, gamepads.deadZone)){
+			res.move.x += gamepads.getAxis(gamepads.LSTICK_H);
+		}
 	}
 
 	res.move.x = clamp(-1,res.move.x,1);

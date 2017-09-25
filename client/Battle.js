@@ -364,6 +364,25 @@ Battle.prototype.update = function(){
 			mouse.correctedPos.x = player.spr.x + gamepads.getAxis(gamepads.RSTICK_H)*player.radius*10;
 			mouse.correctedPos.y = player.spr.y + gamepads.getAxis(gamepads.RSTICK_V)*player.radius*10;
 		}
+
+		var closest = null;
+		var closestDist = Math.pow(player.radius*20,2);
+		for(var i = 0; i < enemies.length; ++i){
+			var e = enemies[i];
+
+			if(!player.dead){
+				e.d = Math.pow(player.spr.x-e.spr.x,2) + Math.pow(player.spr.y-e.spr.y,2);
+				if(e.d < closestDist){
+					closest = e;
+					closestDist = e.d;
+				}
+			}
+		}
+		if(winnitronMode && closest){
+			mouse.correctedPos.x = closest.spr.x;
+			mouse.correctedPos.y = closest.spr.y;
+		}
+
 		var input = getInput();
 		// free move
 		player.v.x += input.move.x/3;
@@ -690,7 +709,7 @@ Battle.prototype.update = function(){
 
 		if(!player.dead){
 			// bump
-			if(circToCirc(player.spr.x,player.spr.y,player.radius, e.spr.x,e.spr.y,e.radius)){
+			if(e.d && e.d < Math.pow(player.radius+e.radius,2)){
 				var dx = player.spr.x - e.spr.x;
 				var dy = player.spr.y - e.spr.y;
 				var l = 1/magnitude({x:dx,y:dy});

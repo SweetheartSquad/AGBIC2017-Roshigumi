@@ -9,7 +9,12 @@ var decay = 0.85;
 var sounds=[];
 
 var storage = window.localStorage;
-var scaleMode = parseInt(storage.getItem("scaleMode")) || 1;
+var scaleMode;
+if(winnitronMode){
+	scaleMode = 1;
+}else{
+	scaleMode = parseInt(storage.getItem("scaleMode")) || 1;
+}
 var scaleModes = [
 	"Largest Multiple",
 	"Scale to Fit",
@@ -105,9 +110,6 @@ ready(function(){
 		document.msExitFullScreen ||
 		document.mozCancelFullScreen ||
 		document.webkitExitFullscreen;
-
-	// setup game
-	startTime=Date.now();
 
 	display = document.getElementById('display');
 
