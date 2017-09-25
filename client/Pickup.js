@@ -93,7 +93,7 @@ Pickup.types = {
 			screen_filter.uniforms.uChrAbbSeparation += 1000;
 
 			bullets.speed = 0.1;
-			Enemy.speed = 0.1;
+			Enemy.speed = 0.5;
 
 			player.effects.push({
 				every: function(){
