@@ -41,12 +41,14 @@ var mouse={
 		if(options.lock){
 			this.lock = true;
 			this.lockMouse();
+			this.element.on("pointerlockerror", mouse.on_lockerror.bind(mouse));
 		}
 
 		this.capture = options.capture;
 	},
 
 	lockMouse: function() {
+		this.locked = true;
 		this.element.requestPointerLock = this.element.requestPointerLock || this.element.mozRequestPointerLock;
 		this.element.requestPointerLock();
 	},
@@ -89,7 +91,7 @@ var mouse={
 		}
 	},
 	on_move: function(event){
-		if(this.lock) {
+		if(this.locked) {
 			this.delta.x = event.movementX;
 			this.delta.y = event.movementY;
 			this.pos.x += this.delta.x;
@@ -107,6 +109,11 @@ var mouse={
 		this.mouseWheel = event.deltaY || event.originalEvent.wheelDelta;
 	},
 	on_contextmenu: function(event){
+		event.preventDefault();
+		return false;
+	},
+	on_lockerror: function(event){
+		this.locked = false;
 		event.preventDefault();
 		return false;
 	},
