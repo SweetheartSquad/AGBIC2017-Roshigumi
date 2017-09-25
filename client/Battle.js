@@ -233,8 +233,8 @@ Battle.prototype.init = function(){
 			this.line.beginFill(0xFFFFFF,0);
 			this.line.lineStyle(2,0xFFFFFF,1);
 			this.line.moveTo(0,0);
-			this.line.lineTo(this.height);
-			this.line.drawCircle(0,0,0.5);
+			this.line.lineTo(0,this.height);
+			this.line.drawCircle(0,0,1);
 			this.line.drawCircle(0,this.height,1);
 			this.line.endFill();
 			this.line.cacheAsBitmap = true;
