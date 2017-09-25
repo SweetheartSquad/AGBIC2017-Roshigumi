@@ -542,14 +542,14 @@ Battle.prototype.update = function(){
 	// cursor //
 	////////////
 	cursor.clear();
+	cursor.beginFill(0x0,0.0);
+	cursor.lineStyle(1,0xFFFFFF,1);
+	cursor.moveTo(mouse.correctedPos.x,mouse.correctedPos.y-cursor.size);
+	cursor.lineTo(mouse.correctedPos.x,mouse.correctedPos.y+cursor.size);
+	cursor.moveTo(mouse.correctedPos.x-cursor.size,mouse.correctedPos.y);
+	cursor.lineTo(mouse.correctedPos.x+cursor.size,mouse.correctedPos.y);
+	cursor.endFill();
 	if(!player.dead && !player.blocking){
-		cursor.beginFill(0x0,0.0);
-		cursor.lineStyle(1,0xFFFFFF,1);
-		cursor.moveTo(mouse.correctedPos.x,mouse.correctedPos.y-cursor.size);
-		cursor.lineTo(mouse.correctedPos.x,mouse.correctedPos.y+cursor.size);
-		cursor.moveTo(mouse.correctedPos.x-cursor.size,mouse.correctedPos.y);
-		cursor.lineTo(mouse.correctedPos.x+cursor.size,mouse.correctedPos.y);
-		cursor.endFill();
 		var l = player.getRotatedAttackLines()[2];
 		cursor.beginFill(0x0,0.0);
 		cursor.lineStyle(0.1,0xFFFFFF,1);
