@@ -9,6 +9,8 @@ var keys={
 	RIGHT: 39,
 	DOWN: 40,
 
+	BACKTICK: 192,
+
 	ZERO: 48,
 	ONE: 49,
 	TWO: 50,
