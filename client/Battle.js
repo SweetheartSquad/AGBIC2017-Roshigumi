@@ -404,6 +404,10 @@ Battle.prototype.update = function(){
 			sounds["menuback"].play();
 			this.deinit();
 			menu = new Menu();
+			screen_filter.uniforms.uScanDistort = 200;
+			screen_filter.uniforms.uLensDistort = 100;
+			screen_filter.uniforms.uChrAbbSeparation = 1000;
+			sounds["music"].fade(sounds["music"].volume(), 1, 1000);
 			return;
 		}
 	}
