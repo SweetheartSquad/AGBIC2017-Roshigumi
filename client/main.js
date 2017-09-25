@@ -171,7 +171,6 @@ function init(){
 
 	cursor = new PIXI.Graphics();
 	cursor.size = 3.5;
-	cursor.clear();
 	cursor.beginFill(0x0,0.0);
 	cursor.lineStyle(1,0xFFFFFF,1);
 	cursor.moveTo(0,0-cursor.size);

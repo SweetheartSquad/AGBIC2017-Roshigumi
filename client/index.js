@@ -1,6 +1,3 @@
-var startTime = 0;
-var lastTime = 0;
-var curTime = 0;
 var game;
 var resizeTimeout=null;
 
