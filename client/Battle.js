@@ -16,9 +16,6 @@ Battle.prototype.init = function(){
 	sword.y = player.spr.y;
 	sword.cacheAsBitmap = true;
 
-	cursor = new PIXI.Graphics();
-	cursor.size = 3;
-
 	bullets = {};
 
 	bullets.speed = 1;
@@ -347,7 +344,6 @@ Battle.prototype.init = function(){
 	this.container.addChild(player.spr);
 	this.container.addChild(player.slashMark);
 	this.container.addChild(sword);
-	this.container.addChild(cursor);
 	this.container.addChild(this.extra);
 
 	if(debug.enabled){
@@ -363,10 +359,6 @@ Battle.prototype.update = function(){
 		stamina.update();
 	}
 	this.extra.clear();
-	mouse.correctedPos = {
-		x: mouse.pos.x/scaleMultiplier/postProcessScale,
-		y: mouse.pos.y/scaleMultiplier/postProcessScale
-	};
 	if(!player.dead){
 		if(Math.abs(gamepads.getAxis(gamepads.RSTICK_H)) > 0 || Math.abs(gamepads.getAxis(gamepads.RSTICK_V)) > 0){
 			mouse.correctedPos.x = player.spr.x + gamepads.getAxis(gamepads.RSTICK_H)*player.radius*10;

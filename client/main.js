@@ -169,6 +169,10 @@ function init(){
 		g.destroy();
 	}());
 
+	cursor = new PIXI.Graphics();
+	cursor.size = 3;
+	scene.addChild(cursor);
+
 	menu = new Menu();
 	
 	// start the main loop
@@ -303,6 +307,10 @@ function update(){
 	if(debug.enabled){
 		debug.clear();
 	}
+	mouse.correctedPos = {
+		x: mouse.pos.x/scaleMultiplier/postProcessScale,
+		y: mouse.pos.y/scaleMultiplier/postProcessScale
+	};
 
 	if(menu){
 		menu.update();
