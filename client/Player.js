@@ -68,7 +68,7 @@ function Player(){
 Player.prototype.attack = function(){
 	var s = sounds["slash"].play();
 	howlPos(sounds["slash"],s, player.spr.x,player.spr.y,0);
-	sounds["slash"].rate(1 + (Math.random()*2-1)*0.1, s);
+	sounds["slash"].rate(1 + (Math.random()*2-1)*0.1 + (1-stamina.current/stamina.max)*0.5, s);
 	screen_filter.uniforms.uScanDistort += 3;
 	sword.side *= -1;
 	sword.x = lerp(sword.x, this.spr.x, 0.9);
