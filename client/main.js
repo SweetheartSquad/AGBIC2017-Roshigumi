@@ -77,7 +77,7 @@ function init(){
 	});
 	mouse.init({
 		element: "canvas",
-		lock: false,
+		lock: true,
 		capture: [mouse.LEFT, mouse.RIGHT],
 		allowContextMenu: false
 	});
