@@ -43,7 +43,7 @@ Battle.prototype.init = function(){
 		bullets.container.parent.addChild(c);
 		bullets.container.parent.swapChildren(c,bullets.container);
 		bullets.container.parent.removeChild(bullets.container);
-		bullets.container.destroy(true);
+		bullets.container.destroy();
 		bullets.container = c;
 		bullets.tex.destroy(true);
 		var b = svg("swordsvg",{x:bullets.radius*3,y:bullets.radius*3*0.1});
@@ -54,6 +54,7 @@ Battle.prototype.init = function(){
 			b.dead = true;
 			b.spr.texture = bullets.tex;
 		}
+		bullets.pool.update();
 	};
 	bullets.revert = function(){
 		bullets.radius = 3;
@@ -65,7 +66,7 @@ Battle.prototype.init = function(){
 		bullets.container.parent.addChild(c);
 		bullets.container.parent.swapChildren(c,bullets.container);
 		bullets.container.parent.removeChild(bullets.container);
-		bullets.container.destroy(true);
+		bullets.container.destroy();
 		bullets.container = c;
 		bullets.tex.destroy(true);
 		var b = svg("bullet",{x:bullets.radius*3.5,y:bullets.radius*3.5});
@@ -76,6 +77,7 @@ Battle.prototype.init = function(){
 			b.dead = true;
 			b.spr.texture = bullets.tex;
 		}
+		bullets.pool.update();
 	};
 	bullets.pool = new Pool(bullets.max, Bullet);
 
@@ -590,8 +592,7 @@ Battle.prototype.update = function(){
 	if(!player.dead){
 		// boss check
 		if(this.boss){
-			this.boss.name.alpha = lerp(this.boss.name.alpha, 1, 0.01);
-			if(!this.boss.enemy){
+			if(!this.boss.dead && !this.boss.enemy){
 				//spawn boss
 
 				sounds["boss"].play();
@@ -611,6 +612,7 @@ Battle.prototype.update = function(){
 					this.boss.dead = game.main.curTime;
 					this.boss.name.parent.removeChild(this.boss.name);
 					this.boss.name.destroy(true);
+					delete this.boss.enemy;
 
 					bullets.revert();
 				}else{
@@ -671,22 +673,27 @@ Battle.prototype.update = function(){
 				this.boss.name.addChild(hx2);
 
 				this.boss.update = function(){
-					var p = this.boss.enemy.health/EnemyTypes.boss.health;
-					h.scale.x = p;
-					hx1.x = -p*size.x/3;
-					hx2.x = p*size.x/3;
-					var pat = this.boss.enemy.bulletpattern;
-					if(p < 0.33){
-						this.boss.enemy.bulletpattern = BulletPatterns.boss3;
-					}else if(p < 0.66){
-						this.boss.enemy.bulletpattern = BulletPatterns.boss2;
+					if(this.boss.enemy){
+						this.boss.name.alpha = lerp(this.boss.name.alpha, 1, 0.01);
+						var p = this.boss.enemy.health/EnemyTypes.boss.health;
+						h.scale.x = p;
+						hx1.x = -p*size.x/3;
+						hx2.x = p*size.x/3;
+						var pat = this.boss.enemy.bulletpattern;
+						if(p < 0.33){
+							this.boss.enemy.bulletpattern = BulletPatterns.boss3;
+						}else if(p < 0.66){
+							this.boss.enemy.bulletpattern = BulletPatterns.boss2;
+						}else{
+							this.boss.enemy.bulletpattern = BulletPatterns.boss1;
+						}
+						if(pat !== this.boss.enemy.bulletpattern){
+							blur_filter.uniforms.uInvert += 0.1;
+							screen_filter.uniforms.uChrAbbSeparation += 100;
+							score.add(1000);
+						}
 					}else{
-						this.boss.enemy.bulletpattern = BulletPatterns.boss1;
-					}
-					if(pat !== this.boss.enemy.bulletpattern){
-						blur_filter.uniforms.uInvert += 0.1;
-						screen_filter.uniforms.uChrAbbSeparation += 100;
-						score.add(1000);
+						this.boss.name.alpha = lerp(this.boss.name.alpha, 0, 0.01);
 					}
 				}.bind(this);
 
