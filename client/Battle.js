@@ -267,6 +267,7 @@ Battle.prototype.init = function(){
 	stamina.init();
 
 	score = {
+		width: 9,
 		current: 0,
 		last: 0,
 		container: new PIXI.Container(),
@@ -277,7 +278,7 @@ Battle.prototype.init = function(){
 			for(var i = 0; i < 10; ++i){
 				var l="";
 				this.numbers[i] = [];
-				for(var j = 0; j < 10; ++j){
+				for(var j = 0; j < this.width; ++j){
 					l += i.toString();
 				}
 				var t = text(l, {x:10,y:10}, 0.3, {x:-0.5,y:0.5});
@@ -298,22 +299,16 @@ Battle.prototype.init = function(){
 		update:function(){
 			if(this.current > this.last){
 				var l = this.getScoreString(this.last);
-				while(l.length < 10){
-					l = "0"+l;
-				}
-				for(var i = 0; i < 10; ++i){
+				for(var i = 0; i < l.length; ++i){
 					var n = l[l.length-1-i];
-					this.numbers[n][10-1-i].visible = false;
+					this.numbers[n][l.length-1-i].visible = false;
 				}
 
 
 				l = this.getScoreString(this.current);
-				while(l.length < 10){
-					l = "0"+l;
-				}
-				for(var i = 0; i < 10; ++i){
+				for(var i = 0; i < l.length; ++i){
 					var n = l[l.length-1-i];
-					this.numbers[n][10-1-i].visible = true;
+					this.numbers[n][l.length-1-i].visible = true;
 				}
 				this.last = this.current;
 			}
@@ -322,7 +317,11 @@ Battle.prototype.init = function(){
 			if(arguments.length < 1){
 				s = this.current;
 			}
-			return Math.ceil(s*100).toString(10);
+			s=Math.ceil(s*100).toString(10);
+			while(s.length < this.width){
+				s = "0"+s;
+			}
+			return s;
 		}
 	};
 	score.init();
@@ -576,11 +575,20 @@ Battle.prototype.update = function(){
 				this.boss.enemy = new Enemy(EnemyTypes.boss);
 				enemies.push(this.boss.enemy);
 			}else{
-				this.boss.update();
 				if(!this.boss.dead && this.boss.enemy && enemies.length === 0){
 					// boss killed
+					score.add(10000);
+					blur_filter.uniforms.uBlurAdd += 0.1;
+					screen_filter.uniforms.uChrAbbSeparation += 1000;
+					screen_filter.uniforms.uInvert += 1;
+
 					this.boss.dead = game.main.curTime;
+					this.boss.name.parent.removeChild(this.boss.name);
+					this.boss.name.destroy();
+
 					bullets.revert();
+				}else{
+					this.boss.update();
 				}
 			}
 		}
@@ -641,12 +649,18 @@ Battle.prototype.update = function(){
 					h.scale.x = p;
 					hx1.x = -p*size.x/3;
 					hx2.x = p*size.x/3;
+					var pat = this.boss.enemy.bulletpattern;
 					if(p < 0.33){
 						this.boss.enemy.bulletpattern = BulletPatterns.boss3;
 					}else if(p < 0.66){
 						this.boss.enemy.bulletpattern = BulletPatterns.boss2;
 					}else{
 						this.boss.enemy.bulletpattern = BulletPatterns.boss1;
+					}
+					if(pat !== this.boss.enemy.bulletpattern){
+						blur_filter.uniforms.uInvert += 0.1;
+						screen_filter.uniforms.uChrAbbSeparation += 100;
+						score.add(1000);
 					}
 				}.bind(this);
 
@@ -920,7 +934,7 @@ Battle.prototype.update = function(){
 		if(!this.highScore.best && game.main.curTime-this.deadTime > 4000){
 			var t=this.highScore.best = text("Best-"+score.getScoreString(storage.getItem("highscore") || 0), {x:10,y:10}, 0.5, {x:0,y:0});
 			this.container.addChild(t);
-			t.x = size.x/2;
+			t.x = size.x/2 + 5*1.5;
 			t.y = size.y/2+50-40;
 		}
 		if(storage.getItem("highscore") < score.current){
