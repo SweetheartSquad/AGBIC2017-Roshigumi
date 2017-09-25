@@ -250,7 +250,6 @@ Menu.prototype.update = function(){
 	// interaction
 	var input = getInput();
 	if(mouseActive){
-		console.log(mouseActive);
 		for(var i = 0; i < this.options.length; ++i){
 			this.deselect(i);
 		}
