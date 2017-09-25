@@ -101,7 +101,7 @@ function wait(frames, moveFunc, enemy){
 	}
 	return false;
 }
-function shootPlayer(enemy){
+function shootPlayer(speed,enemy){
 	if(!player.dead){
 		var b = bullets.pool.add(enemy);
 		if(b){
@@ -112,6 +112,8 @@ function shootPlayer(enemy){
 			b.v.y*=l;
 			b.spr.x += b.v.x * enemy.radius;
 			b.spr.y += b.v.y * enemy.radius;
+			b.v.x *= speed;
+			b.v.y *= speed;
 		}
 	}
 	return true;
@@ -275,7 +277,7 @@ function moveToCorner(enemy){
 	return false;
 }
 
-function shootArc(frames, framesDelay, enemy){
+function shootArc(frames, framesDelay, freq, enemy){
 	if(!player.dead){
 		if(!enemy.shootArcOptions){
 			enemy.shootArcOptions = {
@@ -287,7 +289,7 @@ function shootArc(frames, framesDelay, enemy){
 			var b = bullets.pool.add(enemy);
 			if(b){
 				var a = enemy.shootArcOptions.frames/framesDelay/frames-0.5;
-				a *= frames/4;
+				a *= frames/4*freq;
 				a = Math.sin(a);
 				a += enemy.shootArcOptions.target;
 				b.v.x = Math.cos(a);
@@ -308,7 +310,7 @@ function shootArc(frames, framesDelay, enemy){
 BulletPatterns = {
 	shootPlayer: [
 		wait.bind(undefined, 100, patrol),
-		shootPlayer
+		shootPlayer.bind(undefined, 1)
 	],
 	shootRandom: [
 		wait.bind(undefined, 200, patrol),
@@ -334,7 +336,7 @@ BulletPatterns = {
 	shootCorner: [
 		moveToCorner,
 		wait.bind(undefined, 10, stop),
-		shootArc.bind(undefined, 200, 4),
+		shootArc.bind(undefined, 200, 4, 1),
 		wait.bind(undefined, 60, stop)
 	],
 	shootCircle4: [
@@ -355,6 +357,67 @@ BulletPatterns = {
 	],
 	none: [
 		wait.bind(undefined, 1, stop)
+	],
+	boss1: [
+		moveToCorner,
+		wait.bind(undefined, 10, stop),
+		shootCircle.bind(undefined, 4),
+		shootArc.bind(undefined, 200, 20, 20),
+		shootCircle.bind(undefined, 4),
+		wait.bind(undefined, 60, stop)
+	],
+	boss2: [
+		wait.bind(undefined, 80, patrol),
+		shootCircle.bind(undefined, 16),
+		wait.bind(undefined, 60, patrol),
+		shootPlayer.bind(undefined, 5),
+		wait.bind(undefined, 2, patrol),
+		shootPlayer.bind(undefined, 5),
+		wait.bind(undefined, 2, patrol),
+		shootPlayer.bind(undefined, 5),
+		wait.bind(undefined, 2, patrol),
+		shootPlayer.bind(undefined, 5),
+		wait.bind(undefined, 2, patrol),
+		shootPlayer.bind(undefined, 5),
+		wait.bind(undefined, 2, patrol),
+		shootPlayer.bind(undefined, 5),
+		wait.bind(undefined, 2, patrol),
+		shootPlayer.bind(undefined, 5),
+		wait.bind(undefined, 2, patrol),
+		shootPlayer.bind(undefined, 5),
+		wait.bind(undefined, 2, patrol),
+		shootPlayer.bind(undefined, 5)
+	],
+	boss3: [
+		wait.bind(undefined, 20, wander),
+		shootRotateInCircle,
+		wait.bind(undefined, 20, wander),
+		shootRotateInCircle,
+		shootPlayer.bind(undefined, 3),
+		wait.bind(undefined, 20, wander),
+		shootRotateInCircle,
+		wait.bind(undefined, 20, wander),
+		shootRotateInCircle,
+		shootPlayer.bind(undefined, 3),
+		shootCircle.bind(undefined, 4),
+		wait.bind(undefined, 20, wander),
+		shootRotateInCircle,
+		wait.bind(undefined, 20, wander),
+		shootRotateInCircle,
+		shootPlayer.bind(undefined, 3),
+		wait.bind(undefined, 20, wander),
+		shootRotateInCircle,
+		shootCircle.bind(undefined, 8),
+		wait.bind(undefined, 20, wander),
+		shootRotateInCircle,
+		shootPlayer.bind(undefined, 3),
+		wait.bind(undefined, 20, wander),
+		shootRotateInCircle,
+		shootCircle.bind(undefined, 16),
+		wait.bind(undefined, 20, wander),
+		shootRotateInCircle,
+		shootCircle.bind(undefined, 32),
+		shootPlayer.bind(undefined, 3)
 	]
 };
 
@@ -377,6 +440,12 @@ EnemyTypes = {
 		pattern:BulletPatterns.shootPlayer,
 		health: 1,
 		scoreThreshold: 0
+	},
+	boss: {
+		source:{svg: "enemy_boss", x:36*3.25, y:36*0.7*3.25},
+		pattern:BulletPatterns.boss1,
+		health: 30,
+		scoreThreshold: 10000000
 	},
 	sam: {
 		source:{svg: "enemy_sam", x:48* 0.8,y:48},

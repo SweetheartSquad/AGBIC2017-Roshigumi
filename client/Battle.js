@@ -34,6 +34,50 @@ Battle.prototype.init = function(){
 		bullets.tex = b.generateTexture();
 		b.destroy();
 	}());
+	bullets.replace = function(){
+		bullets.radius = 16;
+		var c = new PIXI.ParticleContainer(bullets.max, {
+			scale:false,
+			position:true,
+			rotation:true
+		}, bullets.max);
+		bullets.container.parent.addChild(c);
+		bullets.container.parent.swapChildren(c,bullets.container);
+		bullets.container.parent.removeChild(bullets.container);
+		bullets.container.destroy();
+		bullets.container = c;
+		bullets.tex.destroy();
+		var b = svg("swordsvg",{x:bullets.radius*3,y:bullets.radius*3*0.1});
+		bullets.tex = b.generateTexture();
+		b.destroy();
+		for(var i = 0; i < bullets.pool.objs.length; ++i){
+			b = bullets.pool.objs[i];
+			b.dead = true;
+			b.spr.texture = bullets.tex;
+		}
+	};
+	bullets.revert = function(){
+		bullets.radius = 3;
+		var c = new PIXI.ParticleContainer(bullets.max, {
+			scale:false,
+			position:true,
+			rotation:true
+		}, bullets.max);
+		bullets.container.parent.addChild(c);
+		bullets.container.parent.swapChildren(c,bullets.container);
+		bullets.container.parent.removeChild(bullets.container);
+		bullets.container.destroy();
+		bullets.container = c;
+		bullets.tex.destroy();
+		var b = svg("bullet",{x:bullets.radius*3.5,y:bullets.radius*3.5});
+		bullets.tex = b.generateTexture();
+		b.destroy();
+		for(var i = 0; i < bullets.pool.objs.length; ++i){
+			b = bullets.pool.objs[i];
+			b.dead = true;
+			b.spr.texture = bullets.tex;
+		}
+	};
 	bullets.pool = new Pool(bullets.max, Bullet);
 
 
@@ -523,9 +567,98 @@ Battle.prototype.update = function(){
 	
 	// spawn
 	if(!player.dead){
-		if(
-			(enemies.length === 0 && Math.random() < 0.1)
-			|| (enemies.length<50 && (Math.max(0.01,3-enemies.length/Math.max(1,score.current/10000))*score.current) * Math.random() / 500 > 1 || enemies.length===0 && Math.random()<0.01)
+		// boss check
+		if(this.boss){
+			this.boss.name.alpha = lerp(this.boss.name.alpha, 1, 0.01);
+			if(!this.boss.enemy){
+				//spawn boss
+				bullets.replace();
+				this.boss.enemy = new Enemy(EnemyTypes.boss);
+				enemies.push(this.boss.enemy);
+			}else{
+				this.boss.update();
+				if(!this.boss.dead && this.boss.enemy && enemies.length === 0){
+					// boss killed
+					this.boss.dead = game.main.curTime;
+					bullets.revert();
+				}
+			}
+		}
+		if (!this.boss && score.current > 10000){
+			if(enemies.length === 0 && bullets.pool.live.length === 0){
+				// start boss
+				this.boss = {
+					start: game.main.curTime
+				};
+				this.boss.name = new PIXI.Container();
+				this.boss.name.x = size.x/2 - 0.5;
+				this.boss.name.y = size.y - 30- 0.5;
+				this.boss.name.alpha = 0;
+
+				var t = text("the shogun", {x:8,y:6}, 1, {x:0,y:0});
+				t.cacheAsBitmap = true;
+				this.boss.name.addChild(t);
+
+				var b = new PIXI.Graphics();
+				b.y = 10;
+				b.beginFill(0,0);
+				b.lineStyle(1,0xFFFFFF,1);
+				b.drawRect(-size.x/3, 0, size.x/3*2, 10);
+				b.drawCircle(-size.x/3, 0, 1);
+				b.drawCircle(size.x/3, 0, 1);
+				b.drawCircle(-size.x/3, 10, 1);
+				b.drawCircle(size.x/3, 10, 1);
+				b.endFill();
+				b.cacheAsBitmap = true;
+				this.boss.name.addChild(b);
+
+				var h = new PIXI.Graphics();
+				h.y = 10;
+				h.beginFill(0xFFFFFF,0.2);
+				h.drawRect(-size.x/3, 0, size.x/3*2, 10);
+				h.endFill();
+				h.cacheAsBitmap = true;
+				this.boss.name.addChild(h);
+
+				var hx1 = new PIXI.Graphics();
+				hx1.y = 10;
+				hx1.beginFill(0,0);
+				hx1.lineStyle(1,0xFFFFFF,1);
+				hx1.moveTo(0, 0);
+				hx1.lineTo(0,10);
+				hx1.drawCircle(0, 0, 1);
+				hx1.drawCircle(0, 10, 1);
+				hx1.endFill();
+				hx1.cacheAsBitmap = true;
+				this.boss.name.addChild(hx1);
+				var hx2 = hx1.clone();
+				hx2.y = 10;
+				hx2.cacheAsBitmap = true;
+				this.boss.name.addChild(hx2);
+
+				this.boss.update = function(){
+					var p = this.boss.enemy.health/EnemyTypes.boss.health;
+					h.scale.x = p;
+					hx1.x = -p*size.x/3;
+					hx2.x = p*size.x/3;
+					if(p < 0.33){
+						this.boss.enemy.bulletpattern = BulletPatterns.boss3;
+					}else if(p < 0.66){
+						this.boss.enemy.bulletpattern = BulletPatterns.boss2;
+					}else{
+						this.boss.enemy.bulletpattern = BulletPatterns.boss1;
+					}
+				}.bind(this);
+
+				this.container.addChild(this.boss.name);
+			}
+		}else if(
+			enemies.length<50 && (
+			(
+				enemies.length === 0 && Math.random() < 0.1) // no enemies
+				|| (this.boss && this.boss.dead && Math.random() < (game.main.curTime-this.boss.dead)/200000) // post-boss
+				|| (!this.boss && (Math.max(0.01,3-enemies.length/Math.max(1,score.current/10000))*score.current) * Math.random() / 500 > 1) // standard spawn
+			)
 		){
 			var k = Object.keys(EnemyTypes);
 			for(var i = k.length-1; i >= 0; --i){
@@ -836,6 +969,7 @@ Battle.prototype.update = function(){
 };
 
 Battle.prototype.deinit = function(){
+	bullets.revert();
 	this.container.parent.removeChild(this.container);
 	this.container.destroy();
 	for(var i in EnemyTypes){
