@@ -71,12 +71,12 @@ var mouse={
 			this.down[event.button]=true;
 			this.justDown[event.button]=true;
 		}
+		if(this.lock){
+			this.lockMouse();
+		}
 		if(this.capture.indexOf(event.button) != -1){
 			event.preventDefault();
 			return false;
-		}
-		if(this.lock){
-			this.lockMouse();
 		}
 	},
 	on_up: function(event){
