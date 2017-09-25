@@ -224,6 +224,8 @@ function chasePlayer(enemy){
 
 		enemy.v.x += v.x;
 		enemy.v.y += v.y;
+	}else{
+		patrol(enemy);
 	}
 }
 
@@ -303,6 +305,8 @@ function shootArc(frames, framesDelay, freq, enemy){
 			enemy.shootArcOptions = undefined;
 			return true;
 		}
+	}else{
+		return true;
 	}
 	return false;
 }
