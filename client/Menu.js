@@ -239,6 +239,8 @@ Menu.prototype.move = function(by){
 	this.select(this.selection);
 }
 Menu.prototype.update = function(){
+	var m = mouse.isJustDown(mouse.LEFT);
+	var mouseActive = Math.abs(mouse.delta.x)+Math.abs(mouse.delta.y) > 0 || m;
 	mouse.update(); /// hack: update mouse to avoid accepting clicks on menu
 
 	cursor.clear();
@@ -255,13 +257,34 @@ Menu.prototype.update = function(){
 
 	// interaction
 	var input = getInput();
-	if(input.down){
-		this.next();
-	}else if(input.up){
-		this.prev();
-	}else if(getJustAction1()){
-		this.options[this.selection].action();
-		var s =sounds["menu"].play();
+	if(mouseActive){
+		console.log(mouseActive);
+		for(var i = 0; i < this.options.length; ++i){
+			this.deselect(i);
+		}
+		for(var i = 0; i < this.options.length; ++i){
+			var o = this.options[i];
+			var c = o.getBounds().contains(mouse.correctedPos.x, mouse.correctedPos.y);
+			if(c){
+				if(this.options[i].action){
+					this.select(i);
+					if(m){
+						this.options[i].action();
+						var s =sounds["menu"].play();
+						break;
+					}
+				}
+			}
+		}
+	}else{
+		if(input.down){
+			this.next();
+		}else if(input.up){
+			this.prev();
+		}else if(getJustAction1()){
+			this.options[this.selection].action();
+			var s =sounds["menu"].play();
+		}
 	}
 
 	if(Math.random() < 0.005){
