@@ -91,6 +91,7 @@ Pickup.types = {
 
 			blur_filter.uniforms.uBlurAdd += 0.1;
 			screen_filter.uniforms.uChrAbbSeparation += 1000;
+			sounds["music"].rate(0.5);
 
 			bullets.speed = 0.3;
 			Enemy.speed = 0.5;
@@ -102,6 +103,7 @@ Pickup.types = {
 				complete: function(){
 					blur_filter.uniforms.uBlurAdd -= 0.1;
 					screen_filter.uniforms.uScanDistort += 20;
+					sounds["music"].rate(1);
 					
 					bullets.speed = 1;
 					Enemy.speed = 1;
