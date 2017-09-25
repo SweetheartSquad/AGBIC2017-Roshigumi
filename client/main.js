@@ -113,7 +113,7 @@ function init(){
 		g.endFill();
 		t = g.generateTexture();
 		bg = new PIXI.Sprite(t);
-		g.destroy();
+		g.destroy(true);
 		scene.addChild(bg);
 	}());
 
@@ -166,7 +166,7 @@ function init(){
 		g.endFill();
 		t = g.generateTexture();
 		scene.addChild(new PIXI.Sprite(t));
-		g.destroy();
+		g.destroy(true);
 	}());
 
 	cursor = new PIXI.Graphics();

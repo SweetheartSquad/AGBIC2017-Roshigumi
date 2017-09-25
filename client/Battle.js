@@ -29,7 +29,7 @@ Battle.prototype.init = function(){
 	(function(){
 		var b = svg("bullet",{x:bullets.radius*3.5,y:bullets.radius*3.5});
 		bullets.tex = b.generateTexture();
-		b.destroy();
+		b.destroy(true);
 	}());
 	bullets.replace = function(){
 		bullets.radius = 16;
@@ -41,12 +41,12 @@ Battle.prototype.init = function(){
 		bullets.container.parent.addChild(c);
 		bullets.container.parent.swapChildren(c,bullets.container);
 		bullets.container.parent.removeChild(bullets.container);
-		bullets.container.destroy();
+		bullets.container.destroy(true);
 		bullets.container = c;
-		bullets.tex.destroy();
+		bullets.tex.destroy(true);
 		var b = svg("swordsvg",{x:bullets.radius*3,y:bullets.radius*3*0.1});
 		bullets.tex = b.generateTexture();
-		b.destroy();
+		b.destroy(true);
 		for(var i = 0; i < bullets.pool.objs.length; ++i){
 			b = bullets.pool.objs[i];
 			b.dead = true;
@@ -63,12 +63,12 @@ Battle.prototype.init = function(){
 		bullets.container.parent.addChild(c);
 		bullets.container.parent.swapChildren(c,bullets.container);
 		bullets.container.parent.removeChild(bullets.container);
-		bullets.container.destroy();
+		bullets.container.destroy(true);
 		bullets.container = c;
-		bullets.tex.destroy();
+		bullets.tex.destroy(true);
 		var b = svg("bullet",{x:bullets.radius*3.5,y:bullets.radius*3.5});
 		bullets.tex = b.generateTexture();
-		b.destroy();
+		b.destroy(true);
 		for(var i = 0; i < bullets.pool.objs.length; ++i){
 			b = bullets.pool.objs[i];
 			b.dead = true;
@@ -92,7 +92,7 @@ Battle.prototype.init = function(){
 		s.drawRect(0,0,1,1);
 		s.endFill();
 		stars.tex = s.generateTexture();
-		s.destroy();
+		s.destroy(true);
 	}());
 	stars.pool = new Pool(stars.max, Star);
 	for(var i = 0; i < stars.max/2; ++i){
@@ -116,7 +116,7 @@ Battle.prototype.init = function(){
 		s.lineTo(20,0);
 		s.endFill();
 		particles.tex = s.generateTexture();
-		s.destroy();
+		s.destroy(true);
 	}());
 	particles.pool = new Pool(particles.max, Particle);
 
@@ -286,7 +286,7 @@ Battle.prototype.init = function(){
 					number.visible = false;
 					this.container.addChild(number);
 				}
-				t.destroy();
+				t.destroy(true);
 			}
 			score.add(1);
 		},
@@ -579,7 +579,7 @@ Battle.prototype.update = function(){
 
 					this.boss.dead = game.main.curTime;
 					this.boss.name.parent.removeChild(this.boss.name);
-					this.boss.name.destroy();
+					this.boss.name.destroy(true);
 
 					bullets.revert();
 				}else{
@@ -905,12 +905,12 @@ Battle.prototype.update = function(){
 	if(player.dead && player.spr){
 		this.deadTime = game.main.curTime;
 		player.spr.parent.removeChild(player.spr);
-		player.spr.destroy();
+		player.spr.destroy(true);
 		delete player.spr;
 		sword.parent.removeChild(sword);
-		sword.destroy();
+		sword.destroy(true);
 		player.slashMark.parent.removeChild(player.slashMark);
-		player.slashMark.destroy();
+		player.slashMark.destroy(true);
 		this.highScore = {};
 	}
 	if(this.deadTime){
@@ -980,15 +980,16 @@ Battle.prototype.update = function(){
 Battle.prototype.deinit = function(){
 	bullets.revert();
 	this.container.parent.removeChild(this.container);
-	this.container.destroy();
 	for(var i in EnemyTypes){
 		if(EnemyTypes.hasOwnProperty(i)){
 			var c = EnemyTypes[i].container;
 			while(c.children.length > 0){
 				c.removeChildAt(0).destroy();
 			}
+			c.parent.removeChild(c);
 		}
 	}
+	this.container.destroy(true);
 	if(debug.enabled){
 		debug.drawList.length = 0;
 	}

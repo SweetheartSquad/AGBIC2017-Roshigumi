@@ -187,7 +187,7 @@ Menu.prototype.setOptions = function(options, defaultSelection){
 		for(var i = 0; i < this.options.length; ++i){
 			var o = this.options[i];
 			o.parent.removeChild(o);
-			o.destroy();
+			o.destroy(true);
 		}
 	}
 	var textScale = {
@@ -212,7 +212,7 @@ Menu.prototype.setOptions = function(options, defaultSelection){
 }
 Menu.prototype.deinit = function(){
 	scene.removeChild(this.container);
-	this.container.destroy();
+	this.container.destroy(true);
 };
 Menu.prototype.next = function(){
 	do{
