@@ -174,6 +174,8 @@ function init(){
 	// start the main loop
 	window.onresize = onResize;
 	onResize();
+	mouse.pos.x = size.x/2*scaleMultiplier*postProcessScale;
+	mouse.pos.y = size.y/2*scaleMultiplier*postProcessScale;
 	game.main.start();
 }
 
