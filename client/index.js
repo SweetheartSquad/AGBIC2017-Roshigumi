@@ -175,13 +175,7 @@ ready(function(){
 	});
 	Howler.orientation(0,1,0, 0,0,1);
 
-	PIXI.loader
-		.add("screen_shader","assets/screen_shader.frag")
-		.add("blur_shader","assets/blur_shader.frag");
-
-	PIXI.loader
-		.on("progress", loadProgressHandler)
-		.load(init);
+	init();
 });
 
 function howlPos(s,i,x,y,z){

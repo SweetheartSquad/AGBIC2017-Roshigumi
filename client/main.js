@@ -83,9 +83,9 @@ function init(){
 	});
 
 	// setup screen filter
-	screen_filter = new CustomFilter(PIXI.loader.resources.screen_shader.data);
+	screen_filter = new CustomFilter(screen_shader);
 	screen_filter.padding = 0;
-	blur_filter = new CustomFilter(PIXI.loader.resources.blur_shader.data);
+	blur_filter = new CustomFilter(blur_shader);
 	blur_filter.padding = 0;
 	blur_filter.padding = 0;
 	screen_filter.uniforms.uBufferSize = [nextPowerOfTwo(size.x*postProcessScale),nextPowerOfTwo(size.y*postProcessScale)];
