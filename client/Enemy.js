@@ -381,19 +381,19 @@ EnemyTypes = {
 	sam: {
 		source:{svg: "enemy_sam", x:48* 0.8,y:48},
 		pattern:BulletPatterns.shootCorner,
-		health: 3,
+		health: 1,
 		scoreThreshold: 8000
 	},
 	circle4: {
-		source:{svg: "enemy_card", x:24, y:24},
+		source:{svg: "enemy_card", x:28, y:28},
 		pattern:BulletPatterns.shootCircle4,
-		health: 3,
+		health: 2,
 		scoreThreshold: 750
 	},
 	circle6: {
 		source:{svg: "enemy_kam", x:36, y:36*0.9},
 		pattern:BulletPatterns.shootCircle6,
-		health: 3,
+		health: 6,
 		scoreThreshold: 6000
 	}
 };

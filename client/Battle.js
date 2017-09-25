@@ -534,8 +534,7 @@ Battle.prototype.update = function(){
 				}
 			}
 			k = EnemyTypes[k[Math.floor(Math.random()*k.length)]];
-			e = new Enemy(k);
-			enemies.push(e);
+			enemies.push(new Enemy(k));
 		}
 	}
 
