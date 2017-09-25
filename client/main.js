@@ -366,6 +366,8 @@ function getAction1(){
 	|| keys.isDown(keys.CTRL)
 	|| gamepads.isDown(gamepads.A)
 	|| gamepads.isDown(gamepads.Y)
+	|| gamepads.isDown(gamepads.RB)
+	|| gamepads.isDown(gamepads.RT)
 	|| mouse.isDown(mouse.LEFT);
 }
 
@@ -376,6 +378,8 @@ function getJustAction1(){
 	|| keys.isJustDown(keys.CTRL)
 	|| gamepads.isJustDown(gamepads.A)
 	|| gamepads.isJustDown(gamepads.Y)
+	|| gamepads.isJustDown(gamepads.RB)
+	|| gamepads.isJustDown(gamepads.RT)
 	|| mouse.isJustDown(mouse.LEFT);
 }
 
@@ -386,6 +390,8 @@ function getAction2(){
 	|| keys.isDown(keys.CTRL)
 	|| gamepads.isDown(gamepads.X)
 	|| gamepads.isDown(gamepads.B)
+	|| gamepads.isDown(gamepads.LB)
+	|| gamepads.isDown(gamepads.LT)
 	|| mouse.isDown(mouse.RIGHT);
 }
 
@@ -396,6 +402,8 @@ function getJustAction2(){
 	|| keys.isJustDown(keys.CTRL)
 	|| gamepads.isJustDown(gamepads.X)
 	|| gamepads.isJustDown(gamepads.B)
+	|| gamepads.isJustDown(gamepads.LB)
+	|| gamepads.isJustDown(gamepads.LT)
 	|| mouse.isJustDown(mouse.RIGHT);
 }
 

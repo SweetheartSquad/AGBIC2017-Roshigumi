@@ -367,8 +367,11 @@ Battle.prototype.update = function(){
 		x: mouse.pos.x/scaleMultiplier/postProcessScale,
 		y: mouse.pos.y/scaleMultiplier/postProcessScale
 	};
-
 	if(!player.dead){
+		if(Math.abs(gamepads.getAxis(gamepads.RSTICK_H)) > 0 || Math.abs(gamepads.getAxis(gamepads.RSTICK_V)) > 0){
+			mouse.correctedPos.x = player.spr.x + gamepads.getAxis(gamepads.RSTICK_H)*player.radius*10;
+			mouse.correctedPos.y = player.spr.y + gamepads.getAxis(gamepads.RSTICK_V)*player.radius*10;
+		}
 		var input = getInput();
 		// free move
 		player.v.x += input.move.x/3;
