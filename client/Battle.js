@@ -423,127 +423,133 @@ Battle.prototype.update = function(){
 			}else{
 				stamina.drain(0); // prevent turtling regen
 			}
-		}else if(getJustAction1() && stamina.current > 22){
-			// hit enemies
-			for(var i = 0; i < enemies.length; ++i){
-				var e = enemies[i];
-				var p = player.slash(e);
-				if(p){
-					var dx = p.attackLine[1].x - p.attackLine[0].x;
-					var dy = p.attackLine[1].y - p.attackLine[0].y;
-					var l = 1/magnitude({x:dx,y:dy});
+		}else if(getJustAction1()){
+			if(stamina.current < 22){
+				blur_filter.uniforms.uBlurAdd -= 0.5;
+				screen_filter.uniforms.uScanDistort += 50;
+				sounds["menuback"].play();
+			}else{
+				// hit enemies
+				for(var i = 0; i < enemies.length; ++i){
+					var e = enemies[i];
+					var p = player.slash(e);
+					if(p){
+						var dx = p.attackLine[1].x - p.attackLine[0].x;
+						var dy = p.attackLine[1].y - p.attackLine[0].y;
+						var l = 1/magnitude({x:dx,y:dy});
 
-					dx*=l;
-					dy*=l;
+						dx*=l;
+						dy*=l;
 
-					dx*=5*(1-stamina.current/stamina.max/2);
-					dy*=5*(1-stamina.current/stamina.max/2);
+						dx*=5*(1-stamina.current/stamina.max/2);
+						dy*=5*(1-stamina.current/stamina.max/2);
 
-					e.v.x += dx;
-					e.v.y += dy;
-					scene.x += dx*2;
-					scene.y += dy*2;
-					e.hit = 5;
+						e.v.x += dx;
+						e.v.y += dy;
+						scene.x += dx*2;
+						scene.y += dy*2;
+						e.hit = 5;
 
-					// slash mark
-					this.extra.beginFill(0,0);
-					for(var s = 0; s < 3; ++s){
-						this.extra.lineStyle(0.5,0xFFFFFF,1);
-						this.extra.moveTo(p.intersection.x + (Math.random()*2-1)*10*s,p.intersection.y + (Math.random()*2-1)*10*s);
-						this.extra.lineTo(e.spr.x + dx*20 + (Math.random()*2-1)*10*s,e.spr.y + dy*20 + (Math.random()*2-1)*10*s);
-					}
-					this.extra.endFill();
-					if(blur_filter.uniforms.uBlurAdd < 0.43){
-						blur_filter.uniforms.uBlurAdd += 0.03;
-					}
-
-					score.add(10);
-
-					e.health -= 1;
-					if(e.health <= 0){
-						// kill enemy
-						this.kills += 1;
-						
-						for(var p = 0; p < 5+Math.random()*5; ++p){
-							particles.pool.add(e);
+						// slash mark
+						this.extra.beginFill(0,0);
+						for(var s = 0; s < 3; ++s){
+							this.extra.lineStyle(0.5,0xFFFFFF,1);
+							this.extra.moveTo(p.intersection.x + (Math.random()*2-1)*10*s,p.intersection.y + (Math.random()*2-1)*10*s);
+							this.extra.lineTo(e.spr.x + dx*20 + (Math.random()*2-1)*10*s,e.spr.y + dy*20 + (Math.random()*2-1)*10*s);
+						}
+						this.extra.endFill();
+						if(blur_filter.uniforms.uBlurAdd < 0.43){
+							blur_filter.uniforms.uBlurAdd += 0.03;
 						}
 
-						// health
-						if(
-							(this.kills === 1 && health.current < health.max)
-							|| (Math.random()+Math.min(0.19,score.current/10000) < 0.2*(1+(health.max-health.current)/health.max))
-						){
-							var h = new Pickup(Pickup.types.heart);
-							this.pickups.push(h);
-							this.container.addChild(h.spr);
-							h.spr.x = e.spr.x;
-							h.spr.y = e.spr.y;
-							h.v.x = e.v.x;
-							h.v.y = e.v.y;
-						}else if(this.kills > 3){
-							// powerups
-							var allowPowerup = true;
-							if(player.effects.length > 0){
-								allowPowerup = false;
-							}else{
-								for(var i = 0; i < this.pickups.length; ++i){
-									if(this.pickups[i].type !== Pickup.types.heart){
-										allowPowerup = false;
-										break;
+						score.add(10);
+
+						e.health -= 1;
+						if(e.health <= 0){
+							// kill enemy
+							this.kills += 1;
+							
+							for(var p = 0; p < 5+Math.random()*5; ++p){
+								particles.pool.add(e);
+							}
+
+							// health
+							if(
+								(this.kills === 1 && health.current < health.max)
+								|| (Math.random()+Math.min(0.19,score.current/10000) < 0.2*(1+(health.max-health.current)/health.max))
+							){
+								var h = new Pickup(Pickup.types.heart);
+								this.pickups.push(h);
+								this.container.addChild(h.spr);
+								h.spr.x = e.spr.x;
+								h.spr.y = e.spr.y;
+								h.v.x = e.v.x;
+								h.v.y = e.v.y;
+							}else if(this.kills > 3){
+								// powerups
+								var allowPowerup = true;
+								if(player.effects.length > 0){
+									allowPowerup = false;
+								}else{
+									for(var i = 0; i < this.pickups.length; ++i){
+										if(this.pickups[i].type !== Pickup.types.heart){
+											allowPowerup = false;
+											break;
+										}
+									}
+								}
+								if(allowPowerup){
+									if(Math.random() < this.powerupChance){
+										this.powerupChance = 0;
+										var t = Pickup.getRandomPowerup();
+										var h = new Pickup(t);
+										this.pickups.push(h);
+										this.container.addChild(h.spr);
+										h.spr.x = e.spr.x;
+										h.spr.y = e.spr.y;
+										h.v.x = e.v.x;
+										h.v.y = e.v.y;
+									}else{
+										this.powerupChance += 0.05;
 									}
 								}
 							}
-							if(allowPowerup){
-								if(Math.random() < this.powerupChance){
-									this.powerupChance = 0;
-									var t = Pickup.getRandomPowerup();
-									var h = new Pickup(t);
-									this.pickups.push(h);
-									this.container.addChild(h.spr);
-									h.spr.x = e.spr.x;
-									h.spr.y = e.spr.y;
-									h.v.x = e.v.x;
-									h.v.y = e.v.y;
-								}else{
-									this.powerupChance += 0.05;
-								}
+
+							score.add(100);
+							var s = sounds["kill"].play();
+							howlPos(sounds["kill"],s, e.spr.x,e.spr.y,0);
+							sounds["kill"].rate(1 + (Math.random()*2-1)*0.25,s);
+
+							// effect
+							this.extra.lineStyle(4,0xFFFFFF,1);
+							this.extra.drawCircle(e.spr.x,e.spr.y,30);
+							this.extra.lineStyle(0.5,0xFFFFFF,1);
+							this.extra.drawCircle(e.spr.x,e.spr.y,40);
+							this.extra.lineStyle(0.25,0xFFFFFF,1);
+							this.extra.drawCircle(e.spr.x,e.spr.y,50);
+							screen_filter.uniforms.uChrAbbSeparation += 128;
+							screen_filter.uniforms.uInvert -= 0.1;
+
+							// actually remove
+							e.dead = true;
+							e.spr.parent.removeChild(e.spr);
+							e.spr.destroy();
+							enemies.splice(enemies.indexOf(e),1);
+							if(debug.enabled){
+								debug.drawList.splice(debug.drawList.indexOf(e),1);
 							}
+						}else{
+							var s = sounds["slash-hit"].play();
+							howlPos(sounds["slash-hit"],s, e.spr.x,e.spr.y,0);
+							sounds["slash-hit"].rate(1 + (Math.random()*2-1)*0.1,s);
 						}
-
-						score.add(100);
-						var s = sounds["kill"].play();
-						howlPos(sounds["kill"],s, e.spr.x,e.spr.y,0);
-						sounds["kill"].rate(1 + (Math.random()*2-1)*0.25,s);
-
-						// effect
-						this.extra.lineStyle(4,0xFFFFFF,1);
-						this.extra.drawCircle(e.spr.x,e.spr.y,30);
-						this.extra.lineStyle(0.5,0xFFFFFF,1);
-						this.extra.drawCircle(e.spr.x,e.spr.y,40);
-						this.extra.lineStyle(0.25,0xFFFFFF,1);
-						this.extra.drawCircle(e.spr.x,e.spr.y,50);
-						screen_filter.uniforms.uChrAbbSeparation += 128;
-						screen_filter.uniforms.uInvert -= 0.1;
-
-						// actually remove
-						e.dead = true;
-						e.spr.parent.removeChild(e.spr);
-						e.spr.destroy();
-						enemies.splice(enemies.indexOf(e),1);
-						if(debug.enabled){
-							debug.drawList.splice(debug.drawList.indexOf(e),1);
-						}
-					}else{
-						var s = sounds["slash-hit"].play();
-						howlPos(sounds["slash-hit"],s, e.spr.x,e.spr.y,0);
-						sounds["slash-hit"].rate(1 + (Math.random()*2-1)*0.1,s);
 					}
 				}
-			}
 
-			player.attack();
-			stamina.drain(22);
-			sword.scale.x = sword.scale.y = 1;
+				player.attack();
+				stamina.drain(22);
+				sword.scale.x = sword.scale.y = 1;
+			}
 		}
 
 		// thruster
