@@ -152,21 +152,21 @@ function stop(){
 
 }
 function patrol(enemy){
-	if(!enemy.target){
+	if(!enemy.patrolTarget){
 		if(Math.random() < 0.01){
-			enemy.target = {
-				x:Math.random()*size.x*0.75 + 0.125,
-				y:Math.random()*size.y*0.75 + 0.125
+			enemy.patrolTarget = {
+				x:enemy.radius + (Math.random()*(size.x-enemy.radius*2)*0.75 + 0.125),
+				y:enemy.radius + (Math.random()*(size.y-enemy.radius*2)*0.75 + 0.125)
 			};
 		}
 	}else{
 		var v = {
-			x: enemy.target.x - enemy.spr.x,
-			y: enemy.target.y - enemy.spr.y
+			x: enemy.patrolTarget.x - enemy.spr.x,
+			y: enemy.patrolTarget.y - enemy.spr.y
 		};
 		var l = magnitude(v);
 		if(l < 1){
-			enemy.target = undefined;
+			enemy.patrolTarget = undefined;
 		}
 		l = 1/l;
 		v.x *= l;
@@ -180,22 +180,22 @@ function patrol(enemy){
 }
 
 function wander(enemy){
-	if(!enemy.target){
+	if(!enemy.wanderTarget){
 		var ratio = (Math.random()*2-1)*30;
-		enemy.target = {
+		enemy.wanderTarget = {
 			frame: 1,
 			x: 150 + ratio,
 			y: 150 - ratio
 		};
 	}else{
-		enemy.target.frame+=1;
+		enemy.wanderTarget.frame+=1;
 		var v = {
-			x: ((Math.cos(enemy.target.frame/enemy.target.x)/2+0.5)*0.8+0.1)*size.x - enemy.spr.x,
-			y: ((Math.sin(enemy.target.frame/enemy.target.y)/2+0.5)*0.9+0.05)*size.y - enemy.spr.y
+			x: enemy.radius+((Math.cos(enemy.wanderTarget.frame/enemy.wanderTarget.x)/2+0.5)*0.8+0.1)*(size.x-enemy.radius*2) - enemy.spr.x,
+			y: enemy.radius+((Math.sin(enemy.wanderTarget.frame/enemy.wanderTarget.y)/2+0.5)*0.9+0.05)*(size.y-enemy.radius*2) - enemy.spr.y
 		};
 		var l = magnitude(v);
 		if(l < 1){
-			enemy.target = undefined;
+			enemy.wanderTarget = undefined;
 		}
 		l = 1/l;
 		v.x *= l;
@@ -375,13 +375,13 @@ EnemyTypes = {
 	circle: {
 		source:{svg: "enemy_circle", x:36, y:36*0.7},
 		pattern:BulletPatterns.shootPlayer,
-		health: 3,
+		health: 1,
 		scoreThreshold: 0
 	},
 	sam: {
 		source:{svg: "enemy_sam", x:48* 0.8,y:48},
 		pattern:BulletPatterns.shootCorner,
-		health: 1,
+		health: 3,
 		scoreThreshold: 8000
 	},
 	circle4: {
