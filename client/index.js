@@ -33,6 +33,13 @@ toggleFullscreen = function(){
 		game.view.toggleFullscreen = false;
 	}
 };
+function quit(){
+	if (typeof nw !== 'undefined' && nw !== null) {
+		nw.App.quit();
+	} else {
+		location.reload();
+	}
+}
 
 ready(function(){
 	if(!window.performance){

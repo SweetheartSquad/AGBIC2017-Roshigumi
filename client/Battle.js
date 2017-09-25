@@ -371,6 +371,18 @@ Battle.prototype.update = function(){
 		player.update();
 	}
 
+	if(keys.isJustDown(keys.ESCAPE)){
+		if(!player.dead){
+			while(health.current > 0){
+				health.damage();
+			}
+		}else{
+			this.deinit();
+			menu = new Menu();
+			return;
+		}
+	}
+
 	if(!player.dead){
 		if(!player.blocking && getAction2()){
 			if(stamina.current > 0.3){

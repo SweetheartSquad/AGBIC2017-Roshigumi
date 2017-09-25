@@ -279,6 +279,14 @@ Menu.prototype.update = function(){
 		}
 	}
 
+	if(keys.isJustDown(keys.ESCAPE)){
+		if(this.options[0].action === mainMenu[0].action){
+			quit();
+		}else{
+			this.setOptions(mainMenu, 0);
+		}
+	}
+
 	if(Math.random() < 0.005){
 		screen_filter.uniforms.uScanDistort += 10*Math.random();
 		screen_filter.uniforms.uChrAbbSeparation += 100*Math.random();
