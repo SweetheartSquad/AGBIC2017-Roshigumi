@@ -12,24 +12,28 @@ var palettes = [
 		colour: [-3, 0, 0.25]
 	},
 	{
-		name: "neon",
-		colour: [0.5,0,-1]
-	},
-	{
 		name: "witch",
-		colour: [0.5,-0.3,10]
-	},
-	{
-		name: "infrared",
-		colour: [-3,-0.5,0.8]
-	},
-	{
-		name: "dark-forest",
-		colour: [0.03, -1, -0.25]
+		colour: [0.25,-0.3,0.75]
 	},
 	{
 		name: "pulp",
-		colour: [-0.4358186449815582, 0.7842105259376866, 0.7070602956392871]
+		colour: [0.8722403032681343, -0.5808644803447445, 0.36715786076264445]
+	},
+	{
+		name: "dark forest",
+		colour: [0.03, -1, -0.25]
+	},
+	{
+		name: "lavabo",
+		colour: [0.37252937411651565, 0.23381866646199567, 0.544828629682768]
+	},
+	{
+		name: "40-love",
+		colour: [-0.9345150057299234, 0.5154926129946191, 0.36140050426619696]
+	},
+	{
+		name: "eggg",
+		colour: [0.7146197750215877, 0.9135517354397447, 0.4075349085517894]
 	},
 	{
 		name: "vacuum",
@@ -37,15 +41,15 @@ var palettes = [
 	},
 	{
 		name: "cream",
-		colour: [1,0.6,0.6]
-	},
-	{
-		name: "industrial",
-		colour: [0.48930425124300214, 5.4162016834965385, 6.912143168052054]
+		colour: [2.665576975835908, 0.6133051169929784, 0.6470838473841618]
 	},
 	{
 		name: "shimmer",
 		colour: [-100, -100, -100]
+	},
+	{
+		name: "random",
+		colour: [0, 0, 0]
 	}
 ];
 var currentPalette = 0;
@@ -345,6 +349,9 @@ function setPalette(palette){
 		currentPalette += palettes.length;
 	}
 	currentPalette %= palettes.length;
+	if(currentPalette === palettes.length - 1){
+		palettes[currentPalette].colour = [(Math.random()*2-1)*(Math.random()*3), (Math.random()*2-1)*(Math.random()*3), (Math.random()*2-1)*(Math.random()*3)];
+	}
 	optionsMenu[1].text = palettes[currentPalette].name;
 	localStorage.setItem("palette", currentPalette);
 }
