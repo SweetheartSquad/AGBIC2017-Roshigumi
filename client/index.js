@@ -126,51 +126,51 @@ ready(function(){
 	fontStyle={font: "8px font", align: "left"};
 
 	sounds["menu"] = new Howl({
-		src:["assets/audio/menu_option.wav"],
+		src:["assets/audio/menu_option.ogg"],
 		autoplay:false
 	});
 	sounds["menuback"] = new Howl({
-		src:["assets/audio/menuback.wav"],
+		src:["assets/audio/menuback.ogg"],
 		autoplay:false
 	});
 	sounds["death"] = new Howl({
-		src:["assets/audio/death.wav"],
+		src:["assets/audio/death.ogg"],
 		autoplay:false
 	});
 	sounds["hurt"] = new Howl({
-		src:["assets/audio/hurt.wav"],
+		src:["assets/audio/hurt.ogg"],
 		autoplay:false
 	});
 	sounds["heal"] = new Howl({
-		src:["assets/audio/powerup.wav"],
+		src:["assets/audio/powerup.ogg"],
 		autoplay:false
 	});
 	sounds["shoot"] = new Howl({
-		src:["assets/audio/shoot.wav"],
+		src:["assets/audio/shoot.ogg"],
 		autoplay:false
 	});
 	sounds["blocked"] = new Howl({
-		src:["assets/audio/block.wav"],
+		src:["assets/audio/block.ogg"],
 		autoplay:false
 	});
 	sounds["slash"] = new Howl({
-		src:["assets/audio/slash.wav"],
+		src:["assets/audio/slash.ogg"],
 		autoplay:false
 	});
 	sounds["slash-hit"] = new Howl({
-		src:["assets/audio/enemyhit.wav"],
+		src:["assets/audio/enemyhit.ogg"],
 		autoplay:false
 	});
 	sounds["kill"] = new Howl({
-		src:["assets/audio/enemykill.wav"],
+		src:["assets/audio/enemykill.ogg"],
 		autoplay:false
 	});
 	sounds["boss"] = new Howl({
-		src:["assets/audio/boss spawn.wav"],
+		src:["assets/audio/boss spawn.ogg"],
 		autoplay:false
 	});
 	sounds["thruster"] = new Howl({
-		src:["assets/audio/thruster.wav"],
+		src:["assets/audio/thruster.ogg"],
 		autoplay:false,
 		loop:true,
 		volume:0
