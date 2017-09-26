@@ -88,6 +88,11 @@ var optionsMenu = [
 			setPalette(currentPalette+1);
 			menu.setOptions(optionsMenu);
 			sounds["menu"].play();
+		},
+		actionDir: function(dir){
+			setPalette(currentPalette+dir);
+			menu.setOptions(optionsMenu);
+			sounds["menu"].play();
 		}
 	},
 	{
@@ -97,6 +102,18 @@ var optionsMenu = [
 	{
 		text: "Scaling",
 		action: function(){
+			if(scaleMode === 1){
+				scaleMode = 2;
+			}else{
+				scaleMode = 1;
+			}
+			storage.setItem("scaleMode", scaleMode)
+			optionsMenu[3].text = scaleModes[scaleMode];
+			menu.setOptions(optionsMenu, 2);
+			onResize();
+			sounds["menu"].play();
+		},
+		actionDir: function(dir){
 			if(scaleMode === 1){
 				scaleMode = 2;
 			}else{
@@ -206,10 +223,11 @@ Menu.prototype.setOptions = function(options, defaultSelection){
 		var t = text(this.options[i].text, textScale, 0.5,{x:-0.5,y:0});
 		t.y += i*textScale.y*1.8;
 		this.optionsContainer.addChild(t);
-		var a = this.options[i].action;
+		var o = this.options[i];
 		this.options[i] = t;
-		this.options[i].action = a;
-		if(!a){
+		this.options[i].action = o.action;
+		this.options[i].actionDir = o.actionDir;
+		if(!o.action){
 			this.options[i].alpha = 0.4;
 		}
 	}
@@ -290,6 +308,12 @@ Menu.prototype.update = function(){
 			this.prev();
 		}else if(getJustAction1()){
 			this.options[this.selection].action();
+		}else if(this.options[this.selection].actionDir){
+			if(input.left){
+				this.options[this.selection].actionDir(-1);
+			}else if(input.right){
+				this.options[this.selection].actionDir(1);
+			}
 		}
 	}
 
@@ -317,6 +341,9 @@ Menu.prototype.select = function(id){
 
 function setPalette(palette){
 	currentPalette = palette;
+	if(currentPalette < 0){
+		currentPalette += palettes.length;
+	}
 	currentPalette %= palettes.length;
 	optionsMenu[1].text = palettes[currentPalette].name;
 	localStorage.setItem("palette", currentPalette);
