@@ -1,6 +1,3 @@
-*{
-}
-
 html,body,#display{
 	padding:0;
 	margin:0;
@@ -43,8 +40,6 @@ canvas{
 	transition:
 	width 0.1s,
 	height 0.1s;
-
-	/*border:solid white 1px;*/
 }
 
 #display{
