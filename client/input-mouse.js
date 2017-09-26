@@ -49,8 +49,13 @@ var mouse={
 
 	lockMouse: function() {
 		this.locked = true;
-		this.element.requestPointerLock = this.element.requestPointerLock || this.element.mozRequestPointerLock;
-		this.element.requestPointerLock();
+		if(this.element.requestPointerLock){
+			this.element.requestPointerLock();	
+		}else if(this.element.mozRequestPointerLock){
+			this.element.mozRequestPointerLock();
+		}else{
+			this.locked = false;
+		}
 	},
 
 	update: function(){
